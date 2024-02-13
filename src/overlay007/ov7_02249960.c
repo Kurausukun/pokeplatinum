@@ -167,6 +167,30 @@ static void ov7_02249960 (int param0, BOOL param1)
     Unk_ov7_0224F5A0->unk_94 = sub_0205D994(&Unk_ov7_0224F5A0->unk_40, Unk_ov7_0224F5A0->unk_00[5], sub_02025E44(Unk_ov7_0224F5A0->unk_68->unk_0C), 1);
 }
 
+static inline void ov7_02249960_inline (int param0, BOOL param1)
+{
+    if (!sub_0205DA04(Unk_ov7_0224F5A0->unk_94)) {
+        sub_0201D730(Unk_ov7_0224F5A0->unk_94);
+    }
+
+    if (param1) {
+        MessageLoader_GetStrbuf(Unk_ov7_0224F5A0->unk_74, param0, Unk_ov7_0224F5A0->unk_00[4]);
+        sub_0200C388(Unk_ov7_0224F5A0->unk_58, Unk_ov7_0224F5A0->unk_00[5], Unk_ov7_0224F5A0->unk_00[4]);
+    } else {
+        MessageLoader_GetStrbuf(Unk_ov7_0224F5A0->unk_74, param0, Unk_ov7_0224F5A0->unk_00[5]);
+    }
+
+    if (!sub_0201A7CC(&Unk_ov7_0224F5A0->unk_40)) {
+        sub_0205D8F4(Unk_ov7_0224F5A0->unk_68->unk_08, &Unk_ov7_0224F5A0->unk_40, 3);
+    }
+
+    sub_0205D944(&Unk_ov7_0224F5A0->unk_40, sub_02025E44(Unk_ov7_0224F5A0->unk_68->unk_0C));
+    sub_02002AC8(1);
+    sub_02002AE4(0);
+    sub_02002B20(0);
+    Unk_ov7_0224F5A0->unk_94 = sub_0201D738(&Unk_ov7_0224F5A0->unk_40, 1, Unk_ov7_0224F5A0->unk_00[5], 0, 0, 1, 0);   
+}
+
 static void ov7_02249A10 (UnkStruct_ov84_02240FA8 param0, u8 param1, u8 param2, u8 param3, u8 param4, u16 param5)
 {
     UnkStruct_ov84_02240FA8 v0;
@@ -481,128 +505,30 @@ static void ov7_0224A0C8 (UnkStruct_ov7_02249C2C * param0)
     }
 }
 
-asm static void ov7_0224A128 (SysTask * param0, void * param1)
+static void ov7_0224A128(SysTask * param0, void * param1)
 {
-    push {r4, r5, lr}
-    sub sp, #0xc
-    add r5, r0, #0
-    add r4, r1, #0
-    bl sub_020360F0
-    cmp r0, #0
-    beq _0224A152
-    add r0, r5, #0
-    add r1, r4, #0
-    bl ov7_0224AFD8
-    mov r0, #0
-    add r1, r0, #0
-    bl ov7_02249960
-    add r0, r4, #0
-    bl ov7_0224B348
-    add sp, #0xc
-    pop {r4, r5, pc}
- _0224A152:
-    bl sub_0203608C
-    bl sub_02032EE8
-    cmp r0, #0
-    beq _0224A238
-    bl sub_020365D0
-    ldr r1, = Unk_ov7_0224F5A0
-              add r0, r4, #0
-    add r0, #0x8e
-    ldr r1, [r1, #0]
-    ldrh r0, [r0]
-    ldr r1, [r1, #0x7c]
-    bl sub_020339AC
-    ldr r2, = Unk_ov7_0224F5A0
-              ldr r0, [r4, #0x58]
-    ldr r2, [r2, #0]
-    mov r1, #1
-    ldr r2, [r2, #0x7c]
-    bl sub_0200B498
-    bl ov7_0224B3D4
-    cmp r0, #2
-    bgt _0224A192
-    mov r0, #1
-    add r1, r0, #0
-    bl ov7_02249960
-    b _0224A232
- _0224A192:
-    ldr r0, = Unk_ov7_0224F5A0
-              ldr r0, [r0, #0]
-    add r0, #0x94
-    ldrb r0, [r0]
-    bl sub_0205DA04
-    cmp r0, #0
-    bne _0224A1AE
-    ldr r0, = Unk_ov7_0224F5A0
-              ldr r0, [r0, #0]
-    add r0, #0x94
-    ldrb r0, [r0]
-    bl sub_0201D730
- _0224A1AE:
-    ldr r0, = Unk_ov7_0224F5A0
-              mov r1, #2
-    ldr r2, [r0, #0]
-    ldr r0, [r2, #0x74]
-    ldr r2, [r2, #0x10]
-    bl MessageLoader_GetStrbuf
-    ldr r0, = Unk_ov7_0224F5A0
-              ldr r2, [r0, #0]
-    ldr r0, [r2, #0x58]
-    ldr r1, [r2, #0x14]
-    ldr r2, [r2, #0x10]
-    bl sub_0200C388
-    ldr r0, = Unk_ov7_0224F5A0
-              ldr r0, [r0, #0]
-    add r0, #0x40
-    bl sub_0201A7CC
-    cmp r0, #0
-    bne _0224A1E8
-    ldr r0, = Unk_ov7_0224F5A0
-              mov r2, #3
-    ldr r1, [r0, #0]
-    ldr r0, [r1, #0x68]
-    add r1, #0x40
-    ldr r0, [r0, #8]
-    bl sub_0205D8F4
- _0224A1E8:
-    ldr r0, = Unk_ov7_0224F5A0
-              ldr r0, [r0, #0]
-    ldr r0, [r0, #0x68]
-    ldr r0, [r0, #0xc]
-    bl sub_02025E44
-    add r1, r0, #0
-    ldr r0, = Unk_ov7_0224F5A0
-              ldr r0, [r0, #0]
-    add r0, #0x40
-    bl sub_0205D944
-    mov r0, #1
-    bl sub_02002AC8
-    mov r0, #0
-    bl sub_02002AE4
-    mov r0, #0
-    bl sub_02002B20
-    ldr r0, = Unk_ov7_0224F5A0
-              mov r3, #0
-    ldr r2, [r0, #0]
-    mov r1, #1
-    str r3, [sp]
-    str r1, [sp, #4]
-    add r0, r2, #0
-    str r3, [sp, #8]
-    ldr r2, [r2, #0x14]
-    add r0, #0x40
-    bl sub_0201D738
-    ldr r1, = Unk_ov7_0224F5A0
-              ldr r1, [r1, #0]
-    add r1, #0x94
-    strb r0, [r1]
- _0224A232:
-    ldr r0, = ov7_0224A34C
-              bl ov7_0224A530
- _0224A238:
-              add sp, #0xc
-    pop {r4, r5, pc}
+    UnkStruct_ov7_02249C2C * v0 = (UnkStruct_ov7_02249C2C *)param1;
+
+    if (sub_020360F0()) {
+        ov7_0224AFD8(param0, v0);
+        ov7_02249960(0, FALSE);
+        ov7_0224B348(v0);
+        return;
+    }
+    
+    if (sub_02032EE8(sub_0203608C()) == NULL)
+        return;
+
+    sub_020365D0();
+
+    sub_020339AC(v0->unk_8E, Unk_ov7_0224F5A0->unk_7C);
+    sub_0200B498(v0->unk_58, 1, Unk_ov7_0224F5A0->unk_7C);
+    if (ov7_0224B3D4() <= 2) {
+        ov7_02249960(1, TRUE);
+    } else {
+        ov7_02249960_inline(2, TRUE);
+    }
+    ov7_0224A530(ov7_0224A34C);
 }
 
 static BOOL ov7_0224A244 (SysTask * param0, void * param1)
