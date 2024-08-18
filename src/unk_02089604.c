@@ -60,7 +60,6 @@ void sub_02089688(UnkStruct_02089688 *param0)
         if (param0->unk_38C.unk_04[v0] == 0) {
             break;
         }
-
         param0->unk_2A4 += param0->unk_38C.unk_04[v0];
         param0->unk_3C0++;
     }
@@ -71,7 +70,6 @@ void sub_02089688(UnkStruct_02089688 *param0)
 
     for (v0 = 0; v0 < 4; v0++) {
         v2 = 8 * param0->unk_3C0 + (8 * (param0->unk_2A4 - param0->unk_38C.unk_04[v0]) + 32 * param0->unk_38C.unk_04[v0]);
-
         param0->unk_274[v0 + 1] = 112 - v2 / 2;
     }
 
