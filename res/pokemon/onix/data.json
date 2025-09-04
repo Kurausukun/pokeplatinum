@@ -116,6 +116,11 @@
             "EVO_TRADE_WITH_HELD_ITEM",
             "ITEM_METAL_COAT",
             "SPECIES_STEELIX"
+        ],
+        [
+            "EVO_LEVEL_WITH_HELD_ITEM",
+            "ITEM_METAL_COAT",
+            "SPECIES_STEELIX"
         ]
     ],
     "offspring": "SPECIES_ONIX",

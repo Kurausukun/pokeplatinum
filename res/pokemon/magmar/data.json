@@ -97,6 +97,11 @@
             "EVO_TRADE_WITH_HELD_ITEM",
             "ITEM_MAGMARIZER",
             "SPECIES_MAGMORTAR"
+        ],
+        [
+            "EVO_LEVEL_WITH_HELD_ITEM",
+            "ITEM_MAGMARIZER",
+            "SPECIES_MAGMORTAR"
         ]
     ],
     "offspring": "SPECIES_MAGBY",

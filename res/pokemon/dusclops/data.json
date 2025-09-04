@@ -122,6 +122,11 @@
             "EVO_TRADE_WITH_HELD_ITEM",
             "ITEM_REAPER_CLOTH",
             "SPECIES_DUSKNOIR"
+        ],
+        [
+            "EVO_LEVEL_WITH_HELD_ITEM",
+            "ITEM_REAPER_CLOTH",
+            "SPECIES_DUSKNOIR"
         ]
     ],
     "offspring": "SPECIES_DUSKULL",

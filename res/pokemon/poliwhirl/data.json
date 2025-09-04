@@ -103,6 +103,11 @@
             "EVO_TRADE_WITH_HELD_ITEM",
             "ITEM_KINGS_ROCK",
             "SPECIES_POLITOED"
+        ],
+        [
+            "EVO_LEVEL_WITH_HELD_ITEM",
+            "ITEM_KINGS_ROCK",
+            "SPECIES_POLITOED"
         ]
     ],
     "offspring": "SPECIES_POLIWAG",

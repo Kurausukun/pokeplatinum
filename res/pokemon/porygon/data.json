@@ -103,6 +103,11 @@
             "EVO_TRADE_WITH_HELD_ITEM",
             "ITEM_UPGRADE",
             "SPECIES_PORYGON2"
+        ],
+        [
+            "EVO_LEVEL_WITH_HELD_ITEM",
+            "ITEM_UPGRADE",
+            "SPECIES_PORYGON2"
         ]
     ],
     "offspring": "SPECIES_PORYGON",

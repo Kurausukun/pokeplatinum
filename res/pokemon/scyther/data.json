@@ -113,6 +113,11 @@
             "EVO_TRADE_WITH_HELD_ITEM",
             "ITEM_METAL_COAT",
             "SPECIES_SCIZOR"
+        ],
+        [
+            "EVO_LEVEL_WITH_HELD_ITEM",
+            "ITEM_METAL_COAT",
+            "SPECIES_SCIZOR"
         ]
     ],
     "offspring": "SPECIES_SCYTHER",

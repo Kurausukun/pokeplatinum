@@ -103,6 +103,11 @@
             "EVO_TRADE_WITH_HELD_ITEM",
             "ITEM_ELECTIRIZER",
             "SPECIES_ELECTIVIRE"
+        ],
+        [
+            "EVO_LEVEL_WITH_HELD_ITEM",
+            "ITEM_ELECTIRIZER",
+            "SPECIES_ELECTIVIRE"
         ]
     ],
     "offspring": "SPECIES_ELEKID",
