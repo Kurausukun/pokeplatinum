@@ -3664,6 +3664,13 @@ u16 Pokemon_GetEvolutionTargetSpecies(Party *party, Pokemon *mon, u8 evoClass, u
                 }
                 break;
 
+            case EVO_LEVEL_WITH_HELD_ITEM:
+                if (speciesEvolutions[i].param == monHeldItem) {
+                    targetSpecies = speciesEvolutions[i].targetSpecies;
+                    *evoTypeResult = EVO_LEVEL_WITH_HELD_ITEM;
+                }
+                break;
+
             case EVO_LEVEL_KNOW_MOVE:
                 if (Pokemon_HasMove(mon, speciesEvolutions[i].param) == TRUE) {
                     targetSpecies = speciesEvolutions[i].targetSpecies;

@@ -209,6 +209,7 @@ static SpeciesEvolutionList ParseEvolutions(rapidjson::Document &root)
         case EVO_USE_ITEM_FEMALE:
         case EVO_LEVEL_WITH_HELD_ITEM_DAY:
         case EVO_LEVEL_WITH_HELD_ITEM_NIGHT:
+        case EVO_LEVEL_WITH_HELD_ITEM:
             param = LookupConst(evoEntry[1].GetString(), Item);
             break;
 
