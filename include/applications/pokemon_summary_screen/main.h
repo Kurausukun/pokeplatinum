@@ -311,6 +311,13 @@ enum ConditionRect {
     MAX_CONDITION_RECT
 };
 
+
+enum SummarySkillState {
+    SKILL_STATE_STATS = 0,
+    SKILL_STATE_IVS,
+    SKILL_STATE_EVS
+};
+
 #define SUMMARY_SUBSCREEN_BUTTON_NONE 0xFF
 
 #define RIBBONS_PER_ROW  4
@@ -395,6 +402,13 @@ typedef struct PokemonSummaryMonData {
     u8 tough;
     u8 sheen;
     u8 preferredFlavor;
+    
+    u8 hpEV;
+    u8 atkEV;
+    u8 defEV;
+    u8 speedEV;
+    u8 spAtkEV;
+    u8 spDefEV;
 
     u16 markings;
     u16 form;
@@ -403,6 +417,13 @@ typedef struct PokemonSummaryMonData {
     u32 isEgg : 1;
     u32 isShiny : 1;
     u32 pokerus : 2;
+    
+    u32 hpIV : 5;
+    u32 atkIV : 5;
+    u32 defIV : 5;
+    u32 speedIV : 5;
+    u32 spAtkIV : 5;
+    u32 spDefIV : 5;
 
     u32 ribbons[4];
 } PokemonSummaryMonData;
@@ -449,6 +470,7 @@ typedef struct PokemonSummaryScreen {
     u8 cursor : 4;
     u8 cursorTmp : 4;
     u8 pageState;
+    u8 skillState;
 
     u8 subscreenType : 4;
     u8 subscreenExit : 4;

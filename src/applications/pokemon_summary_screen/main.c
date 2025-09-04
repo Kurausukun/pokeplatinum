@@ -639,6 +639,30 @@ static int HandleInput_Main(PokemonSummaryScreen *summaryScreen)
             return SUMMARY_STATE_TRANSITION_OUT;
         }
     }
+    
+    if (JOY_NEW(PAD_BUTTON_L)) {
+        if (summaryScreen->page == SUMMARY_PAGE_SKILLS && summaryScreen->skillState != SKILL_STATE_IVS) {
+            Sound_PlayEffect(SEQ_SE_DP_DECIDE);
+            PokemonSummaryScreen_PrintIVs(summaryScreen);
+            summaryScreen->skillState = SKILL_STATE_IVS;
+        }
+    }
+    
+    else if (JOY_NEW(PAD_BUTTON_R)) {
+        if (summaryScreen->page == SUMMARY_PAGE_SKILLS && summaryScreen->skillState != SKILL_STATE_EVS) {
+            Sound_PlayEffect(SEQ_SE_DP_DECIDE);
+            PokemonSummaryScreen_PrintEVs(summaryScreen);
+            summaryScreen->skillState = SKILL_STATE_EVS;
+        }
+    }
+    
+    else if (JOY_NEW(PAD_BUTTON_SELECT)) {
+        if (summaryScreen->page == SUMMARY_PAGE_SKILLS && summaryScreen->skillState != SKILL_STATE_STATS) {
+            Sound_PlayEffect(SEQ_SE_DP_DECIDE);
+            PokemonSummaryScreen_PrintStats(summaryScreen);
+            summaryScreen->skillState = SKILL_STATE_STATS;
+        }
+    }
 
     if (CheckSubscreenPressAndSetButton(summaryScreen) == TRUE) {
         summaryScreen->pageState = PAGE_STATE_SCROLL_FINISHED;
@@ -1110,6 +1134,20 @@ static void SetMonDataFromMon(PokemonSummaryScreen *summaryScreen, Pokemon *mon,
     monData->ability = Pokemon_GetValue(mon, MON_DATA_ABILITY, NULL);
     monData->nature = Pokemon_GetNature(mon);
 
+    monData->hpIV = Pokemon_GetValue(mon, MON_DATA_HP_IV, NULL);
+    monData->atkIV = Pokemon_GetValue(mon, MON_DATA_ATK_IV, NULL);
+    monData->defIV = Pokemon_GetValue(mon, MON_DATA_DEF_IV, NULL);
+    monData->spAtkIV = Pokemon_GetValue(mon, MON_DATA_SPATK_IV, NULL);
+    monData->spDefIV = Pokemon_GetValue(mon, MON_DATA_SPDEF_IV, NULL);
+    monData->speedIV = Pokemon_GetValue(mon, MON_DATA_SPEED_IV, NULL);
+
+    monData->hpEV = Pokemon_GetValue(mon, MON_DATA_HP_EV, NULL);
+    monData->atkEV = Pokemon_GetValue(mon, MON_DATA_ATK_EV, NULL);
+    monData->defEV = Pokemon_GetValue(mon, MON_DATA_DEF_EV, NULL);
+    monData->spAtkEV = Pokemon_GetValue(mon, MON_DATA_SPATK_EV, NULL);
+    monData->spDefEV = Pokemon_GetValue(mon, MON_DATA_SPDEF_EV, NULL);
+    monData->speedEV = Pokemon_GetValue(mon, MON_DATA_SPEED_EV, NULL);
+
     u16 i;
     u8 maxPP;
     for (i = 0; i < LEARNED_MOVES_MAX; i++) {
@@ -1345,6 +1383,7 @@ static void ChangePage(PokemonSummaryScreen *summaryScreen, s8 delta)
         return;
     }
 
+    summaryScreen->skillState = SKILL_STATE_STATS;
     Sound_PlayEffect(SEQ_SE_DP_SELECT5);
     PokemonSummaryScreen_UpdateSubscreenButtonGfx(summaryScreen);
     PokemonSummaryScreen_UpdateConditionFlashSprites(summaryScreen, FALSE);
