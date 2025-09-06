@@ -1545,6 +1545,7 @@ static void ChangeSummaryMon(PokemonSummaryScreen *summaryScreen, s8 delta)
     PokemonSummaryScreen_InitSheenSprites(summaryScreen);
     PokemonSummaryScreen_UpdateMiscMonDataSprites(summaryScreen);
     PokemonSummaryScreen_DrawExtraWindows(summaryScreen);
+    PokemonSummaryScreen_PrintNatures(summaryScreen, TRUE);
 }
 
 static s8 TryAdvanceSummaryMonIndex(PokemonSummaryScreen *summaryScreen, s8 delta)

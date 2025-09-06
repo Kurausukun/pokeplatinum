@@ -973,11 +973,9 @@ static void PrintStaticWindows(PokemonSummaryScreen *summaryScreen)
     PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_EXP, PokemonSummary_Text_LabelExp, SUMMARY_TEXT_WHITE, ALIGN_LEFT);
     PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_EXP_NEXT_LV, PokemonSummary_Text_LabelExpNextLv, SUMMARY_TEXT_WHITE, ALIGN_LEFT);
     PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_HP, PokemonSummary_Text_LabelHp, SUMMARY_TEXT_WHITE, ALIGN_LEFT);
-    PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_ATTACK, PokemonSummary_Text_LabelAttack, SUMMARY_TEXT_WHITE, ALIGN_LEFT);
-    PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_DEFENSE, PokemonSummary_Text_LabelDefense, SUMMARY_TEXT_WHITE, ALIGN_LEFT);
-    PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_SP_ATTACK, PokemonSummary_Text_LabelSpAttack, SUMMARY_TEXT_WHITE, ALIGN_LEFT);
-    PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_SP_DEFENSE, PokemonSummary_Text_LabelSpDefense, SUMMARY_TEXT_WHITE, ALIGN_LEFT);
-    PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_SPEED, PokemonSummary_Text_LabelSpeed, SUMMARY_TEXT_WHITE, ALIGN_LEFT);
+
+    PokemonSummaryScreen_PrintNatures(summaryScreen, FALSE);
+
     PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_ABILITY, PokemonSummary_Text_LabelAbility, SUMMARY_TEXT_WHITE, ALIGN_LEFT);
     PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_SHEEN, PokemonSummary_Text_LabelSheen, SUMMARY_TEXT_WHITE, ALIGN_LEFT);
 
@@ -1672,4 +1670,27 @@ void PokemonSummaryScreen_PrintStats(PokemonSummaryScreen *summaryScreen)
     Window_ScheduleCopyToVRAM(&summaryScreen->extraWindows[SUMMARY_WINDOW_SP_ATTACK]);
     Window_ScheduleCopyToVRAM(&summaryScreen->extraWindows[SUMMARY_WINDOW_SP_DEFENSE]);
     Window_ScheduleCopyToVRAM(&summaryScreen->extraWindows[SUMMARY_WINDOW_SPEED]);
+}
+
+void PokemonSummaryScreen_PrintNatures(PokemonSummaryScreen *summaryScreen, BOOL scheduleVRAMCopy)
+{
+    static const u32 textLUT[5] = {
+        PokemonSummary_Text_LabelAttack,
+        PokemonSummary_Text_LabelDefense,
+        PokemonSummary_Text_LabelSpeed,
+        PokemonSummary_Text_LabelSpAttack,
+        PokemonSummary_Text_LabelSpDefense,
+    };
+
+    for (int i = 0; i < 5; i++) {
+        if (Pokemon_GetStatAffinityOf(summaryScreen->monData.nature, STAT_ATTACK + i) == 1)
+            PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_ATTACK + i, textLUT[i], SUMMARY_TEXT_WHITE_RED_SHADOW, ALIGN_LEFT);
+        else if (Pokemon_GetStatAffinityOf(summaryScreen->monData.nature, STAT_ATTACK + i) == -1)
+            PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_ATTACK + i, textLUT[i], SUMMARY_TEXT_WHITE_BLUE_SHADOW, ALIGN_LEFT);
+        else
+            PrintTextToStaticWindow(summaryScreen, SUMMARY_WINDOW_LABEL_ATTACK + i, textLUT[i], SUMMARY_TEXT_WHITE, ALIGN_LEFT);
+        
+        if (scheduleVRAMCopy)
+            Window_ScheduleCopyToVRAM(&summaryScreen->staticWindows[SUMMARY_WINDOW_LABEL_ATTACK + i]);
+    }
 }

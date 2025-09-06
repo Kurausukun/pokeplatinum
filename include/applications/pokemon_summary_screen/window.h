@@ -37,5 +37,6 @@ void PokemonSummaryScreen_PrintPoffinFeedMsg(PokemonSummaryScreen *summaryScreen
 void PokemonSummaryScreen_PrintIVs(PokemonSummaryScreen *summaryScreen);
 void PokemonSummaryScreen_PrintEVs(PokemonSummaryScreen *summaryScreen);
 void PokemonSummaryScreen_PrintStats(PokemonSummaryScreen *summaryScreen);
+void PokemonSummaryScreen_PrintNatures(PokemonSummaryScreen *summaryScreen, BOOL scheduleVRAMCopy);
 
 #endif // POKEPLATINUM_POKEMON_SUMMARY_SCREEN_WINDOW_H

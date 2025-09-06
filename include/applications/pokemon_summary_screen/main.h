@@ -328,6 +328,8 @@ enum SummarySkillState {
 #define SUMMARY_TEXT_BLUE              TEXT_COLOR(3, 4, 0)
 #define SUMMARY_TEXT_RED               TEXT_COLOR(5, 6, 0)
 #define SUMMARY_TEXT_BLACK_DARK_SHADOW TEXT_COLOR(1, 2, 15)
+#define SUMMARY_TEXT_WHITE_RED_SHADOW  TEXT_COLOR(15, 5, 0)
+#define SUMMARY_TEXT_WHITE_BLUE_SHADOW TEXT_COLOR(15, 3, 0)
 
 typedef struct ConditionRectangle {
     VecFx16 topLeft;
