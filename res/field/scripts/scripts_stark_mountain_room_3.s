@@ -35,57 +35,34 @@ _0083:
     Return
 
 _0089:
-    GoToIfSet FLAG_UNK_0x008E, _0096
+    GoToIfSet FLAG_MAP_LOCAL, _0096
     End
 
 _0096:
     SetFlag FLAG_UNK_0x01DD
     RemoveObject 1
-    ClearFlag FLAG_UNK_0x008E
+    ClearFlag FLAG_MAP_LOCAL
     End
 
-    .byte 14
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 35
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 33
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+StarkMountainRoom3_UnusedMovement:
+    WalkNormalWest
+    WalkOnSpotNormalEast
+    WalkOnSpotNormalSouth
+    EndMovement
 
     .balign 4, 0
 _00B4:
     WalkOnSpotNormalNorth
     EndMovement
 
-    .byte 32
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 13
-    .byte 0
-    .byte 9
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+StarkMountainRoom3_UnusedMovement2:
+    WalkOnSpotNormalNorth
+    EndMovement
+
+StarkMountainRoom3_UnusedMovement3:
+    Delay8
+    WalkNormalSouth 9
+    EndMovement
 
 _00D0:
     BufferPlayerName 1
@@ -107,9 +84,9 @@ _00E6:
     PlayCry SPECIES_HEATRAN
     Message 15
     CloseMessage
-    SetFlag FLAG_UNK_0x008E
+    SetFlag FLAG_MAP_LOCAL
     StartLegendaryBattle SPECIES_HEATRAN, 50
-    ClearFlag FLAG_UNK_0x008E
+    ClearFlag FLAG_MAP_LOCAL
     CheckWonBattle VAR_RESULT
     GoToIfEq VAR_RESULT, FALSE, _0168
     CheckLostBattle VAR_RESULT
@@ -145,34 +122,18 @@ _017A:
     SetFlag FLAG_UNLOCKED_VS_SEEKER_LVL_5
     Return
 
-    .byte 12
-    .byte 0
-    .byte 6
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 13
-    .byte 0
-    .byte 6
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 4
-    .byte 0
-    .byte 33
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+StarkMountainRoom3_UnusedMovement4:
+    WalkNormalNorth 6
+    EndMovement
+
+StarkMountainRoom3_UnusedMovement5:
+    WalkNormalSouth 6
+    EndMovement
+
+StarkMountainRoom3_UnusedMovement6:
+    Delay8 4
+    WalkOnSpotNormalSouth
+    EndMovement
 
 _019C:
     LockAll
@@ -272,16 +233,16 @@ _019C:
     SetFlag FLAG_UNK_0x0231
     SetVar VAR_UNK_0x409E, 1
     SetFlag FLAG_ARRESTED_CHARON_STARK_MOUNTAIN
-    ClearFlag FLAG_UNK_0x01A3
+    ClearFlag FLAG_HIDE_LOOKER_IN_GAME_CORNER
     ClearFlag FLAG_UNK_0x01D9
     ClearFlag FLAG_UNK_0x01D6
     ClearFlag FLAG_UNK_0x022B
     ClearFlag FLAG_UNK_0x022D
     ClearFlag FLAG_UNK_0x022E
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     Warp MAP_HEADER_STARK_MOUNTAIN_OUTSIDE, 0, 0x2EF, 233, 0
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     End
 

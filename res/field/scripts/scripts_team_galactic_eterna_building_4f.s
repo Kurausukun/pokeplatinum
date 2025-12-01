@@ -14,10 +14,9 @@ _001A:
     ScrCmd_2CD
     End
 
-    .byte 205
-    .byte 2
-    .byte 2
-    .byte 0
+TeamGalacticEternaBuilding4F_Unused:
+    ScrCmd_2CD
+    End
 
 _0022:
     PlayFanfare SEQ_SE_CONFIRM
@@ -32,10 +31,10 @@ _0022:
     GoToIfEq VAR_RESULT, FALSE, _0135
     Message 1
     CloseMessage
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     RemoveObject 0
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     WaitTime 15, VAR_RESULT
     GetPlayerDir VAR_0x8004
@@ -66,7 +65,7 @@ _00D0:
 _00E2:
     Message 4
     CloseMessage
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     SetFlag FLAG_UNK_0x01FD
     SetFlag FLAG_UNK_0x01BB
@@ -79,7 +78,7 @@ _00E2:
     RemoveObject 1
     RemoveObject 3
     SetVar VAR_UNK_0x407A, 3
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     SetFlag FLAG_ALT_MUSIC_GALACTIC_ETERNA_BUILDING
     ReleaseAll
@@ -100,22 +99,11 @@ _0144:
     WalkNormalNorth
     EndMovement
 
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 15
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 32
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+TeamGalacticEternaBuilding4F_UnusedMovement:
+    Delay8
+    WalkNormalEast 2
+    WalkOnSpotNormalNorth
+    EndMovement
 
     .balign 4, 0
 _015C:
@@ -135,30 +123,15 @@ _0174:
     WalkOnSpotNormalSouth
     EndMovement
 
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 62
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 33
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+TeamGalacticEternaBuilding4F_UnusedMovement2:
+    WalkOnSpotNormalWest
+    Delay4
+    WalkOnSpotNormalSouth
+    EndMovement
+
+TeamGalacticEternaBuilding4F_UnusedMovement3:
+    WalkOnSpotNormalWest
+    EndMovement
 
 _0198:
     PlayFanfare SEQ_SE_CONFIRM

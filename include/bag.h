@@ -15,6 +15,18 @@
 #define POKEBALL_POCKET_SIZE    15
 #define BATTLE_ITEM_POCKET_SIZE 30
 
+// clang-format off
+#define LARGEST_POCKET_SIZE   \
+    max(ITEM_POCKET_SIZE,     \
+    max(KEY_ITEM_POCKET_SIZE, \
+    max(TMHM_POCKET_SIZE,     \
+    max(MAIL_POCKET_SIZE,     \
+    max(MEDICINE_POCKET_SIZE, \
+    max(BERRY_POCKET_SIZE,    \
+    max(POKEBALL_POCKET_SIZE, \
+    BATTLE_ITEM_POCKET_SIZE)))))))
+// clang-format on
+
 typedef struct BagItem {
     u16 item;
     u16 quantity;
@@ -53,22 +65,31 @@ typedef struct BagCursor {
 } BagCursor;
 
 int Bag_SaveSize(void);
-Bag *Bag_New(enum HeapId heapID);
+Bag *Bag_New(enum HeapID heapID);
 void Bag_Init(Bag *bag);
 void Bag_Copy(const Bag *src, Bag *dst);
 u32 Bag_GetRegisteredItem(const Bag *bag);
 void Bag_RegisterItem(Bag *bag, u32 item);
-BOOL Bag_CanFitItem(Bag *bag, u16 item, u16 count, enum HeapId heapID);
-BOOL Bag_TryAddItem(Bag *bag, u16 item, u16 count, enum HeapId heapID);
-BOOL Bag_TryRemoveItem(Bag *bag, u16 item, u16 count, enum HeapId heapID);
-BOOL Pocket_TryRemoveItem(BagItem *pocket, u32 pocketSize, u16 item, u16 count, enum HeapId heapID);
-BOOL Bag_CanRemoveItem(Bag *bag, u16 item, u16 count, enum HeapId heapID);
+BOOL Bag_CanFitItem(Bag *bag, u16 item, u16 count, enum HeapID heapID);
+BOOL Bag_TryAddItem(Bag *bag, u16 item, u16 count, enum HeapID heapID);
+BOOL Bag_TryRemoveItem(Bag *bag, u16 item, u16 count, enum HeapID heapID);
+BOOL Pocket_TryRemoveItem(BagItem *pocket, u32 pocketSize, u16 item, u16 count, enum HeapID heapID);
+BOOL Bag_CanRemoveItem(Bag *bag, u16 item, u16 count, enum HeapID heapID);
 BOOL Bag_HasItemsInPocket(Bag *bag, u32 pocketID);
-u16 Bag_GetItemQuantity(Bag *bag, u16 item, enum HeapId heapID);
-u16 Pocket_GetItemQuantity(BagItem *pocket, u32 pocketSize, u16 item, enum HeapId heapID);
+u16 Bag_GetItemQuantity(Bag *bag, u16 item, enum HeapID heapID);
+u16 Pocket_GetItemQuantity(BagItem *pocket, u32 pocketSize, u16 item, enum HeapID heapID);
 void Pocket_SortEmpty(BagItem *pocket, const u32 size); // Moves empty slots to the end of the pocket
 void Pocket_Sort(BagItem *pocket, const u32 size); // Same as Pocket_SortEmpty, but also sorts by item ID
-void *sub_0207D824(Bag *bag, const u8 *pockets, enum HeapId heapID);
+
+/**
+ * @brief Creates a BagContext with the given pocket types.
+ *
+ * @param bag The Bag from which to pull the pockets
+ * @param pockets A 0xFF-terminated array of which pocket types should be available.
+ * @param heapID
+ * @return A new BagContext giving access to the chosen pockets
+ */
+void *BagContext_CreateWithPockets(Bag *bag, const u8 *pockets, enum HeapID heapID);
 BagItem *Bag_GetItemSlot(Bag *bag, u16 pocketID, u16 slot);
 Bag *SaveData_GetBag(SaveData *saveData);
 BagCursor *BagCursor_New(u32 heapID);

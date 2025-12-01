@@ -94,7 +94,7 @@ _016F:
 _0183:
     ClearFlag FLAG_UNK_0x01B1
     AddObject 20
-    ScrCmd_062 20
+    LockObject 20
     ApplyMovement 20, _02C4
     WaitMovement
     ApplyMovement LOCALID_PLAYER, _02DC
@@ -113,9 +113,9 @@ _01C6:
     End
 
 _01E9:
-    SetVar VAR_0x8004, 0x1B7
+    SetVar VAR_0x8004, ITEM_OLD_CHARM
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     Message 4
     CloseMessage
     GetPlayerMapPos VAR_0x8004, VAR_0x8005
@@ -204,46 +204,19 @@ _02DC:
     WalkOnSpotNormalSouth
     EndMovement
 
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 35
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 32
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 32
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+Route210South_UnusedMovement:
+    Delay8
+    WalkOnSpotNormalEast
+    Delay8
+    WalkOnSpotNormalNorth
+    EndMovement
+
+Route210South_UnusedMovement2:
+    Delay8
+    WalkOnSpotNormalWest
+    Delay8
+    WalkOnSpotNormalNorth
+    EndMovement
 
 _030C:
     PlayFanfare SEQ_SE_CONFIRM
@@ -264,7 +237,7 @@ _031F:
     SetVar VAR_0x8004, ITEM_TM51
     SetVar VAR_0x8005, 1
     GoToIfCannotFitItem VAR_0x8004, VAR_0x8005, VAR_RESULT, _036F
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     SetFlag FLAG_UNK_0x00C7
     GoTo _0364
 
@@ -276,7 +249,7 @@ _0364:
     End
 
 _036F:
-    CallCommonScript 0x7E1
+    MessageBagIsFull
     CloseMessage
     ReleaseAll
     End
@@ -299,5 +272,4 @@ _03A7:
     ReleaseAll
     End
 
-    .byte 0
-    .byte 0
+    .balign 4, 0

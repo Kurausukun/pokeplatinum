@@ -162,9 +162,9 @@ _02AC:
     GoTo _02B5
 
 _02B5:
-    ScrCmd_168 5, 26, 8, 10, 77
-    ScrCmd_16B 77
-    ScrCmd_169 77
+    LoadDoorAnimation 5, 26, 8, 10, ANIMATION_TAG_DOOR_1
+    PlayDoorOpenAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
     ClearFlag FLAG_UNK_0x0197
     AddObject 3
     ApplyMovement 3, _0554
@@ -207,15 +207,15 @@ _035E:
     ApplyMovement 4, _045C
     ApplyMovement LOCALID_PLAYER, _0530
     WaitMovement
-    ScrCmd_16C 77
-    ScrCmd_169 77
-    ScrCmd_16A 77
+    PlayDoorCloseAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
+    UnloadAnimation ANIMATION_TAG_DOOR_1
     RemoveObject 4
     SetVar VAR_UNK_0x4071, 1
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     Warp MAP_HEADER_SANDGEM_TOWN_POKEMON_RESEARCH_LAB, 0, 7, 15, 0
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     End
 
@@ -322,30 +322,15 @@ _047C:
     FaceSouth
     EndMovement
 
-    .byte 63
-    .byte 0
-    .byte 3
-    .byte 0
-    .byte 33
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 15
-    .byte 0
-    .byte 4
-    .byte 0
-    .byte 12
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+SandgemTown_UnusedMovement:
+    Delay8 3
+    WalkOnSpotNormalSouth
+    EndMovement
+
+SandgemTown_UnusedMovement2:
+    WalkNormalEast 4
+    WalkNormalNorth 2
+    EndMovement
 
     .balign 4, 0
 _04A0:
@@ -449,9 +434,9 @@ _056C:
 
 _057C:
     LockAll
-    ScrCmd_168 5, 26, 8, 10, 77
-    ScrCmd_16B 77
-    ScrCmd_169 77
+    LoadDoorAnimation 5, 26, 8, 10, ANIMATION_TAG_DOOR_1
+    PlayDoorOpenAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
     ClearFlag FLAG_UNK_0x02C4
     AddObject 14
     ApplyMovement 14, _0798
@@ -463,16 +448,16 @@ _057C:
     ApplyMovement 4, _07F8
     WaitMovement
     Message 9
-    SetVar VAR_0x8004, 0x162
+    SetVar VAR_0x8004, ITEM_TM27
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     Message 10
     CloseMessage
     ApplyMovement 14, _07A0
     WaitMovement
-    ScrCmd_16C 77
-    ScrCmd_169 77
-    ScrCmd_16A 77
+    PlayDoorCloseAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
+    UnloadAnimation ANIMATION_TAG_DOOR_1
     RemoveObject 14
     WaitTime 30, VAR_RESULT
     GetPlayerGender VAR_RESULT
@@ -737,5 +722,4 @@ _08EB:
     ShowLandmarkSign 29
     End
 
-    .byte 0
-    .byte 0
+    .balign 4, 0

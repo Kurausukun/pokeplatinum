@@ -50,11 +50,11 @@
 #include "sys_task_manager.h"
 #include "system_flags.h"
 #include "trainer_info.h"
+#include "tv_episode_segment.h"
 #include "unk_020298BC.h"
 #include "unk_0202CC64.h"
 #include "unk_0202F108.h"
 #include "unk_020363E8.h"
-#include "unk_0206CCB0.h"
 #include "unk_02094EDC.h"
 #include "unk_02095AF0.h"
 #include "vars_flags.h"
@@ -153,7 +153,7 @@ __attribute__((aligned(4))) static const u8 Unk_020F55D0[][6] = {
 
 void sub_020933F8(FieldTask *param0, UnkStruct_02095C48 *param1)
 {
-    UnkStruct_020933F8 *v0 = Heap_AllocFromHeapAtEnd(HEAP_ID_FIELDMAP, sizeof(UnkStruct_020933F8));
+    UnkStruct_020933F8 *v0 = Heap_AllocAtEnd(HEAP_ID_FIELD2, sizeof(UnkStruct_020933F8));
 
     MI_CpuClear8(v0, sizeof(UnkStruct_020933F8));
     v0->unk_00 = param1;
@@ -382,7 +382,7 @@ static UnkStruct_02095C48 *sub_020937C4(void)
     UnkStruct_02095C48 *v0;
     int v1;
 
-    v0 = Heap_AllocFromHeap(HEAP_ID_20, sizeof(UnkStruct_02095C48));
+    v0 = Heap_Alloc(HEAP_ID_20, sizeof(UnkStruct_02095C48));
     MI_CpuClear8(v0, sizeof(UnkStruct_02095C48));
 
     v0->unk_00.unk_113 = 0;
@@ -403,7 +403,7 @@ UnkStruct_02095C48 *sub_02093800(const UnkStruct_02093800 *param0)
     int v1 = 4 - 1;
     int v2;
 
-    Heap_Create(HEAP_ID_FIELDMAP, HEAP_ID_20, (0x3000 + 0x1000));
+    Heap_Create(HEAP_ID_FIELD2, HEAP_ID_20, 0x3000 + 0x1000);
 
     v0 = sub_020937C4();
     v0->unk_19A4 = LCRNG_GetSeed();
@@ -431,7 +431,7 @@ UnkStruct_02095C48 *sub_02093800(const UnkStruct_02093800 *param0)
         v0->unk_00.unk_E8[v2] = sub_02029C88(HEAP_ID_20);
     }
 
-    sub_020954F0(v0, HEAP_ID_FIELDMAP, v0->unk_00.unk_10E, v0->unk_00.unk_10F, v0->unk_00.unk_110);
+    sub_020954F0(v0, HEAP_ID_FIELD2, v0->unk_00.unk_10E, v0->unk_00.unk_10F, v0->unk_00.unk_110);
     v0->unk_148 = Party_New(HEAP_ID_20);
 
     for (v2 = 0; v2 < 4; v2++) {
@@ -488,7 +488,7 @@ static void sub_020939E0(UnkStruct_02095C48 *param0, int param1, int param2)
     int v0 = 4 - 1;
     int v1;
 
-    sub_02094F04(param0, HEAP_ID_FIELDMAP, v0, param0->unk_00.unk_10F, param0->unk_00.unk_110, param0->unk_00.unk_111, param1, param2);
+    sub_02094F04(param0, HEAP_ID_FIELD2, v0, param0->unk_00.unk_10F, param0->unk_00.unk_110, param0->unk_00.unk_111, param1, param2);
 
     for (v1 = 1; v1 < 4; v1++) {
         sub_02095380(&param0->unk_00.unk_10[v1], param0->unk_00.unk_00[v1], HEAP_ID_20);
@@ -499,7 +499,7 @@ static void sub_020939E0(UnkStruct_02095C48 *param0, int param1, int param2)
             param0->unk_00.unk_D8[v1] = Strbuf_Init(8, HEAP_ID_20);
         }
 
-        Pokemon_GetValue(param0->unk_00.unk_00[v1], MON_DATA_OTNAME_STRBUF, param0->unk_00.unk_D8[v1]);
+        Pokemon_GetValue(param0->unk_00.unk_00[v1], MON_DATA_OT_NAME_STRING, param0->unk_00.unk_D8[v1]);
     }
 
     for (v1 = 1; v1 < 4; v1++) {
@@ -548,19 +548,19 @@ static int sub_02093B2C(Pokemon *param0, int param1)
     for (v1 = 0; v1 <= 3; v1++) {
         switch (param1) {
         case 0:
-            v2 = Pokemon_GetValue(param0, MON_DATA_SINNOH_SUPER_COOL_RIBBON + v1, NULL);
+            v2 = Pokemon_GetValue(param0, MON_DATA_SUPER_COOL_RIBBON + v1, NULL);
             break;
         case 1:
-            v2 = Pokemon_GetValue(param0, MON_DATA_SINNOH_SUPER_BEAUTY_RIBBON + v1, NULL);
+            v2 = Pokemon_GetValue(param0, MON_DATA_SUPER_BEAUTY_RIBBON + v1, NULL);
             break;
         case 2:
-            v2 = Pokemon_GetValue(param0, MON_DATA_SINNOH_SUPER_CUTE_RIBBON + v1, NULL);
+            v2 = Pokemon_GetValue(param0, MON_DATA_SUPER_CUTE_RIBBON + v1, NULL);
             break;
         case 3:
-            v2 = Pokemon_GetValue(param0, MON_DATA_SINNOH_SUPER_SMART_RIBBON + v1, NULL);
+            v2 = Pokemon_GetValue(param0, MON_DATA_SUPER_SMART_RIBBON + v1, NULL);
             break;
         case 4:
-            v2 = Pokemon_GetValue(param0, MON_DATA_SINNOH_SUPER_TOUGH_RIBBON + v1, NULL);
+            v2 = Pokemon_GetValue(param0, MON_DATA_SUPER_TOUGH_RIBBON + v1, NULL);
             break;
         default:
             GF_ASSERT(0);
@@ -583,7 +583,7 @@ void sub_02093BBC(UnkStruct_02095C48 *param0)
 
     sub_0202A25C(param0->unk_00.unk_E8[param0->unk_00.unk_113]);
 
-    v0 = Heap_AllocFromHeap(HEAP_ID_20, sizeof(UnkStruct_02093BBC));
+    v0 = Heap_Alloc(HEAP_ID_20, sizeof(UnkStruct_02093BBC));
     MI_CpuClear8(v0, sizeof(UnkStruct_02093BBC));
 
     v0->unk_00 = param0->unk_00.unk_00[param0->unk_00.unk_113];
@@ -1449,7 +1449,7 @@ void sub_02094A58(UnkStruct_02095C48 *param0, int param1)
 
     GF_ASSERT(param0->unk_19A0 == NULL);
 
-    v0 = Heap_AllocFromHeapAtEnd(HEAP_ID_FIELD, sizeof(UnkStruct_02094A58));
+    v0 = Heap_AllocAtEnd(HEAP_ID_FIELD1, sizeof(UnkStruct_02094A58));
     MI_CpuClear8(v0, sizeof(UnkStruct_02094A58));
     v0->unk_0C = sub_02095904(param1);
 
@@ -1506,7 +1506,7 @@ static void sub_02094B30(SysTask *param0, void *param1)
         v1->unk_08++;
 
         if (v1->unk_08 > v1->unk_04[v1->unk_0A]) {
-            BrightnessController_StartTransition(6, 0, 4, (GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_BG1 | GX_BLEND_PLANEMASK_BG2 | GX_BLEND_PLANEMASK_BG3 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD), BRIGHTNESS_MAIN_SCREEN);
+            BrightnessController_StartTransition(6, 0, 4, GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_BG1 | GX_BLEND_PLANEMASK_BG2 | GX_BLEND_PLANEMASK_BG3 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD, BRIGHTNESS_MAIN_SCREEN);
             Sound_PlayEffect(SEQ_SE_DP_CON_014);
             v1->unk_0A++;
             v1->unk_08 = 0;

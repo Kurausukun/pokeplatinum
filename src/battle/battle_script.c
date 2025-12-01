@@ -8,7 +8,7 @@
 #include "constants/pokemon.h"
 #include "constants/rtc.h"
 #include "constants/species.h"
-#include "constants/trainer.h"
+#include "constants/string.h"
 #include "generated/abilities.h"
 #include "generated/genders.h"
 
@@ -17,9 +17,9 @@
 #include "struct_defs/battle_system.h"
 #include "struct_defs/fraction.h"
 #include "struct_defs/struct_020127E8.h"
-#include "struct_defs/struct_0208737C.h"
 #include "struct_defs/trainer.h"
 
+#include "applications/naming_screen.h"
 #include "applications/pokedex/ov21_021E8D48.h"
 #include "applications/pokedex/struct_ov21_021E8E0C.h"
 #include "battle/battle_context.h"
@@ -36,8 +36,8 @@
 #include "battle/ov16_02268520.h"
 #include "battle/struct_ov16_0225BFFC_decl.h"
 #include "battle/struct_ov16_0225BFFC_t.h"
-#include "overlay012/ov12_02235E94.h"
-#include "overlay012/struct_ov12_02237728.h"
+#include "battle_anim/ov12_02235E94.h"
+#include "battle_anim/struct_ov12_02237728.h"
 
 #include "bg_window.h"
 #include "char_transfer.h"
@@ -70,10 +70,8 @@
 #include "trainer_info.h"
 #include "unk_02012744.h"
 #include "unk_0201567C.h"
-#include "unk_0208694C.h"
 #include "unk_0208C098.h"
 
-#include "constdata/const_020F2DAC.h"
 #include "res/battle/scripts/sub_seq.naix.h"
 
 typedef BOOL (*BtlCmd)(BattleSystem *, BattleContext *);
@@ -2423,7 +2421,7 @@ static BOOL BtlCmd_CalcExpGain(BattleSystem *battleSys, BattleContext *battleCtx
         for (i = 0; i < Party_GetCurrentCount(BattleSystem_Party(battleSys, BATTLER_US)); i++) {
             Pokemon *mon = BattleSystem_PartyPokemon(battleSys, BATTLER_US, i);
 
-            if (Pokemon_GetValue(mon, MON_DATA_SPECIES, NULL) && Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL)) {
+            if (Pokemon_GetValue(mon, MON_DATA_SPECIES, NULL) && Pokemon_GetValue(mon, MON_DATA_HP, NULL)) {
                 if (battleCtx->sideGetExpMask[(battleCtx->faintedMon >> 1) & 1] & FlagIndex(i)) {
                     totalMonsGainingExp++;
                 }
@@ -2538,7 +2536,7 @@ static BOOL BtlCmd_StartGetExpTask(BattleSystem *battleSys, BattleContext *battl
 {
     BattleScript_Iter(battleCtx, 1);
 
-    battleCtx->taskData = Heap_AllocFromHeap(HEAP_ID_BATTLE, sizeof(BattleScriptTaskData));
+    battleCtx->taskData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleScriptTaskData));
     battleCtx->taskData->battleSys = battleSys;
     battleCtx->taskData->battleCtx = battleCtx;
     battleCtx->taskData->seqNum = SEQ_GET_EXP_START;
@@ -2794,7 +2792,7 @@ static BOOL BtlCmd_StartCatchMonTask(BattleSystem *battleSys, BattleContext *bat
     BattleScript_Iter(battleCtx, 1);
     BOOL safariCapture = BattleScript_Read(battleCtx);
 
-    battleCtx->taskData = Heap_AllocFromHeap(HEAP_ID_BATTLE, sizeof(BattleScriptTaskData));
+    battleCtx->taskData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(BattleScriptTaskData));
     battleCtx->taskData->battleSys = battleSys;
     battleCtx->taskData->battleCtx = battleCtx;
     battleCtx->taskData->seqNum = 0;
@@ -3865,7 +3863,7 @@ static BOOL BtlCmd_PrintTrainerMessage(BattleSystem *battleSys, BattleContext *b
 static u32 BattleScript_CalcPrizeMoney(BattleSystem *battleSys, BattleContext *battleCtx, int battler)
 {
     u8 lastLevel = 0;
-    void *rawParty = Heap_AllocFromHeap(HEAP_ID_BATTLE, sizeof(TrainerMonWithMovesAndItem) * MAX_PARTY_SIZE);
+    void *rawParty = Heap_Alloc(HEAP_ID_BATTLE, sizeof(TrainerMonWithMovesAndItem) * MAX_PARTY_SIZE);
 
     Trainer trainer;
     Trainer_Load(battleSys->trainerIDs[battler], &trainer);
@@ -4757,7 +4755,7 @@ static BOOL BtlCmd_Metronome(BattleSystem *battleSys, BattleContext *battleCtx)
 
     while (TRUE) {
         int i;
-        u16 move = (BattleSystem_RandNext(battleSys) % NUM_MOVES) + 1;
+        u16 move = (BattleSystem_RandNext(battleSys) % NUM_VALID_MOVES) + 1;
 
         // Do not try to invoke a move that we already know.
         for (i = 0; i < LEARNED_MOVES_MAX; i++) {
@@ -5507,7 +5505,7 @@ static BOOL BtlCmd_TryWhirlwind(BattleSystem *battleSys, BattleContext *battleCt
 
             if (Pokemon_GetValue(mon, MON_DATA_SPECIES, NULL)
                 && Pokemon_GetValue(mon, MON_DATA_IS_EGG, NULL) == FALSE
-                && Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL)) {
+                && Pokemon_GetValue(mon, MON_DATA_HP, NULL)) {
                 eligibleMons++;
             }
         }
@@ -5526,7 +5524,7 @@ static BOOL BtlCmd_TryWhirlwind(BattleSystem *battleSys, BattleContext *battleCt
                 mon = Party_GetPokemonBySlotIndex(defenderParty, i);
             } while (Pokemon_GetValue(mon, MON_DATA_SPECIES, NULL) == SPECIES_NONE
                 || Pokemon_GetValue(mon, MON_DATA_IS_EGG, NULL) == TRUE
-                || Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL) == 0);
+                || Pokemon_GetValue(mon, MON_DATA_HP, NULL) == 0);
 
             battleCtx->switchedPartySlot[battleCtx->defender] = i;
         } else {
@@ -6377,10 +6375,10 @@ static BOOL BtlCmd_TryTeleport(BattleSystem *battleSys, BattleContext *battleCtx
 static inline BOOL BeatUpEligibleMon(BattleContext *battleCtx, Pokemon *mon)
 {
     return battleCtx->beatUpCounter == battleCtx->selectedPartySlot[battleCtx->attacker]
-        || (Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL) != 0
-            && Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL) != SPECIES_NONE
-            && Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL) != SPECIES_EGG
-            && Pokemon_GetValue(mon, MON_DATA_STATUS_CONDITION, NULL) == MON_CONDITION_NONE);
+        || (Pokemon_GetValue(mon, MON_DATA_HP, NULL) != 0
+            && Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL) != SPECIES_NONE
+            && Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL) != SPECIES_EGG
+            && Pokemon_GetValue(mon, MON_DATA_STATUS, NULL) == MON_CONDITION_NONE);
 }
 
 /**
@@ -6643,8 +6641,8 @@ static BOOL BtlCmd_TryAssist(BattleSystem *battleSys, BattleContext *battleCtx)
         }
 
         mon = BattleSystem_PartyPokemon(battleSys, battleCtx->attacker, i);
-        if (Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL) != SPECIES_NONE
-            && Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL) != SPECIES_EGG) {
+        if (Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL) != SPECIES_NONE
+            && Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL) != SPECIES_EGG) {
             for (j = 0; j < LEARNED_MOVES_MAX; j++) {
                 move = Pokemon_GetValue(mon, MON_DATA_MOVE1 + j, NULL);
                 if (Move_IsInvoker(move) == FALSE && Move_CanBeMetronomed(battleSys, battleCtx, battleCtx->attacker, move) == TRUE) {
@@ -8010,7 +8008,7 @@ static BOOL BtlCmd_GenerateEndOfBattleItem(BattleSystem *battleSys, BattleContex
 
     for (i = 0; i < BattleSystem_PartyCount(battleSys, BATTLER_US); i++) {
         mon = BattleSystem_PartyPokemon(battleSys, BATTLER_US, i);
-        species = Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL);
+        species = Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL);
         item = Pokemon_GetValue(mon, MON_DATA_HELD_ITEM, NULL);
         ability = Pokemon_GetValue(mon, MON_DATA_ABILITY, NULL);
 
@@ -9091,9 +9089,9 @@ static BOOL BtlCmd_CheckBlackOut(BattleSystem *battleSys, BattleContext *battleC
         for (i = 0; i < Party_GetCurrentCount(party1); i++) {
             mon = Party_GetPokemonBySlotIndex(party1, i);
 
-            if (Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL) != SPECIES_NONE
-                && Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL) != SPECIES_EGG) {
-                aliveMons += Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL);
+            if (Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL) != SPECIES_NONE
+                && Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL) != SPECIES_EGG) {
+                aliveMons += Pokemon_GetValue(mon, MON_DATA_HP, NULL);
             }
         }
 
@@ -9105,9 +9103,9 @@ static BOOL BtlCmd_CheckBlackOut(BattleSystem *battleSys, BattleContext *battleC
             for (i = 0; i < Party_GetCurrentCount(party2); i++) {
                 mon = Party_GetPokemonBySlotIndex(party2, i);
 
-                if (Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL) != SPECIES_NONE
-                    && Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL) != SPECIES_EGG) {
-                    aliveMons += Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL);
+                if (Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL) != SPECIES_NONE
+                    && Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL) != SPECIES_EGG) {
+                    aliveMons += Pokemon_GetValue(mon, MON_DATA_HP, NULL);
                 }
             }
         }
@@ -9122,9 +9120,9 @@ static BOOL BtlCmd_CheckBlackOut(BattleSystem *battleSys, BattleContext *battleC
         for (i = 0; i < Party_GetCurrentCount(party); i++) {
             mon = Party_GetPokemonBySlotIndex(party, i);
 
-            if (Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL) != SPECIES_NONE
-                && Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL) != SPECIES_EGG) {
-                aliveMons += Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL);
+            if (Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL) != SPECIES_NONE
+                && Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL) != SPECIES_EGG) {
+                aliveMons += Pokemon_GetValue(mon, MON_DATA_HP, NULL);
             }
         }
 
@@ -9367,7 +9365,7 @@ static BOOL BtlCmd_TryRestoreStatusOnSwitch(BattleSystem *battleSys, BattleConte
     if (battleCtx->battleMons[battler].curHP && battleCtx->selectedPartySlot[battler] != 6) {
         Pokemon *mon = BattleSystem_PartyPokemon(battleSys, battler, battleCtx->selectedPartySlot[battler]);
         int ability = Pokemon_GetValue(mon, MON_DATA_ABILITY, NULL);
-        int status = Pokemon_GetValue(mon, MON_DATA_STATUS_CONDITION, NULL);
+        int status = Pokemon_GetValue(mon, MON_DATA_STATUS, NULL);
 
         if (battleCtx->battleMons[battler].ability != ABILITY_NATURAL_CURE
             && Ability_ForbidsStatus(battleCtx, ability, status) == FALSE) {
@@ -9952,7 +9950,7 @@ static void BattleScript_GetExpTask(SysTask *task, void *inData)
             && data->battleCtx->battleMons[BATTLER_ENEMY_1].curHP
                     + data->battleCtx->battleMons[BATTLER_ENEMY_2].curHP
                 == 0
-            && Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL)
+            && Pokemon_GetValue(mon, MON_DATA_HP, NULL)
             && data->battleCtx->expJinglePlayed == FALSE) {
             Sound_PlayBGM(SEQ_VICTORY_WILD_POKEMON);
             data->battleCtx->expJinglePlayed = TRUE;
@@ -9962,7 +9960,7 @@ static void BattleScript_GetExpTask(SysTask *task, void *inData)
         u32 totalExp = 0;
         msg.id = 1; // "{0} gained {1} Exp. Points!"
 
-        if (Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL) && Pokemon_GetValue(mon, MON_DATA_LEVEL, NULL) != 100) {
+        if (Pokemon_GetValue(mon, MON_DATA_HP, NULL) && Pokemon_GetValue(mon, MON_DATA_LEVEL, NULL) != 100) {
             if (data->battleCtx->sideGetExpMask[battler] & FlagIndex(slot)) {
                 totalExp = data->battleCtx->gainedExp;
             }
@@ -9989,7 +9987,7 @@ static void BattleScript_GetExpTask(SysTask *task, void *inData)
                 msg.id = 2; // "{0} gained a boosted {1} Exp. Points!"
             }
 
-            u32 newExp = Pokemon_GetValue(mon, MON_DATA_EXP, NULL);
+            u32 newExp = Pokemon_GetValue(mon, MON_DATA_EXPERIENCE, NULL);
             data->tmpData[3] = newExp - Pokemon_GetCurrentLevelBaseExp(mon);
             newExp += totalExp;
 
@@ -9997,7 +9995,7 @@ static void BattleScript_GetExpTask(SysTask *task, void *inData)
                 data->battleCtx->battleMons[expBattler].exp = newExp;
             }
 
-            Pokemon_SetValue(mon, MON_DATA_EXP, &newExp);
+            Pokemon_SetValue(mon, MON_DATA_EXPERIENCE, &newExp);
             BattleScript_CalcEffortValues(BattleSystem_Party(data->battleSys, expBattler),
                 slot,
                 data->battleCtx->battleMons[data->battleCtx->faintedMon].species,
@@ -10074,7 +10072,7 @@ static void BattleScript_GetExpTask(SysTask *task, void *inData)
             int level = Pokemon_GetValue(mon, MON_DATA_LEVEL, NULL);
 
             // Cache the stats from the previous level for later
-            data->battleCtx->tmpData = Heap_AllocFromHeap(HEAP_ID_BATTLE, sizeof(PokemonStats));
+            data->battleCtx->tmpData = Heap_Alloc(HEAP_ID_BATTLE, sizeof(PokemonStats));
             PokemonStats *oldStats = data->battleCtx->tmpData;
             for (i = 0; i < STAT_MAX; i++) {
                 oldStats->stat[i] = Pokemon_GetValue(mon, statParams[i], NULL);
@@ -10131,7 +10129,7 @@ static void BattleScript_GetExpTask(SysTask *task, void *inData)
 
         LoadStandardWindowTiles(bgl, 2, 1, 0, HEAP_ID_BATTLE);
         PaletteData_LoadBufferFromFileStart(paletteSys, NARC_INDEX_GRAPHIC__PL_WINFRAME, GetStandardWindowPaletteNARCMember(), HEAP_ID_BATTLE, 0, 0x20, 8 * 0x10);
-        Window_Add(bgl, window, 2, 0x11, 0x7, 14, 12, 11, (9 + 1));
+        Window_Add(bgl, window, 2, 0x11, 0x7, 14, 12, 11, 9 + 1);
         Window_FillTilemap(window, 0xFF);
         Window_DrawStandardFrame(window, 0, 1, 8);
 
@@ -10582,7 +10580,7 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
                 v2->seqNum = 1;
 
                 Sound_PlayEffect(SEQ_SE_DP_NAGERU);
-                v2->battleSys->unk_241E++;
+                v2->battleSys->ballsThrown++;
                 ov12_022368C8(v2->ballRotation, 0);
             }
         } else {
@@ -10597,7 +10595,7 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
                     v2->seqNum = 1;
 
                     Sound_PlayEffect(SEQ_SE_DP_NAGERU);
-                    v2->battleSys->unk_241E++;
+                    v2->battleSys->ballsThrown++;
                     ov12_022368C8(v2->ballRotation, 0);
                 }
             }
@@ -10609,11 +10607,11 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
                 u32 battleType = BattleSystem_BattleType(v2->battleSys);
 
                 if (battleType & BATTLE_TYPE_TRAINER) {
-                    Sound_PlayPannedEffect(1510, 117);
+                    Sound_PlayPannedEffect(SEQ_SE_DP_KON, 117);
                     ov12_022368C8(v2->ballRotation, 2);
                     v2->seqNum = 25;
                 } else {
-                    Sound_PlayPannedEffect(1800, 117);
+                    Sound_PlayPannedEffect(SEQ_SE_DP_BOWA4, 117);
                     ov12_022368C8(v2->ballRotation, 1);
 
                     v2->seqNum = 2;
@@ -10672,7 +10670,7 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
     case 7:
         if (--v2->tmpData[1] == 0) {
             ov12_022368C8(v2->ballRotation, 6);
-            Sound_PlayPannedEffect(1801, 117);
+            Sound_PlayPannedEffect(SEQ_SE_DP_GETTING, 117);
             v2->seqNum = 8;
         }
         break;
@@ -10709,12 +10707,12 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
                     v3 = BattleSystem_PartyPokemon(v2->battleSys, v1, v2->battleCtx->selectedPartySlot[v1]);
                     BattleSystem_SetPokemonCatchData(v2->battleSys, v2->battleCtx, v3);
                     sub_02015738(ov16_0223E220(v2->battleSys), 1);
-                    PaletteData_StartFade(v4, (0x1 | 0x2 | 0x4 | 0x8), 0xffff, 1, 0, 16, 0x0);
+                    PaletteData_StartFade(v4, 0x1 | 0x2 | 0x4 | 0x8, 0xffff, 1, 0, 16, 0x0);
                     PokemonSpriteManager_StartFadeAll(v5, 0, 16, 0, 0x0);
                     v2->seqNum = 32;
                 } else if (BattleSystem_CaughtSpecies(v2->battleSys, Pokemon_GetValue(v3, MON_DATA_SPECIES, NULL))) {
                     sub_02015738(ov16_0223E220(v2->battleSys), 1);
-                    PaletteData_StartFade(v4, (0x1 | 0x4), 0xffff, 1, 0, 16, 0x0);
+                    PaletteData_StartFade(v4, 0x1 | 0x4, 0xffff, 1, 0, 16, 0x0);
                     PokemonSpriteManager_StartFadeAll(v5, 0, 16, 0, 0x0);
                     v2->seqNum = 16;
                 } else {
@@ -10738,7 +10736,7 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
         if (Text_IsPrinterActive(v2->tmpData[0]) == 0) {
             if (--v2->tmpData[1] == 0) {
                 v2->seqNum = 12;
-                PaletteData_StartFade(v4, (0x1 | 0x4), 0xffff, 1, 0, 16, 0x0);
+                PaletteData_StartFade(v4, 0x1 | 0x4, 0xffff, 1, 0, 16, 0x0);
                 PokemonSpriteManager_StartFadeAll(v5, 0, 16, 0, 0x0);
                 sub_02015738(ov16_0223E220(v2->battleSys), 1);
             }
@@ -10778,7 +10776,7 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
             }
 
             if (v2->seqNum == 14) {
-                PaletteData_StartFade(v4, (0x1 | 0x4), 0xffff, 1, 0, 16, 0x0);
+                PaletteData_StartFade(v4, 0x1 | 0x4, 0xffff, 1, 0, 16, 0x0);
                 ov21_021E8E04(v2->tmpPtr[0], 0);
             }
         }
@@ -10798,7 +10796,7 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
         ov21_021E8DD0(v2->tmpPtr[0]);
         CharTransfer_PushTaskManager(v2->tmpPtr[1]);
         ov16_0223B578(v2->battleSys);
-        PaletteData_StartFade(v4, (0x1 | 0x4), 0xffff, 1, 16, 0, 0x0);
+        PaletteData_StartFade(v4, 0x1 | 0x4, 0xffff, 1, 16, 0, 0x0);
         v2->seqNum = 17;
         break;
     case 16:
@@ -10815,7 +10813,7 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
                 ov16_0223B578(v2->battleSys);
                 Pokemon_BuildSpriteTemplate(&v14, v3, 2);
                 PokemonSpriteManager_CreateSprite(v5, &v14, 128, 72, 0, 0, NULL, NULL);
-                PaletteData_StartFade(v4, (0x1 | 0x4), 0xffff, 1, 16, 0, 0x0);
+                PaletteData_StartFade(v4, 0x1 | 0x4, 0xffff, 1, 16, 0, 0x0);
                 PokemonSpriteManager_StartFadeAll(v5, 16, 0, 0, 0x0);
 
                 v2->seqNum = 17;
@@ -10845,7 +10843,7 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
                 v2->seqNum = 22;
             } else {
                 sub_02015738(ov16_0223E220(v2->battleSys), 1);
-                PaletteData_StartFade(v4, (0x1 | 0x2 | 0x4 | 0x8), 0xffff, 1, 0, 16, 0x0);
+                PaletteData_StartFade(v4, 0x1 | 0x2 | 0x4 | 0x8, 0xffff, 1, 0, 16, 0x0);
                 PokemonSpriteManager_StartFadeAll(v5, 0, 16, 0, 0x0);
                 v2->seqNum = 20;
             }
@@ -10854,25 +10852,30 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
     case 20:
         if (PaletteData_GetSelectedBuffersMask(v4) == 0) {
             {
-                UnkStruct_0208737C *v16;
+                NamingScreenArgs *v16;
 
                 SetScreenColorBrightness(DS_SCREEN_MAIN, COLOR_BLACK);
                 SetScreenColorBrightness(DS_SCREEN_SUB, COLOR_BLACK);
 
                 v3 = BattleSystem_PartyPokemon(v2->battleSys, v1, v2->battleCtx->selectedPartySlot[v1]);
-                v16 = sub_0208712C(HEAP_ID_BATTLE, 1, Pokemon_GetValue(v3, MON_DATA_SPECIES, NULL), 10, BattleSystem_GetOptions(v2->battleSys));
+                v16 = NamingScreenArgs_Init(
+                    HEAP_ID_BATTLE,
+                    NAMING_SCREEN_TYPE_POKEMON,
+                    Pokemon_GetValue(v3, MON_DATA_SPECIES, NULL),
+                    MON_NAME_LEN,
+                    BattleSystem_GetOptions(v2->battleSys));
                 v2->tmpPtr[1] = v16;
 
                 if (BattleSystem_PartyCount(v2->battleSys, 0) < 6) {
-                    v16->unk_44 = 0;
+                    v16->battleMsgID = 0;
                 } else {
-                    v16->unk_44 = 1174 + ov16_0223F240(v2->battleSys);
+                    v16->battleMsgID = 1174 + ov16_0223F240(v2->battleSys);
                 }
 
-                v16->unk_08 = Pokemon_GetValue(v3, MON_DATA_FORM, NULL);
+                v16->monForm = Pokemon_GetValue(v3, MON_DATA_FORM, NULL);
                 v16->pcBoxes = BattleSystem_PCBoxes(v2->battleSys);
-                v16->unk_10 = Pokemon_GetValue(v3, MON_DATA_GENDER, NULL);
-                v2->tmpPtr[0] = ApplicationManager_New(&Unk_020F2DAC, v16, HEAP_ID_BATTLE);
+                v16->monGender = Pokemon_GetValue(v3, MON_DATA_GENDER, NULL);
+                v2->tmpPtr[0] = ApplicationManager_New(&gNamingScreenAppTemplate, v16, HEAP_ID_BATTLE);
                 v2->seqNum = 21;
 
                 ov16_0223F414(v2->battleSys);
@@ -10899,18 +10902,18 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
     case 21:
         if (ApplicationManager_Exec(v2->tmpPtr[0])) {
             {
-                UnkStruct_0208737C *v19;
+                NamingScreenArgs *v19;
                 int v20;
 
                 v19 = v2->tmpPtr[1];
                 v3 = BattleSystem_PartyPokemon(v2->battleSys, v1, v2->battleCtx->selectedPartySlot[v1]);
 
-                if (v19->unk_14 == 0) {
-                    Pokemon_SetValue(v3, MON_DATA_NICKNAME_STRBUF_AND_FLAG, v19->textInputStr);
-                    ov16_0223F24C(v2->battleSys, (1 + 48));
+                if (v19->returnCode == NAMING_SCREEN_CODE_OK) {
+                    Pokemon_SetValue(v3, MON_DATA_NICKNAME_STRING_AND_FLAG, v19->textInputStr);
+                    ov16_0223F24C(v2->battleSys, 1 + 48);
                 }
 
-                sub_0208716C(v19);
+                NamingScreenArgs_Free(v19);
                 ApplicationManager_Free(v2->tmpPtr[0]);
                 ov16_0223F314(v2->battleSys, 2);
 
@@ -10933,12 +10936,12 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
                 BattleSystem_SetPokemonCatchData(v2->battleSys, v2->battleCtx, v3);
                 ov16_0223EF48(v2->battleSys, v3);
                 ov16_0223EF68(v2->battleSys, v3);
-                BattleIO_IncrementRecord(v2->battleSys, 0, 0, (1 + 8));
+                BattleIO_IncrementRecord(v2->battleSys, 0, 0, 1 + 8);
 
                 if (Party_AddPokemon(v22, v3) == 1) {
                     if (v2->seqNum == 22) {
                         sub_02015738(ov16_0223E220(v2->battleSys), 1);
-                        PaletteData_StartFade(v4, (0x1 | 0x2 | 0x4 | 0x8), 0xffff, 1, 0, 16, 0x0);
+                        PaletteData_StartFade(v4, 0x1 | 0x2 | 0x4 | 0x8, 0xffff, 1, 0, 16, 0x0);
                         PokemonSpriteManager_StartFadeAll(v5, 0, 16, 0, 0x0);
                     }
 
@@ -10960,7 +10963,7 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
 
                         for (v27 = 0; v27 < LEARNED_MOVES_MAX; v27++) {
                             v28 = Pokemon_GetValue(v3, MON_DATA_MOVE1_MAX_PP + v27, NULL);
-                            Pokemon_SetValue(v3, MON_DATA_MOVE1_CUR_PP + v27, &v28);
+                            Pokemon_SetValue(v3, MON_DATA_MOVE1_PP + v27, &v28);
                         }
 
                         if (Pokemon_SetGiratinaFormByHeldItem(v3) != -1) {
@@ -10999,7 +11002,7 @@ static void BattleScript_CatchMonTask(SysTask *param0, void *param1)
             if (--v2->tmpData[1] == 0) {
                 {
                     sub_02015738(ov16_0223E220(v2->battleSys), 1);
-                    PaletteData_StartFade(v4, (0x1 | 0x2 | 0x4 | 0x8), 0xffff, 1, 0, 16, 0x0);
+                    PaletteData_StartFade(v4, 0x1 | 0x2 | 0x4 | 0x8, 0xffff, 1, 0, 16, 0x0);
                     PokemonSpriteManager_StartFadeAll(v5, 0, 16, 0, 0x0);
 
                     v2->seqNum = 32;
@@ -12225,7 +12228,7 @@ static void BattleScript_LoadPartyLevelUpIcon(BattleSystem *battleSys, BattleScr
 
     param1->tmpPtr[0] = sub_02012744(1, HEAP_ID_BATTLE);
 
-    if (Pokemon_GetValue(param2, MON_DATA_NIDORAN_HAS_NICKNAME, NULL) == 0) {
+    if (Pokemon_GetValue(param2, MON_DATA_NO_PRINT_GENDER, NULL) == 0) {
         v13 = 2;
     } else {
         v13 = Pokemon_GetValue(param2, MON_DATA_GENDER, NULL);

@@ -24,13 +24,13 @@ _0058:
     End
 
 _005E:
-    GoToIfSet FLAG_UNK_0x008E, _006B
+    GoToIfSet FLAG_MAP_LOCAL, _006B
     End
 
 _006B:
     SetFlag FLAG_UNK_0x0240
     RemoveObject 0
-    ClearFlag FLAG_UNK_0x008E
+    ClearFlag FLAG_MAP_LOCAL
     End
 
 _0079:
@@ -39,9 +39,9 @@ _0079:
     WaitFanfare SEQ_SE_CONFIRM
     Message 0
     CloseMessage
-    SetFlag FLAG_UNK_0x008E
+    SetFlag FLAG_MAP_LOCAL
     StartLegendaryBattle SPECIES_DARKRAI, 50
-    ClearFlag FLAG_UNK_0x008E
+    ClearFlag FLAG_MAP_LOCAL
     CheckWonBattle VAR_RESULT
     GoToIfEq VAR_RESULT, FALSE, _014C
     CheckDidNotCapture VAR_RESULT
@@ -65,19 +65,19 @@ _00E3:
     Message 2
     CloseMessage
     WaitTime 30, VAR_RESULT
-    FadeScreen 6, 3, 0, 0
+    FadeScreenOut FADE_SCREEN_SPEED_MEDIUM
     WaitFadeScreen
-    FadeScreen 6, 3, 1, 0
+    FadeScreenIn FADE_SCREEN_SPEED_MEDIUM
     WaitFadeScreen
-    FadeScreen 6, 3, 0, 0
+    FadeScreenOut FADE_SCREEN_SPEED_MEDIUM
     WaitFadeScreen
-    FadeScreen 6, 3, 1, 0
+    FadeScreenIn FADE_SCREEN_SPEED_MEDIUM
     WaitFadeScreen
-    FadeScreen 6, 6, 0, 0
+    FadeScreenOut FADE_SCREEN_SPEED_SLOW
     WaitFadeScreen
     WaitTime 120, VAR_RESULT
     Warp MAP_HEADER_CANALAVE_CITY_HARBOR_INN, 0, 8, 6, 1
-    FadeScreen 6, 6, 1, 0
+    FadeScreenIn FADE_SCREEN_SPEED_SLOW
     WaitFadeScreen
     ReleaseAll
     End
@@ -87,5 +87,4 @@ _014C:
     ReleaseAll
     End
 
-    .byte 0
-    .byte 0
+    .balign 4, 0

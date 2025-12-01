@@ -3,6 +3,8 @@
 
 #include "struct_defs/struct_02099F80.h"
 
+#include "main_menu/application_template.h"
+
 #include "bg_window.h"
 #include "font.h"
 #include "gx_layers.h"
@@ -18,7 +20,7 @@
 #include "system.h"
 #include "text.h"
 
-FS_EXTERN_OVERLAY(overlay97);
+FS_EXTERN_OVERLAY(main_menu);
 
 typedef struct {
     int heapID;
@@ -45,8 +47,6 @@ static void sub_0209A4E4(UnkStruct_0209A3D0 *param0);
 static void sub_0209A530(UnkStruct_0209A3D0 *param0);
 static BOOL sub_0209A544(UnkStruct_0209A3D0 *param0);
 static BOOL sub_0209A688(UnkStruct_0209A3D0 *param0, u32 param1, int param2, int param3);
-
-extern const ApplicationManagerTemplate gMainMenuAppTemplate;
 
 static const WindowTemplate Unk_020F8A58 = {
     0x0,
@@ -126,7 +126,7 @@ int sub_0209A3A4(ApplicationManager *appMan, int *param1)
 
     ApplicationManager_FreeData(appMan);
     Heap_Destroy(heapID);
-    EnqueueApplication(FS_OVERLAY_ID(overlay97), &gMainMenuAppTemplate);
+    EnqueueApplication(FS_OVERLAY_ID(main_menu), &gMainMenuAppTemplate);
 
     return 1;
 }
@@ -162,19 +162,18 @@ static void sub_0209A3D0(UnkStruct_0209A3D0 *param0)
     }
     {
         BgTemplate v2 = {
-            0x0,
-            0x0,
-            0x800,
-            0x0,
-            0x1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0000,
-            GX_BG_CHARBASE_0x18000,
-            GX_BG_EXTPLTT_01,
-            0x1,
-            0x0,
-            0x0,
-            0x0
+            .x = 0x0,
+            .y = 0x0,
+            .bufferSize = 0x800,
+            .baseTile = 0x0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0000,
+            .charBase = GX_BG_CHARBASE_0x18000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0x1,
+            .areaOver = 0x0,
+            .mosaic = FALSE,
         };
         Bg_InitFromTemplate(param0->unk_18, BG_LAYER_MAIN_0, &v2, 0);
         Bg_ClearTilemap(param0->unk_18, BG_LAYER_MAIN_0);
@@ -203,7 +202,7 @@ static void sub_0209A490(UnkStruct_0209A3D0 *param0)
 
 static void sub_0209A4E4(UnkStruct_0209A3D0 *param0)
 {
-    param0->unk_1C = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SAVE_CORRUPTED, param0->heapID);
+    param0->unk_1C = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SAVE_CORRUPTED, param0->heapID);
     Text_ResetAllPrinters();
     param0->unk_0C = 0;
 

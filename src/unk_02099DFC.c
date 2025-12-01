@@ -195,25 +195,24 @@ static void sub_02099F80(UnkStruct_02099DFC *param0)
     }
     {
         BgTemplate v2 = {
-            0x0,
-            0x0,
-            0x800,
-            0x0,
-            0x1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0000,
-            GX_BG_CHARBASE_0x18000,
-            GX_BG_EXTPLTT_01,
-            0x1,
-            0x0,
-            0x0,
-            0x0
+            .x = 0x0,
+            .y = 0x0,
+            .bufferSize = 0x800,
+            .baseTile = 0x0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0000,
+            .charBase = GX_BG_CHARBASE_0x18000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0x1,
+            .areaOver = 0x0,
+            .mosaic = FALSE,
         };
         Bg_InitFromTemplate(param0->unk_14, BG_LAYER_MAIN_0, &v2, 0);
         Bg_ClearTilemap(param0->unk_14, BG_LAYER_MAIN_0);
     }
 
-    LoadMessageBoxGraphics(param0->unk_14, BG_LAYER_MAIN_0, (512 - (18 + 12)), 2, 0, param0->heapID);
+    LoadMessageBoxGraphics(param0->unk_14, BG_LAYER_MAIN_0, 512 - (18 + 12), 2, 0, param0->heapID);
     LoadStandardWindowGraphics(param0->unk_14, BG_LAYER_MAIN_0, 512 - (18 + 12) - 9, 3, 0, param0->heapID);
     Font_LoadTextPalette(0, 1 * (2 * 16), param0->heapID);
     Bg_ClearTilesRange(BG_LAYER_MAIN_0, 32, 0, param0->heapID);
@@ -237,7 +236,7 @@ static void sub_0209A044(UnkStruct_02099DFC *param0)
 
 static void sub_0209A098(UnkStruct_02099DFC *param0)
 {
-    param0->unk_18 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0004, param0->heapID);
+    param0->unk_18 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0004, param0->heapID);
     Text_ResetAllPrinters();
     param0->unk_08 = 0;
     Window_AddFromTemplate(param0->unk_14, &param0->unk_1C, &Unk_020F89E4);

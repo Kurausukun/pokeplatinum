@@ -51,22 +51,13 @@ _0088:
     WalkOnSpotNormalSouth
     EndMovement
 
-    .byte 12
-    .byte 0
-    .byte 9
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 12
-    .byte 0
-    .byte 9
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+FloaromaMeadow_UnusedMovement:
+    WalkNormalNorth 9
+    EndMovement
+
+FloaromaMeadow_UnusedMovement2:
+    WalkNormalNorth 9
+    EndMovement
 
     .balign 4, 0
 _00A0:
@@ -110,12 +101,12 @@ _00EE:
 _010E:
     Message 6
     CloseMessage
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     RemoveObject 0
     RemoveObject 1
     SetVar VAR_UNK_0x40E9, 1
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     ClearFlag FLAG_UNK_0x019E
     AddObject 3
@@ -124,15 +115,15 @@ _010E:
     CallIfEq VAR_0x8004, 13, _01C6
     RemoveObject 3
     Message 7
-    SetVar VAR_0x8004, 0x1B6
+    SetVar VAR_0x8004, ITEM_WORKS_KEY
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     SetFlag FLAG_UNK_0x009F
     Message 8
     SetVar VAR_0x8004, ITEM_HONEY
     SetVar VAR_0x8005, 10
     GoToIfCannotFitItem VAR_0x8004, VAR_0x8005, VAR_RESULT, _01AD
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     Message 9
     GoTo _01B0
 
@@ -154,12 +145,10 @@ _01C6:
     WaitMovement
     Return
 
-    .byte 235
-    .byte 0
-    .byte 97
-    .byte 0
-    .byte 2
-    .byte 0
+FloaromaMeadow_Unused:
+    BlackOutFromBattle
+    ReleaseAll
+    End
 
 _01D8:
     End
@@ -246,9 +235,9 @@ _0306:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    SetVar VAR_0x8004, 0x1B6
+    SetVar VAR_0x8004, ITEM_WORKS_KEY
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     CloseMessage
     SetFlag FLAG_UNK_0x009F
     RemoveObject 3

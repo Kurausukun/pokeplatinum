@@ -17,10 +17,10 @@ static void MapHeaderData_LoadEvents(MapHeaderData *data, int headerID);
 static void MapHeaderData_ParseEvents(MapHeaderData *data);
 static void MapHeaderData_LoadInitScripts(MapHeaderData *data, int headerID);
 
-void MapHeaderData_Init(FieldSystem *fieldSystem, enum HeapId heapID)
+void MapHeaderData_Init(FieldSystem *fieldSystem, enum HeapID heapID)
 {
     GF_ASSERT(fieldSystem->mapHeaderData == NULL);
-    fieldSystem->mapHeaderData = Heap_AllocFromHeap(heapID, sizeof(MapHeaderData));
+    fieldSystem->mapHeaderData = Heap_Alloc(heapID, sizeof(MapHeaderData));
 }
 
 void MapHeaderData_Free(FieldSystem *fieldSystem)
@@ -239,7 +239,7 @@ static void MapHeaderData_LoadInitScripts(MapHeaderData *data, int headerID)
     NARC_ReadWholeMemberByIndexPair(data->initScripts, NARC_INDEX_FIELDDATA__SCRIPT__SCR_SEQ, initScriptsID);
 }
 
-const u8 *MapHeaderData_GetInitScripts(const FieldSystem *fieldSystem)
+const u8 *MapHeaderData_GetInitScriptBytes(const FieldSystem *fieldSystem)
 {
     GF_ASSERT(fieldSystem->mapHeaderData != NULL);
     return (const u8 *)&fieldSystem->mapHeaderData->initScripts;

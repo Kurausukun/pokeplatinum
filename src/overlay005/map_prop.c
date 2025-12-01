@@ -29,7 +29,7 @@ typedef struct {
 
 MapPropManager *MapPropManager_New(const u8 heapID)
 {
-    MapPropManager *mapPropManager = Heap_AllocFromHeap(heapID, sizeof(MapPropManager));
+    MapPropManager *mapPropManager = Heap_Alloc(heapID, sizeof(MapPropManager));
     MapPropManager_Init(mapPropManager);
 
     return mapPropManager;
@@ -78,7 +78,7 @@ void MapPropManager_Load(NARC *landDataNARC, const int mapPropFilesSize, AreaDat
     u32 mapPropFilesCount;
 
     if (mapPropFilesSize != 0) {
-        mapPropFiles = Heap_AllocFromHeapAtEnd(HEAP_ID_FIELD, mapPropFilesSize);
+        mapPropFiles = Heap_AllocAtEnd(HEAP_ID_FIELD1, mapPropFilesSize);
         NARC_ReadFile(landDataNARC, mapPropFilesSize, mapPropFiles);
         mapPropFilesCount = mapPropFilesSize / sizeof(MapPropFile);
     } else {
@@ -132,7 +132,7 @@ void MapPropManager_Render(const VecFx32 *positionOffset, const AreaDataManager 
         0,
         0,
         0,
-        FX32_ONE
+        FX32_ONE,
     };
 
     for (int i = 0; i < MAX_LOADED_MAP_PROPS; i++) {
@@ -312,7 +312,7 @@ void MapPropManager_Render2(MapPropManager *mapPropManager, AreaDataManager *con
         0,
         0,
         0,
-        FX32_ONE
+        FX32_ONE,
     };
 
     for (u8 i = 0; i < MAX_LOADED_MAP_PROPS; i++) {

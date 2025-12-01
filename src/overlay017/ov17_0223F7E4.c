@@ -345,10 +345,62 @@ __attribute__((aligned(4))) const u16 Unk_ov17_022534B8[] = {
 };
 
 static const BgTemplate Unk_ov17_02253448[] = {
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0x6000, GX_BG_CHARBASE_0x00000, GX_BG_EXTPLTT_01, 0x0, 0x0, 0x0, 0x0 },
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0x6800, GX_BG_CHARBASE_0x00000, GX_BG_EXTPLTT_01, 0x0, 0x0, 0x0, 0x0 },
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0x7000, GX_BG_CHARBASE_0x00000, GX_BG_EXTPLTT_01, 0x0, 0x0, 0x0, 0x0 },
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0x7800, GX_BG_CHARBASE_0x00000, GX_BG_EXTPLTT_01, 0x0, 0x0, 0x0, 0x0 }
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0x6000,
+        .charBase = GX_BG_CHARBASE_0x00000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x0,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    },
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0x6800,
+        .charBase = GX_BG_CHARBASE_0x00000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x0,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    },
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0x7000,
+        .charBase = GX_BG_CHARBASE_0x00000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x0,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    },
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0x7800,
+        .charBase = GX_BG_CHARBASE_0x00000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x0,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    }
 };
 
 static const TouchScreenRect Unk_ov17_022532D0[] = {
@@ -524,7 +576,7 @@ __attribute__((aligned(4))) static const UnkStruct_ov17_02253388 Unk_ov17_022533
 
 static void *ov17_0223F7E4(void)
 {
-    UnkStruct_ov17_0223F7E4 *v0 = Heap_AllocFromHeap(HEAP_ID_21, sizeof(UnkStruct_ov17_0223F7E4));
+    UnkStruct_ov17_0223F7E4 *v0 = Heap_Alloc(HEAP_ID_21, sizeof(UnkStruct_ov17_0223F7E4));
     MI_CpuClear8(v0, sizeof(UnkStruct_ov17_0223F7E4));
     v0->unk_2C8 = -1;
 
@@ -573,7 +625,7 @@ void *ov17_0223F88C(UnkStruct_02095C48 *param0, UnkStruct_ov17_0223F88C *param1,
         int v4;
 
         for (v4 = 0; v4 < 5; v4++) {
-            v0->unk_20[v4] = Heap_AllocFromHeap(HEAP_ID_21, 0x800);
+            v0->unk_20[v4] = Heap_Alloc(HEAP_ID_21, 0x800);
             v3 = Graphics_GetScrnDataFromOpenNARC(v1, Unk_ov17_02253250[v4], 1, &v2, HEAP_ID_21);
             MI_CpuCopy32(v2->rawData, v0->unk_20[v4], 0x800);
             Heap_Free(v3);
@@ -588,7 +640,7 @@ void *ov17_0223F88C(UnkStruct_02095C48 *param0, UnkStruct_ov17_0223F88C *param1,
         v6 = v0->unk_04->unk_50;
 
         for (v7 = 0; v7 < 2; v7++) {
-            v0->unk_34[v7] = Heap_AllocFromHeap(HEAP_ID_21, 0x200);
+            v0->unk_34[v7] = Heap_Alloc(HEAP_ID_21, 0x200);
             PaletteData_LoadBufferFromFileStart(v6, 45, Unk_ov17_02253238[v7], 21, 1, 0, 0);
             v5 = PaletteData_GetUnfadedBuffer(v6, 1);
             MI_CpuCopy16(v5, v0->unk_34[v7], 0x200);
@@ -747,8 +799,8 @@ static void ov17_0223FBD4(UnkStruct_ov17_0223F7E4 *param0, int param1, int param
     v0 = MessageLoader_GetNewStrbuf(param0->unk_04->unk_38, v2);
     v1 = MessageLoader_GetNewStrbuf(param0->unk_04->unk_38, v3);
 
-    ov17_02240138(param0, &param0->unk_40[0], v0, FONT_SYSTEM, TEXT_COLOR(1, 2, 0), 0, 33008, 128, (8 * 0x10 - 1), 1, NULL);
-    ov17_02240138(param0, &param0->unk_40[1], v1, FONT_SYSTEM, TEXT_COLOR(1, 2, 0), 0, 33008, 128, (8 * 0x14 - 1), 1, NULL);
+    ov17_02240138(param0, &param0->unk_40[0], v0, FONT_SYSTEM, TEXT_COLOR(1, 2, 0), 0, 33008, 128, 8 * 0x10 - 1, 1, NULL);
+    ov17_02240138(param0, &param0->unk_40[1], v1, FONT_SYSTEM, TEXT_COLOR(1, 2, 0), 0, 33008, 128, 8 * 0x14 - 1, 1, NULL);
 
     Strbuf_Free(v0);
     Strbuf_Free(v1);
@@ -845,7 +897,7 @@ static void ov17_0223FF38(UnkStruct_ov17_0223F7E4 *param0, int param1, int param
 
     v2 = MessageLoader_GetNewStrbuf(param0->unk_04->unk_38, 53);
 
-    ov17_02240138(param0, &param0->unk_40[0 + v0], v2, FONT_SUBSCREEN, TEXT_COLOR(1, 9, 0xa), 0, 33008, 128, (0x14 * 8 + 4), 1, NULL);
+    ov17_02240138(param0, &param0->unk_40[0 + v0], v2, FONT_SUBSCREEN, TEXT_COLOR(1, 9, 0xa), 0, 33008, 128, 0x14 * 8 + 4, 1, NULL);
     Strbuf_Free(v2);
 
     param0->unk_128 = ov17_022412C0(param0->unk_04->unk_18, param0->unk_04->unk_1C, param0->unk_04->unk_00->unk_10E);
@@ -987,7 +1039,7 @@ static void ov17_02240138(UnkStruct_ov17_0223F7E4 *param0, UnkStruct_ov17_022401
     v4 = sub_020127E8(&v0);
 
     sub_02012AC0(v4, param5);
-    sub_020128C4(v4, param7, param8);
+    FontOAM_SetXY(v4, param7, param8);
 
     if (param10 == NULL) {
         Window_Remove(&v1);
@@ -1056,7 +1108,7 @@ static void ov17_022402E8(UnkStruct_ov17_0223F7E4 *param0, u16 param1[])
             v3.y = Unk_ov17_02253298[v0][1];
 
             param0->unk_118[v0] = ov17_0224F154(v1, v2, v4, &v3);
-            ManagedSprite_SetPositionXYWithSubscreenOffset(param0->unk_118[v0], v3.x, v3.y, ((192 + 80) << FX32_SHIFT));
+            ManagedSprite_SetPositionXYWithSubscreenOffset(param0->unk_118[v0], v3.x, v3.y, (192 + 80) << FX32_SHIFT);
         }
     }
 }
@@ -1160,8 +1212,8 @@ static void ov17_0224051C(SysTask *param0, void *param1)
     switch (v0->unk_2CC.unk_00) {
     case 0:
         ov17_022403B0(v0, v0->unk_2CC.unk_04_val1.unk_0C, v0->unk_2CC.unk_04_val1.unk_10, v0->unk_2CC.unk_04_val1.unk_18, 2);
-        sub_020129A4(v0->unk_40[v0->unk_2CC.unk_04_val1.unk_19].unk_00, &v2, &v3);
-        sub_020128C4(v0->unk_40[v0->unk_2CC.unk_04_val1.unk_19].unk_00, v2, v3 + -2);
+        FontOAM_GetXY(v0->unk_40[v0->unk_2CC.unk_04_val1.unk_19].unk_00, &v2, &v3);
+        FontOAM_SetXY(v0->unk_40[v0->unk_2CC.unk_04_val1.unk_19].unk_00, v2, v3 + -2);
 
         for (v4 = 0; v4 < 3; v4++) {
             if (v0->unk_2CC.unk_04_val1.unk_00[v4] != NULL) {
@@ -1183,8 +1235,8 @@ static void ov17_0224051C(SysTask *param0, void *param1)
 
     case 2:
         ov17_022403B0(v0, v0->unk_2CC.unk_04_val1.unk_0C, v0->unk_2CC.unk_04_val1.unk_10, v0->unk_2CC.unk_04_val1.unk_18, 1);
-        sub_020129A4(v0->unk_40[v0->unk_2CC.unk_04_val1.unk_19].unk_00, &v2, &v3);
-        sub_020128C4(v0->unk_40[v0->unk_2CC.unk_04_val1.unk_19].unk_00, v2, v3 + 1);
+        FontOAM_GetXY(v0->unk_40[v0->unk_2CC.unk_04_val1.unk_19].unk_00, &v2, &v3);
+        FontOAM_SetXY(v0->unk_40[v0->unk_2CC.unk_04_val1.unk_19].unk_00, v2, v3 + 1);
 
         for (v4 = 0; v4 < 3; v4++) {
             if (v0->unk_2CC.unk_04_val1.unk_00[v4] != NULL) {
@@ -1269,12 +1321,12 @@ static void ov17_02240658(SysTask *param0, void *param1)
         ov17_022403B0(v0, v0->unk_2CC.unk_04_val1.unk_0C, v0->unk_2CC.unk_04_val1.unk_10, v0->unk_2CC.unk_04_val1.unk_18, 2);
 
         if (1) {
-            sub_020129A4(v0->unk_40[v4].unk_00, &v2, &v3);
-            sub_020128C4(v0->unk_40[v4].unk_00, v2, v3 + -2);
-            sub_020129A4(v0->unk_40[v5].unk_00, &v2, &v3);
-            sub_020128C4(v0->unk_40[v5].unk_00, v2, v3 + -2);
-            sub_020129A4(v0->unk_40[v6].unk_00, &v2, &v3);
-            sub_020128C4(v0->unk_40[v6].unk_00, v2, v3 + -2);
+            FontOAM_GetXY(v0->unk_40[v4].unk_00, &v2, &v3);
+            FontOAM_SetXY(v0->unk_40[v4].unk_00, v2, v3 + -2);
+            FontOAM_GetXY(v0->unk_40[v5].unk_00, &v2, &v3);
+            FontOAM_SetXY(v0->unk_40[v5].unk_00, v2, v3 + -2);
+            FontOAM_GetXY(v0->unk_40[v6].unk_00, &v2, &v3);
+            FontOAM_SetXY(v0->unk_40[v6].unk_00, v2, v3 + -2);
 
             if (v8 != 0) {
                 Sprite_OffsetPositionXY(v0->unk_118[v7]->sprite, 0, -2);
@@ -1304,12 +1356,12 @@ static void ov17_02240658(SysTask *param0, void *param1)
         ov17_022403B0(v0, v0->unk_2CC.unk_04_val1.unk_0C, v0->unk_2CC.unk_04_val1.unk_10, v0->unk_2CC.unk_04_val1.unk_18, 1);
 
         if (1) {
-            sub_020129A4(v0->unk_40[v4].unk_00, &v2, &v3);
-            sub_020128C4(v0->unk_40[v4].unk_00, v2, v3 + 1);
-            sub_020129A4(v0->unk_40[v5].unk_00, &v2, &v3);
-            sub_020128C4(v0->unk_40[v5].unk_00, v2, v3 + 1);
-            sub_020129A4(v0->unk_40[v6].unk_00, &v2, &v3);
-            sub_020128C4(v0->unk_40[v6].unk_00, v2, v3 + 1);
+            FontOAM_GetXY(v0->unk_40[v4].unk_00, &v2, &v3);
+            FontOAM_SetXY(v0->unk_40[v4].unk_00, v2, v3 + 1);
+            FontOAM_GetXY(v0->unk_40[v5].unk_00, &v2, &v3);
+            FontOAM_SetXY(v0->unk_40[v5].unk_00, v2, v3 + 1);
+            FontOAM_GetXY(v0->unk_40[v6].unk_00, &v2, &v3);
+            FontOAM_SetXY(v0->unk_40[v6].unk_00, v2, v3 + 1);
 
             if (v8 != 0) {
                 Sprite_OffsetPositionXY(v0->unk_118[v7]->sprite, 0, 1);
@@ -1566,7 +1618,7 @@ static int ov17_02240D04(UnkStruct_ov17_0223F7E4 *param0, int param1)
             v3 = Unk_ov17_0225323C[v0->unk_01][v0->unk_02];
         }
 
-        ov17_02252C78(param0->unk_2FC, v2->unk_14[v3].rect.left + 8, v2->unk_14[v3].rect.right - 8, v2->unk_14[v3].rect.top + 8, v2->unk_14[v3].rect.bottom - 8, ((192 + 80) << FX32_SHIFT));
+        ov17_02252C78(param0->unk_2FC, v2->unk_14[v3].rect.left + 8, v2->unk_14[v3].rect.right - 8, v2->unk_14[v3].rect.top + 8, v2->unk_14[v3].rect.bottom - 8, (192 + 80) << FX32_SHIFT);
         return 0xffffffff;
     }
 
@@ -1580,7 +1632,7 @@ static int ov17_02240D04(UnkStruct_ov17_0223F7E4 *param0, int param1)
     case PAD_KEY_LEFT:
     case PAD_KEY_RIGHT:
         v3 = Unk_ov17_0225323C[v0->unk_01][v0->unk_02];
-        ov17_02252C78(param0->unk_2FC, v2->unk_14[v3].rect.left + 8, v2->unk_14[v3].rect.right - 8, v2->unk_14[v3].rect.top + 8, v2->unk_14[v3].rect.bottom - 8, ((192 + 80) << FX32_SHIFT));
+        ov17_02252C78(param0->unk_2FC, v2->unk_14[v3].rect.left + 8, v2->unk_14[v3].rect.right - 8, v2->unk_14[v3].rect.top + 8, v2->unk_14[v3].rect.bottom - 8, (192 + 80) << FX32_SHIFT);
         break;
     case PAD_BUTTON_A:
         return Unk_ov17_0225323C[v0->unk_01][v0->unk_02];
@@ -1624,7 +1676,7 @@ static int ov17_02240EA4(UnkStruct_ov17_0223F7E4 *param0, int param1)
         v0->unk_02 = v6->unk_02;
         v0->unk_01 = v6->unk_03;
         v3 = Unk_ov17_02253240[v0->unk_01][v0->unk_02];
-        ov17_02252C78(param0->unk_2FC, v2->unk_14[v3].rect.left + 8, v2->unk_14[v3].rect.right - 8, v2->unk_14[v3].rect.top + 8, v2->unk_14[v3].rect.bottom - 8, ((192 + 80) << FX32_SHIFT));
+        ov17_02252C78(param0->unk_2FC, v2->unk_14[v3].rect.left + 8, v2->unk_14[v3].rect.right - 8, v2->unk_14[v3].rect.top + 8, v2->unk_14[v3].rect.bottom - 8, (192 + 80) << FX32_SHIFT);
         return 0xffffffff;
     }
 
@@ -1637,7 +1689,7 @@ static int ov17_02240EA4(UnkStruct_ov17_0223F7E4 *param0, int param1)
     case PAD_KEY_LEFT:
     case PAD_KEY_RIGHT:
         v3 = Unk_ov17_02253240[v0->unk_01][v0->unk_02];
-        ov17_02252C78(param0->unk_2FC, v2->unk_14[v3].rect.left + 8, v2->unk_14[v3].rect.right - 8, v2->unk_14[v3].rect.top + 8, v2->unk_14[v3].rect.bottom - 8, ((192 + 80) << FX32_SHIFT));
+        ov17_02252C78(param0->unk_2FC, v2->unk_14[v3].rect.left + 8, v2->unk_14[v3].rect.right - 8, v2->unk_14[v3].rect.top + 8, v2->unk_14[v3].rect.bottom - 8, (192 + 80) << FX32_SHIFT);
         break;
     case PAD_BUTTON_A:
         return Unk_ov17_02253240[v0->unk_01][v0->unk_02];

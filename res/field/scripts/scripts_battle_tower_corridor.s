@@ -1,4 +1,5 @@
 #include "macros/scrcmd.inc"
+#include "constants/map_object.h"
 
 
     ScriptEntry _000E
@@ -14,7 +15,7 @@ _0010:
     End
 
 _001F:
-    ScrCmd_1B2 0xFF
+    HideObject LOCALID_PLAYER
     Return
 
 _0025:
@@ -28,48 +29,33 @@ _0025:
     GoTo _00D6
 
 _0066:
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     Warp MAP_HEADER_BATTLE_TOWER_BATTLE_ROOM, 0, 7, 6, 0
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     ReleaseAll
     End
 
 _008E:
-    ScrCmd_168 0, 0, 2, 2, 77
-    ScrCmd_16B 77
-    ScrCmd_169 77
+    LoadDoorAnimation 0, 0, 2, 2, ANIMATION_TAG_DOOR_1
+    PlayDoorOpenAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
     ApplyMovement 0, _0140
     WaitMovement
-    ScrCmd_1B1 0xFF
+    ShowObject LOCALID_PLAYER
     ApplyMovement LOCALID_PLAYER, _014C
     WaitMovement
-    ScrCmd_16C 77
-    ScrCmd_169 77
-    ScrCmd_16A 77
+    PlayDoorCloseAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
+    UnloadAnimation ANIMATION_TAG_DOOR_1
     Return
 
-    .byte 94
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 138
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 94
-    .byte 0
-    .byte 0xFF
-    .byte 0
-    .byte 146
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 95
-    .byte 0
-    .byte 27
-    .byte 0
+BattleTowerCorridor_Unused:
+    ApplyMovement 0, BattleTowerCorridor_UnusedMovement
+    ApplyMovement LOCALID_PLAYER, BattleTowerCorridor_UnusedMovement2
+    WaitMovement
+    Return
 
 _00D6:
     ApplyMovement 0, _0178
@@ -97,11 +83,7 @@ _0124:
     ApplyMovement LOCALID_PLAYER, _01F4
     WaitMovement
     GoTo _0066
-
-    .byte 2
-    .byte 0
-    .byte 0
-    .byte 0
+    End
 
     .balign 4, 0
 _0140:
@@ -114,42 +96,18 @@ _014C:
     WalkNormalSouth 2
     EndMovement
 
-    .byte 0
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 12
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 69
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 15
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 20
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 69
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+BattleTowerCorridor_UnusedMovement:
+    FaceNorth
+    WalkNormalNorth 2
+    SetInvisible
+    EndMovement
+
+BattleTowerCorridor_UnusedMovement2:
+    WalkNormalEast
+    FaceNorth
+    WalkFasterNorth
+    SetInvisible
+    EndMovement
 
     .balign 4, 0
 _0178:

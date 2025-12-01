@@ -42,8 +42,7 @@ _0062:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    CheckBadgeAcquired BADGE_ID_RELIC, VAR_RESULT
-    GoToIfEq VAR_RESULT, 1, _0088
+    GoToIfBadgeAcquired BADGE_ID_RELIC, _0088
     Message 4
     WaitABXPadPress
     CloseMessage
@@ -93,11 +92,11 @@ _00CC:
     FacePlayer
     CheckPoketchAppRegistered POKETCH_APPID_POKEMONHISTORY, VAR_RESULT
     GoToIfEq VAR_RESULT, 1, _0118
-    ScrCmd_11E VAR_RESULT
+    GetLocalDexSeenCount VAR_RESULT
     GoToIfLt VAR_RESULT, 50, _010D
     Message 10
-    SetVar VAR_0x8004, 9
-    CallCommonScript 0x7D9
+    SetVar VAR_0x8004, POKETCH_APPID_POKEMONHISTORY
+    GivePoketchApp
     WaitABXPadPress
     CloseMessage
     ReleaseAll
@@ -138,7 +137,7 @@ _0168:
     SetObjectEventPos 18, VAR_0x8004, 0x295
     ClearFlag FLAG_UNK_0x021E
     AddObject 18
-    ScrCmd_062 18
+    LockObject 18
     ApplyMovement LOCALID_PLAYER, _0228
     ApplyMovement 18, _01E8
     WaitMovement

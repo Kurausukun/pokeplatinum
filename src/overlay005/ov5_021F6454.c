@@ -19,6 +19,7 @@
 #include "overlay005/struct_ov5_021F6704_decl.h"
 
 #include "bag.h"
+#include "berry_patch_graphics.h"
 #include "bg_window.h"
 #include "field_script_context.h"
 #include "font.h"
@@ -52,7 +53,6 @@
 #include "unk_02030880.h"
 #include "unk_02038F8C.h"
 #include "unk_0205DFC4.h"
-#include "unk_020677F4.h"
 #include "vars_flags.h"
 
 #include "res/text/bank/battle_tower.h"
@@ -145,7 +145,7 @@ BOOL ScrCmd_2DE(ScriptContext *ctx)
 
     ctx->data[0] = v13;
 
-    v6 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SPECIES_NAME, HEAP_ID_FIELD_TASK);
+    v6 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SPECIES_NAME, HEAP_ID_FIELD3);
     v9 = ov5_021F6704(fieldSystem, 20, 1, 0, 1, FieldSystem_GetVarPointer(fieldSystem, v13), *v10, FieldSystem_GetScriptMemberPtr(ctx->fieldSystem, SCRIPT_MANAGER_WINDOW), v6, FieldSystem_GetVarPointer(fieldSystem, v14), FieldSystem_GetVarPointer(fieldSystem, v15));
     v1 = sub_020308A0(fieldSystem->saveData, 11, &v0);
 
@@ -167,7 +167,7 @@ BOOL ScrCmd_2DE(ScriptContext *ctx)
         Heap_Free(v1);
     }
 
-    v7 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_MENU_ENTRIES, HEAP_ID_FIELD_TASK);
+    v7 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_MENU_ENTRIES, HEAP_ID_FIELD3);
 
     ov5_021F661C(v9, v7);
     ov5_021F6760(v9, 12, 0xff, 0xfffe);
@@ -240,7 +240,7 @@ static void ov5_021F6624(FieldSystem *fieldSystem, UnkStruct_ov5_021F6704 *param
     }
 
     for (v0 = 0; v0 < 120; v0++) {
-        param1->unk_1C[v0] = Strbuf_Init((40 * 2), HEAP_ID_FIELD);
+        param1->unk_1C[v0] = Strbuf_Init(40 * 2, HEAP_ID_FIELD1);
     }
 
     *param1->unk_210 = 0xeeee;
@@ -252,7 +252,7 @@ UnkStruct_ov5_021F6704 *ov5_021F6704(FieldSystem *fieldSystem, u8 param1, u8 par
     UnkStruct_ov5_021F6704 *v0;
     int v1;
 
-    v0 = Heap_AllocFromHeap(HEAP_ID_FIELD, sizeof(UnkStruct_ov5_021F6704));
+    v0 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkStruct_ov5_021F6704));
 
     if (v0 == NULL) {
         return NULL;
@@ -278,11 +278,11 @@ static void ov5_021F6768(UnkStruct_ov5_021F6704 *param0)
         Window_Add(param0->fieldSystem->bgConfig, &param0->unk_08, 3, param0->unk_208, param0->unk_209, 11, param0->unk_20B * 2, 13, 1);
     }
 
-    LoadStandardWindowGraphics(param0->fieldSystem->bgConfig, 3, 1024 - (18 + 12) - 9, 11, 0, HEAP_ID_FIELD);
+    LoadStandardWindowGraphics(param0->fieldSystem->bgConfig, 3, 1024 - (18 + 12) - 9, 11, 0, HEAP_ID_FIELD1);
     Window_DrawStandardFrame(&param0->unk_08, 1, 1024 - (18 + 12) - 9, 11);
     ov5_021F68BC(param0);
 
-    param0->unk_23C = ListMenu_New((const ListMenuTemplate *)&param0->unk_21C, *param0->unk_214, *param0->unk_218, HEAP_ID_FIELD);
+    param0->unk_23C = ListMenu_New((const ListMenuTemplate *)&param0->unk_21C, *param0->unk_214, *param0->unk_218, HEAP_ID_FIELD1);
     param0->unk_04 = SysTask_Start(ov5_021F6A34, param0, 0);
 
     return;
@@ -294,7 +294,7 @@ static void ov5_021F6830(UnkStruct_ov5_021F6704 *param0, u32 param1, u32 param2,
     void *v1;
 
     {
-        Strbuf *v2 = Strbuf_Init((40 * 2), HEAP_ID_FIELD);
+        Strbuf *v2 = Strbuf_Init(40 * 2, HEAP_ID_FIELD1);
 
         MessageLoader_GetStrbuf(param0->unk_1FC, param1, v2);
         StringTemplate_Format(param0->unk_200, param0->unk_1C[param0->unk_20B], v2);
@@ -433,12 +433,12 @@ static void ov5_021F6AD4(UnkStruct_ov5_021F6704 *param0)
 }
 
 static const u16 sHighestIVMessageIndices[] = {
-    pl_msg_00000304_00122,
-    pl_msg_00000304_00123,
-    pl_msg_00000304_00124,
-    pl_msg_00000304_00127,
-    pl_msg_00000304_00125,
-    pl_msg_00000304_00126
+    BattleTower_Text_BestPotentialInHP,
+    BattleTower_Text_BestPotentialInAttack,
+    BattleTower_Text_BestPotentialInDefense,
+    BattleTower_Text_BestPotentialInSpeed,
+    BattleTower_Text_BestPotentialInSpAtk,
+    BattleTower_Text_BestPotentialInSpDef
 };
 
 BOOL ScrCmd_JudgeStats(ScriptContext *ctx)
@@ -511,7 +511,7 @@ BOOL ScrCmd_31D(ScriptContext *param0)
     }
 
     if (v9 > 0) {
-        v4 = Bag_TryAddItem(SaveData_GetBag(fieldSystem->saveData), ITEM_GRISEOUS_ORB, v9, HEAP_ID_FIELD);
+        v4 = Bag_TryAddItem(SaveData_GetBag(fieldSystem->saveData), ITEM_GRISEOUS_ORB, v9, HEAP_ID_FIELD1);
 
         if (v4 == 0) {
             *v11 = 0xff;
@@ -552,55 +552,55 @@ BOOL ScrCmd_31D(ScriptContext *param0)
     return 0;
 }
 
-BOOL ScrCmd_31E(ScriptContext *param0)
+BOOL ScrCmd_TryRevertPokemonForm(ScriptContext *param0)
 {
-    Pokemon *v0;
-    Party *v1;
-    int v2, v3;
-    u32 v4;
-    int v5;
-    int v6;
+    Pokemon *pokemon;
+    Party *party;
+    int pokemonSpecies, pokemonForm;
+    u32 emptyHeldItem;
+    int currentHeldItem;
+    int bagNotFull;
     FieldSystem *fieldSystem = param0->fieldSystem;
-    u16 v8 = ScriptContext_GetVar(param0);
-    u16 *v9 = ScriptContext_GetVarPointer(param0);
+    u16 partySlot = ScriptContext_GetVar(param0);
+    u16 *result = ScriptContext_GetVarPointer(param0);
 
-    v1 = SaveData_GetParty(fieldSystem->saveData);
-    v0 = Party_GetPokemonBySlotIndex(v1, v8);
+    party = SaveData_GetParty(fieldSystem->saveData);
+    pokemon = Party_GetPokemonBySlotIndex(party, partySlot);
 
-    *v9 = 0;
+    *result = 0;
 
-    if (v8 == 0xff) {
+    if (partySlot == 0xff) {
         return 0;
     }
 
-    v5 = Pokemon_GetValue(v0, MON_DATA_HELD_ITEM, NULL);
+    currentHeldItem = Pokemon_GetValue(pokemon, MON_DATA_HELD_ITEM, NULL);
 
-    if (v5 == ITEM_GRISEOUS_ORB) {
-        v6 = Bag_TryAddItem(SaveData_GetBag(fieldSystem->saveData), ITEM_GRISEOUS_ORB, 1, HEAP_ID_FIELD);
+    if (currentHeldItem == ITEM_GRISEOUS_ORB) {
+        bagNotFull = Bag_TryAddItem(SaveData_GetBag(fieldSystem->saveData), ITEM_GRISEOUS_ORB, 1, HEAP_ID_FIELD1);
 
-        if (v6 == 0) {
-            *v9 = 0xff;
+        if (bagNotFull == 0) {
+            *result = 0xff;
             return 0;
         }
 
-        v4 = 0;
-        Pokemon_SetValue(v0, MON_DATA_HELD_ITEM, &v4);
+        emptyHeldItem = 0;
+        Pokemon_SetValue(pokemon, MON_DATA_HELD_ITEM, &emptyHeldItem);
     }
 
-    v3 = Pokemon_GetValue(v0, MON_DATA_FORM, NULL);
+    pokemonForm = Pokemon_GetValue(pokemon, MON_DATA_FORM, NULL);
 
-    if (v3 > 0) {
-        v2 = Pokemon_GetValue(v0, MON_DATA_SPECIES, NULL);
+    if (pokemonForm > 0) {
+        pokemonSpecies = Pokemon_GetValue(pokemon, MON_DATA_SPECIES, NULL);
 
-        switch (v2) {
+        switch (pokemonSpecies) {
         case SPECIES_GIRATINA:
-            Pokemon_SetGiratinaFormByHeldItem(v0);
+            Pokemon_SetGiratinaFormByHeldItem(pokemon);
             break;
         case SPECIES_ROTOM:
-            Pokemon_SetRotomForm(v0, ROTOM_FORM_BASE, 0);
+            Pokemon_SetRotomForm(pokemon, ROTOM_FORM_BASE, 0);
             break;
         case SPECIES_SHAYMIN:
-            Pokemon_SetShayminForm(v0, SHAYMIN_FORM_LAND);
+            Pokemon_SetShayminForm(pokemon, SHAYMIN_FORM_LAND);
             break;
         }
     }
@@ -855,7 +855,7 @@ BOOL ScrCmd_30F(ScriptContext *param0)
         }
         break;
     case 17:
-        if (GameRecords_GetRecordValue(v1, RECORD_UNK_004) < 50) {
+        if (GameRecords_GetRecordValue(v1, RECORD_BERRIES_PLANTED) < 50) {
             *v4 = 0;
         }
         break;
@@ -982,15 +982,15 @@ BOOL ScrCmd_32D(ScriptContext *ctx)
                 MapObject_GetPosPtr(v7, &v1);
                 v1.y = v0;
                 MapObject_SetPos(v7, &v1);
-                MapObject_SetY(v7, (((v0) >> 3) / FX32_ONE));
+                MapObject_SetY(v7, ((v0) >> 3) / FX32_ONE );
             }
 
             v2 = ov5_021EB1A0(v7);
 
-            if ((v2 == NULL) && sub_020677F4(MapObject_GetGraphicsID(v7))) {
+            if ((v2 == NULL) && BerryPatchGraphics_IsBerryPatch(MapObject_GetGraphicsID(v7))) {
                 if (sub_02062D4C(v7)) {
                     sub_02062B68(v7);
-                    v2 = sub_02067A58(v7);
+                    v2 = BerryPatchGraphics_GetGraphicsObject(v7);
                 }
             }
 
@@ -1032,7 +1032,7 @@ static void ov5_021F7654(MapObject *param0, int param1)
     v0.y = (((param1) << 4) * FX32_ONE);
 
     MapObject_SetPos(param0, &v0);
-    MapObject_SetY(param0, ((param1) * 2));
+    MapObject_SetY(param0, (param1) * 2);
 
     v1 = ov5_021EB1A0(param0);
 
@@ -1119,12 +1119,12 @@ BOOL ScrCmd_339(ScriptContext *ctx)
     return 0;
 }
 
-BOOL ScrCmd_330(ScriptContext *ctx)
+BOOL ScrCmd_LogLinkInfoInWiFiHistory(ScriptContext *ctx)
 {
     WiFiHistory *wiFiHistory = SaveData_WiFiHistory(ctx->fieldSystem->saveData);
 
-    sub_02038F8C(wiFiHistory);
-    return 1;
+    WiFiHistory_FlagGeonetLinkInfo(wiFiHistory);
+    return TRUE;
 }
 
 BOOL ScrCmd_333(ScriptContext *ctx)

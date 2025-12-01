@@ -2,8 +2,6 @@ subdir('icongra')
 subdir('personal')
 subdir('pokeanm')
 subdir('pokegra')
-subdir('trgra')
-subdir('trmsg')
 subdir('waza')
 
 prebuilt_files = [

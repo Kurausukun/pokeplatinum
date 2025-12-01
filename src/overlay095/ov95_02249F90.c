@@ -6,7 +6,6 @@
 #include "struct_defs/struct_02099F80.h"
 
 #include "overlay095/ov95_02246C20.h"
-#include "overlay095/struct_ov95_02247628_decl.h"
 
 #include "bg_window.h"
 #include "enums.h"
@@ -27,7 +26,7 @@ enum {
 };
 
 typedef struct {
-    UnkStruct_ov95_02247628 *unk_00;
+    TradeSequenceData *unk_00;
     int unk_04;
     int unk_08;
     BgConfig *unk_0C;
@@ -45,9 +44,9 @@ static void ov95_0224A10C(UnkStruct_ov95_02249FF8 *param0);
 static void ov95_0224A320(UnkStruct_ov95_02249FF8 *param0);
 static void ov95_0224A358(BgConfig *param0, int param1, int param2);
 
-void *ov95_02249F90(UnkStruct_ov95_02247628 *param0)
+void *ov95_02249F90(TradeSequenceData *param0)
 {
-    UnkStruct_ov95_02249FF8 *v0 = Heap_AllocFromHeap(HEAP_ID_58, sizeof(UnkStruct_ov95_02249FF8));
+    UnkStruct_ov95_02249FF8 *v0 = Heap_Alloc(HEAP_ID_58, sizeof(UnkStruct_ov95_02249FF8));
 
     if (v0) {
         int v1;
@@ -171,49 +170,46 @@ static void ov95_0224A10C(UnkStruct_ov95_02249FF8 *param0)
         GX_BG0_AS_3D
     };
     static const BgTemplate v2 = {
-        0,
-        0,
-        0x1000,
-        0,
-        2,
-        GX_BG_COLORMODE_16,
-        GX_BG_SCRBASE_0xd000,
-        GX_BG_CHARBASE_0x00000,
-        GX_BG_EXTPLTT_01,
-        1,
-        1,
-        0,
-        0
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0x1000,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_256x512,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xd000,
+        .charBase = GX_BG_CHARBASE_0x00000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 1,
+        .areaOver = 1,
+        .mosaic = FALSE,
     };
     static const BgTemplate v3 = {
-        0,
-        0,
-        0x1000,
-        0,
-        2,
-        GX_BG_COLORMODE_16,
-        GX_BG_SCRBASE_0xe000,
-        GX_BG_CHARBASE_0x10000,
-        GX_BG_EXTPLTT_01,
-        2,
-        1,
-        0,
-        0
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0x1000,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_256x512,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xe000,
+        .charBase = GX_BG_CHARBASE_0x10000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 2,
+        .areaOver = 1,
+        .mosaic = FALSE,
     };
     static const BgTemplate v4 = {
-        0,
-        0,
-        0x0,
-        0,
-        1,
-        GX_BG_COLORMODE_16,
-        GX_BG_SCRBASE_0xf000,
-        GX_BG_CHARBASE_0x04000,
-        GX_BG_EXTPLTT_01,
-        3,
-        1,
-        0,
-        0
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0x0,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xf000,
+        .charBase = GX_BG_CHARBASE_0x04000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 3,
+        .areaOver = 1,
+        .mosaic = FALSE,
     };
 
     GXLayers_SetBanks(&v0);

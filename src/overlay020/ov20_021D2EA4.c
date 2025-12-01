@@ -72,7 +72,7 @@ static void ov20_021D375C(UnkStruct_ov20_021D30F8 *param0, BOOL param1);
 
 UnkStruct_ov20_021D30F8 *ov20_021D2EA4(UnkStruct_ov20_021D2128 *param0, const UnkStruct_ov20_021D16E8 *param1, const UnkStruct_020998EC *param2)
 {
-    UnkStruct_ov20_021D30F8 *v0 = Heap_AllocFromHeap(HEAP_ID_35, sizeof(UnkStruct_ov20_021D30F8));
+    UnkStruct_ov20_021D30F8 *v0 = Heap_Alloc(HEAP_ID_35, sizeof(UnkStruct_ov20_021D30F8));
 
     v0->unk_00 = param0;
     v0->unk_04 = param1;
@@ -81,7 +81,7 @@ UnkStruct_ov20_021D30F8 *ov20_021D2EA4(UnkStruct_ov20_021D2128 *param0, const Un
     v0->unk_40 = NULL;
     v0->unk_44 = NULL;
     v0->unk_4C = Strbuf_Init(128, HEAP_ID_35);
-    v0->unk_48 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0437, HEAP_ID_35);
+    v0->unk_48 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0437, HEAP_ID_35);
     v0->unk_50 = ColoredArrow_New(HEAP_ID_35);
 
     return v0;

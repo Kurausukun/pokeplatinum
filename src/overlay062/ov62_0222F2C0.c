@@ -75,7 +75,7 @@ void ov62_0222F2C0(UnkStruct_0208C06C *param0)
         param0->unk_14.unk_30 = 1;
 
         ov62_0222FF40(param0);
-        RenderControlFlags_SetSpeedUpOnTouch(1);
+        RenderControlFlags_SetSpeedUpOnTouch(TRUE);
     }
 
     SetVBlankCallback(ov62_0222F8E4, param0);
@@ -125,8 +125,8 @@ void ov62_0222F2C0(UnkStruct_0208C06C *param0)
 
     {
         param0->unk_14.unk_3C = sub_02012744((5 * 2) + 10, HEAP_ID_102);
-        param0->unk_14.unk_34 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0010, HEAP_ID_102);
-        param0->unk_14.unk_38 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0020, HEAP_ID_102);
+        param0->unk_14.unk_34 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0010, HEAP_ID_102);
+        param0->unk_14.unk_38 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0020, HEAP_ID_102);
     }
 
     ov62_022338A8(param0);
@@ -169,14 +169,14 @@ void ov62_0222F514(UnkStruct_0208C06C *param0)
     SysTask_Done(param0->unk_41E8);
     SpriteSystem_FreeResourcesAndManager(param0->unk_14.unk_04, param0->unk_14.unk_08);
     SpriteSystem_Free(param0->unk_14.unk_04);
-    sub_02039794();
+    NetworkIcon_Destroy();
 
     {
         u32 v1;
         v1 = DisableTouchPad();
 
         TouchScreenActions_Free(param0->unk_14.unk_18);
-        RenderControlFlags_SetSpeedUpOnTouch(0);
+        RenderControlFlags_SetSpeedUpOnTouch(FALSE);
     }
 
     {
@@ -209,17 +209,121 @@ void ov62_0222F514(UnkStruct_0208C06C *param0)
 }
 
 static const BgTemplate Unk_ov62_022487B0[] = {
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0x2000, GX_BG_CHARBASE_0x10000, GX_BG_EXTPLTT_01, 0x1, 0x0, 0x0, 0x0 },
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0x2800, GX_BG_CHARBASE_0x14000, GX_BG_EXTPLTT_01, 0x3, 0x0, 0x0, 0x0 },
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0x3000, GX_BG_CHARBASE_0x18000, GX_BG_EXTPLTT_01, 0x2, 0x0, 0x0, 0x0 },
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0x3800, GX_BG_CHARBASE_0x1c000, GX_BG_EXTPLTT_01, 0x1, 0x0, 0x0, 0x0 }
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0x2000,
+        .charBase = GX_BG_CHARBASE_0x10000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x1,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    },
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0x2800,
+        .charBase = GX_BG_CHARBASE_0x14000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x3,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    },
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0x3000,
+        .charBase = GX_BG_CHARBASE_0x18000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x2,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    },
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0x3800,
+        .charBase = GX_BG_CHARBASE_0x1c000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x1,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    }
 };
 
 static const BgTemplate Unk_ov62_02248820[] = {
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0xc000, GX_BG_CHARBASE_0x00000, GX_BG_EXTPLTT_01, 0x1, 0x0, 0x0, 0x0 },
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0xc800, GX_BG_CHARBASE_0x04000, GX_BG_EXTPLTT_01, 0x3, 0x0, 0x0, 0x0 },
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0xd000, GX_BG_CHARBASE_0x08000, GX_BG_EXTPLTT_01, 0x2, 0x0, 0x0, 0x0 },
-    { 0x0, 0x0, 0x800, 0x0, 0x1, GX_BG_COLORMODE_16, GX_BG_SCRBASE_0xd800, GX_BG_CHARBASE_0x00000, GX_BG_EXTPLTT_01, 0x1, 0x0, 0x0, 0x0 }
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xc000,
+        .charBase = GX_BG_CHARBASE_0x00000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x1,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    },
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xc800,
+        .charBase = GX_BG_CHARBASE_0x04000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x3,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    },
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xd000,
+        .charBase = GX_BG_CHARBASE_0x08000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x2,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    },
+    {
+        .x = 0x0,
+        .y = 0x0,
+        .bufferSize = 0x800,
+        .baseTile = 0x0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xd800,
+        .charBase = GX_BG_CHARBASE_0x00000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0x1,
+        .areaOver = 0x0,
+        .mosaic = FALSE,
+    }
 };
 
 static void ov62_0222F670(BgConfig *param0)
@@ -351,7 +455,7 @@ static void ov62_0222F848(UnkStruct_0208C06C *param0)
         GF_ASSERT(v2);
     }
 
-    SetSubScreenViewRect(SpriteSystem_GetRenderer(param0->unk_14.unk_04), 0, (256 * FX32_ONE));
+    SetSubScreenViewRect(SpriteSystem_GetRenderer(param0->unk_14.unk_04), 0, 256 * FX32_ONE);
 }
 
 void ov62_0222F8E4(void *param0)
@@ -450,7 +554,7 @@ BOOL ov62_0222F910(UnkStruct_0208C06C *param0, int *param1)
         return 1;
     }
 
-    sub_020241B4();
+    G3_ResetG3X();
     PokemonSpriteManager_DrawSprites(param0->unk_14.unk_50);
     G3_RequestSwapBuffers(GX_SORTMODE_MANUAL, GX_BUFFERMODE_Z);
 

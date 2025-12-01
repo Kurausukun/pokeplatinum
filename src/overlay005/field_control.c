@@ -40,6 +40,7 @@
 #include "field_overworld_state.h"
 #include "game_records.h"
 #include "inlines.h"
+#include "item_use_functions.h"
 #include "location.h"
 #include "map_header.h"
 #include "map_header_data.h"
@@ -68,7 +69,6 @@
 #include "unk_0205B33C.h"
 #include "unk_0205F180.h"
 #include "unk_02067A84.h"
-#include "unk_020683F4.h"
 #include "vars_flags.h"
 
 static BOOL Field_CheckMapTransition(FieldSystem *fieldSystem, const FieldInput *input);
@@ -169,12 +169,12 @@ void FieldInput_Update(FieldInput *input, FieldSystem *fieldSystem, u16 pressedK
         input->transitionDir = DIR_NONE;
     }
 
-    input->playerDir = sub_02061308(fieldSystem->playerAvatar, pressedKeys, heldKeys);
+    input->playerDir = PlayerAvatar_CalcFaceDirection(fieldSystem->playerAvatar, pressedKeys, heldKeys);
 }
 
 BOOL FieldInput_Process(const FieldInput *input, FieldSystem *fieldSystem)
 {
-    if (input->dummy5 == FALSE && sub_0203F5C0(fieldSystem, 1) == TRUE) {
+    if (input->dummy5 == FALSE && FieldSystem_RunInitScript(fieldSystem, INIT_SCRIPT_ON_FRAME_TABLE) == TRUE) {
         return TRUE;
     }
 
@@ -206,7 +206,7 @@ BOOL FieldInput_Process(const FieldInput *input, FieldSystem *fieldSystem)
 
     if (input->dummy5 == FALSE) {
         int playerEvent = PLAYER_EVENT_NONE;
-        int direction = sub_02061308(fieldSystem->playerAvatar, input->pressedKeys, input->heldKeys);
+        enum FaceDirection direction = PlayerAvatar_CalcFaceDirection(fieldSystem->playerAvatar, input->pressedKeys, input->heldKeys);
 
         if (SystemFlag_HandleStrengthActive(SaveData_GetVarsFlags(fieldSystem->saveData), HANDLE_FLAG_CHECK)) {
             playerEvent |= PLAYER_EVENT_USED_STRENGTH;
@@ -280,7 +280,7 @@ BOOL FieldInput_Process(const FieldInput *input, FieldSystem *fieldSystem)
         enum AvatarDistortionState distortionState = PlayerAvatar_MapDistortionState(fieldSystem->playerAvatar);
 
         if (distortionState == AVATAR_DISTORTION_STATE_NONE || distortionState == AVATAR_DISTORTION_STATE_ACTIVE) {
-            int event = sub_0203CA6C(fieldSystem, MapHeaderData_GetBgEvents(fieldSystem), MapHeaderData_GetNumBgEvents(fieldSystem));
+            int event = FieldEvent_GetInteractedBgEventScript(fieldSystem, MapHeaderData_GetBgEvents(fieldSystem), MapHeaderData_GetNumBgEvents(fieldSystem));
 
             if (event != 0xffff) {
                 ScriptManager_Set(fieldSystem, event, NULL);
@@ -347,7 +347,7 @@ static BOOL Field_CheckSign(FieldSystem *fieldSystem)
         return TRUE;
     }
 
-    int event = sub_0203CB80(fieldSystem, MapHeaderData_GetBgEvents(fieldSystem), MapHeaderData_GetNumBgEvents(fieldSystem));
+    int event = FieldEvent_GetInteractedWallSignScript(fieldSystem, MapHeaderData_GetBgEvents(fieldSystem), MapHeaderData_GetNumBgEvents(fieldSystem));
 
     if (event != 0xffff) {
         ScriptManager_Set(fieldSystem, event, NULL);
@@ -359,7 +359,7 @@ static BOOL Field_CheckSign(FieldSystem *fieldSystem)
 
 BOOL FieldInput_Process_Underground(FieldInput *input, FieldSystem *fieldSystem)
 {
-    if (input->dummy5 == FALSE && sub_0203F5C0(fieldSystem, 1) == TRUE) {
+    if (input->dummy5 == FALSE && FieldSystem_RunInitScript(fieldSystem, INIT_SCRIPT_ON_FRAME_TABLE) == TRUE) {
         return TRUE;
     }
 
@@ -370,7 +370,7 @@ BOOL FieldInput_Process_Underground(FieldInput *input, FieldSystem *fieldSystem)
     ov23_02242814();
 
     if (input->interact) {
-        ov23_02242830(FALSE);
+        ov23_02242830(0);
         return FALSE;
     }
 
@@ -488,7 +488,7 @@ BOOL FieldInput_Process_UnionRoom(const FieldInput *input, FieldSystem *fieldSys
 
 int FieldInput_Process_BattleTower(const FieldInput *input, FieldSystem *fieldSystem)
 {
-    if (input->dummy5 == FALSE && sub_0203F5C0(fieldSystem, 1) == TRUE) {
+    if (input->dummy5 == FALSE && FieldSystem_RunInitScript(fieldSystem, INIT_SCRIPT_ON_FRAME_TABLE) == TRUE) {
         return TRUE;
     }
 
@@ -509,7 +509,7 @@ int FieldInput_Process_BattleTower(const FieldInput *input, FieldSystem *fieldSy
             return TRUE;
         }
 
-        int v2 = sub_0203CA6C(fieldSystem, MapHeaderData_GetBgEvents(fieldSystem), MapHeaderData_GetNumBgEvents(fieldSystem));
+        int v2 = FieldEvent_GetInteractedBgEventScript(fieldSystem, MapHeaderData_GetBgEvents(fieldSystem), MapHeaderData_GetNumBgEvents(fieldSystem));
 
         if (v2 != 0xffff) {
             ScriptManager_Set(fieldSystem, v2, NULL);
@@ -549,7 +549,7 @@ static BOOL Field_CheckWildEncounter(FieldSystem *fieldSystem)
 
     if (SystemFlag_CheckInPalPark(SaveData_GetVarsFlags(fieldSystem->saveData)) == TRUE) {
         if (CatchingShow_CheckWildEncounter(fieldSystem, playerX, playerZ) == TRUE) {
-            Encounter_NewVsPalParkTransfer(fieldSystem, CatchingShow_GetBattleDTO(fieldSystem));
+            Encounter_NewVsPalParkTransfer(fieldSystem, CatchingShow_GetBattleDataTransfer(fieldSystem));
             return TRUE;
         } else {
             return FALSE;
@@ -731,7 +731,7 @@ static BOOL Field_ProcessStep(FieldSystem *fieldSystem)
         return FALSE;
     }
 
-    ov5_021EA714(fieldSystem, 5, 1);
+    FieldSystem_SendPoketchEvent(fieldSystem, POKETCH_EVENT_PEDOMETER, 1);
 
     if (Field_UpdatePoison(fieldSystem) == TRUE) {
         return TRUE;
@@ -1069,7 +1069,7 @@ static BOOL Field_DistortionInteract(FieldSystem *fieldSystem, MapObject **objec
 
     sub_020617BC(fieldSystem->playerAvatar, &playerX, &playerY, &playerZ);
 
-    while (sub_020625B0(fieldSystem->mapObjMan, object, &objectIndex, (1 << 0))) {
+    while (sub_020625B0(fieldSystem->mapObjMan, object, &objectIndex, 1 << 0)) {
         objectX = MapObject_GetX(*object);
         objectY = MapObject_GetY(*object) / 2;
         objectZ = MapObject_GetZ(*object);

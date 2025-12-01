@@ -10,7 +10,6 @@
 #include "constants/sound.h"
 #include "constants/species.h"
 #include "constants/string.h"
-#include "constants/trainer.h"
 #include "generated/abilities.h"
 #include "generated/game_records.h"
 #include "generated/genders.h"
@@ -47,6 +46,10 @@
 
 #include "res/battle/scripts/sub_seq.naix.h"
 
+#define TRMSG_ACTIVE_BATTLER_HALF_HP_FLAG 2
+#define TRMSG_LAST_BATTLER_FLAG           3
+#define TRMSG_LAST_BATTLER_HALF_HP_FLAG   4
+
 static BOOL BasicTypeMulApplies(BattleContext *battleCtx, int attacker, int defender, int chartEntry);
 static int MapSideEffectToSubscript(BattleContext *battleCtx, enum BattleSideEffectType type, u32 effect);
 static int ApplyTypeMultiplier(BattleContext *battleCtx, int attacker, int mul, int damage, BOOL update, u32 *moveStatus);
@@ -77,7 +80,7 @@ void BattleSystem_InitBattleMon(BattleSystem *battleSys, BattleContext *battleCt
     int i;
     for (i = 0; i < LEARNED_MOVES_MAX; i++) {
         battleCtx->battleMons[battler].moves[i] = Pokemon_GetValue(mon, MON_DATA_MOVE1 + i, NULL);
-        battleCtx->battleMons[battler].ppCur[i] = Pokemon_GetValue(mon, MON_DATA_MOVE1_CUR_PP + i, NULL);
+        battleCtx->battleMons[battler].ppCur[i] = Pokemon_GetValue(mon, MON_DATA_MOVE1_PP + i, NULL);
         battleCtx->battleMons[battler].ppUps[i] = Pokemon_GetValue(mon, MON_DATA_MOVE1_PP_UPS + i, NULL);
     }
 
@@ -118,7 +121,7 @@ void BattleSystem_InitBattleMon(BattleSystem *battleSys, BattleContext *battleCt
         battleCtx->battleMons[battler].heldItem = ITEM_NONE;
     } else {
         battleCtx->battleMons[battler].ability = Pokemon_GetValue(mon, MON_DATA_ABILITY, NULL);
-        battleCtx->battleMons[battler].status = Pokemon_GetValue(mon, MON_DATA_STATUS_CONDITION, NULL);
+        battleCtx->battleMons[battler].status = Pokemon_GetValue(mon, MON_DATA_STATUS, NULL);
         battleCtx->battleMons[battler].heldItem = Pokemon_GetValue(mon, MON_DATA_HELD_ITEM, NULL);
     }
 
@@ -130,9 +133,9 @@ void BattleSystem_InitBattleMon(BattleSystem *battleSys, BattleContext *battleCt
 
     battleCtx->battleMons[battler].level = Pokemon_GetValue(mon, MON_DATA_LEVEL, NULL);
     battleCtx->battleMons[battler].friendship = Pokemon_GetValue(mon, MON_DATA_FRIENDSHIP, NULL);
-    battleCtx->battleMons[battler].curHP = Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL);
+    battleCtx->battleMons[battler].curHP = Pokemon_GetValue(mon, MON_DATA_HP, NULL);
     battleCtx->battleMons[battler].maxHP = Pokemon_GetValue(mon, MON_DATA_MAX_HP, NULL);
-    battleCtx->battleMons[battler].exp = Pokemon_GetValue(mon, MON_DATA_EXP, NULL);
+    battleCtx->battleMons[battler].exp = Pokemon_GetValue(mon, MON_DATA_EXPERIENCE, NULL);
     battleCtx->battleMons[battler].personality = Pokemon_GetValue(mon, MON_DATA_PERSONALITY, NULL);
     battleCtx->battleMons[battler].OTId = Pokemon_GetValue(mon, MON_DATA_OT_ID, NULL);
     battleCtx->battleMons[battler].OTGender = Pokemon_GetValue(mon, MON_DATA_OT_GENDER, NULL);
@@ -148,7 +151,7 @@ void BattleSystem_InitBattleMon(BattleSystem *battleSys, BattleContext *battleCt
     Pokedex_HeightWeightData_Release(heightWeightData);
     Pokedex_HeightWeightData_Free(heightWeightData);
     Pokemon_GetValue(mon, MON_DATA_NICKNAME, battleCtx->battleMons[battler].nickname);
-    Pokemon_GetValue(mon, MON_DATA_OTNAME, battleCtx->battleMons[battler].OTName);
+    Pokemon_GetValue(mon, MON_DATA_OT_NAME, battleCtx->battleMons[battler].OTName);
 
     battleCtx->battleMons[battler].timesDamaged = 0;
     battleCtx->battleMons[battler].trainerMessageFlags = 0;
@@ -173,19 +176,19 @@ void BattleSystem_ReloadPokemon(BattleSystem *battleSys, BattleContext *battleCt
     battleCtx->battleMons[battler].spDefense = Pokemon_GetValue(mon, MON_DATA_SP_DEF, NULL);
     battleCtx->battleMons[battler].level = Pokemon_GetValue(mon, MON_DATA_LEVEL, NULL);
     battleCtx->battleMons[battler].friendship = Pokemon_GetValue(mon, MON_DATA_FRIENDSHIP, NULL);
-    battleCtx->battleMons[battler].curHP = Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL);
+    battleCtx->battleMons[battler].curHP = Pokemon_GetValue(mon, MON_DATA_HP, NULL);
     battleCtx->battleMons[battler].maxHP = Pokemon_GetValue(mon, MON_DATA_MAX_HP, NULL);
 
     if ((battleCtx->battleMons[battler].statusVolatile & VOLATILE_CONDITION_TRANSFORM) == FALSE) {
         for (int i = 0; i < LEARNED_MOVES_MAX; i++) {
             if ((battleCtx->battleMons[battler].moveEffectsData.mimickedMoveSlot & FlagIndex(i)) == FALSE) {
                 battleCtx->battleMons[battler].moves[i] = Pokemon_GetValue(mon, MON_DATA_MOVE1 + i, NULL);
-                battleCtx->battleMons[battler].ppCur[i] = Pokemon_GetValue(mon, MON_DATA_MOVE1_CUR_PP + i, NULL);
+                battleCtx->battleMons[battler].ppCur[i] = Pokemon_GetValue(mon, MON_DATA_MOVE1_PP + i, NULL);
                 battleCtx->battleMons[battler].ppUps[i] = Pokemon_GetValue(mon, MON_DATA_MOVE1_PP_UPS + i, NULL);
             }
         }
 
-        battleCtx->battleMons[battler].exp = Pokemon_GetValue(mon, MON_DATA_EXP, NULL);
+        battleCtx->battleMons[battler].exp = Pokemon_GetValue(mon, MON_DATA_EXPERIENCE, NULL);
     }
 }
 
@@ -1919,7 +1922,7 @@ BOOL BattleSystem_CheckTrainerMessage(BattleSystem *battleSys, BattleContext *ba
                 for (int i = 0; i < Party_GetCurrentCount(party); i++) {
                     Pokemon *mon = Party_GetPokemonBySlotIndex(party, i);
 
-                    if (Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL)) {
+                    if (Pokemon_GetValue(mon, MON_DATA_HP, NULL)) {
                         alive++;
                     }
                 }
@@ -1942,7 +1945,7 @@ BOOL BattleSystem_CheckTrainerMessage(BattleSystem *battleSys, BattleContext *ba
                 for (int i = 0; i < Party_GetCurrentCount(party); i++) {
                     Pokemon *mon = Party_GetPokemonBySlotIndex(party, i);
 
-                    if (Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL)) {
+                    if (Pokemon_GetValue(mon, MON_DATA_HP, NULL)) {
                         alive++;
                     }
                 }
@@ -3162,7 +3165,7 @@ BOOL BattleSystem_AnyReplacementMons(BattleSystem *battleSys, BattleContext *bat
         pokemon = Party_GetPokemonBySlotIndex(party, i);
         if (Pokemon_GetValue(pokemon, MON_DATA_SPECIES, NULL)
             && Pokemon_GetValue(pokemon, MON_DATA_IS_EGG, NULL) == FALSE
-            && Pokemon_GetValue(pokemon, MON_DATA_CURRENT_HP, NULL)
+            && Pokemon_GetValue(pokemon, MON_DATA_HP, NULL)
             && selectedSlot1 != i
             && selectedSlot2 != i) {
             aliveMons++;
@@ -6284,7 +6287,7 @@ BOOL BattleSystem_PokemonIsOT(BattleSystem *battleSys, Pokemon *mon)
     const charcode_t *trName = TrainerInfo_Name(trInfo);
 
     charcode_t monOTName[TRAINER_NAME_LEN + 1];
-    Pokemon_GetValue(mon, MON_DATA_OTNAME, monOTName);
+    Pokemon_GetValue(mon, MON_DATA_OT_NAME, monOTName);
 
     if (trID == Pokemon_GetValue(mon, MON_DATA_OT_ID, NULL)
         && trGender == Pokemon_GetValue(mon, MON_DATA_OT_GENDER, NULL)
@@ -6313,7 +6316,7 @@ BOOL BattleSystem_TriggerFormChange(BattleSystem *battleSys, BattleContext *batt
                     && battleCtx->battleMons[battleCtx->msgBattlerTemp].type2 != TYPE_NORMAL) {
                     battleCtx->battleMons[battleCtx->msgBattlerTemp].type1 = TYPE_NORMAL;
                     battleCtx->battleMons[battleCtx->msgBattlerTemp].type2 = TYPE_NORMAL;
-                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = 0;
+                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = CASTFORM_FORM_NORMAL;
                     *subscript = subscript_form_change;
                     result = TRUE;
                     break;
@@ -6322,7 +6325,7 @@ BOOL BattleSystem_TriggerFormChange(BattleSystem *battleSys, BattleContext *batt
                     && battleCtx->battleMons[battleCtx->msgBattlerTemp].type2 != TYPE_FIRE) {
                     battleCtx->battleMons[battleCtx->msgBattlerTemp].type1 = TYPE_FIRE;
                     battleCtx->battleMons[battleCtx->msgBattlerTemp].type2 = TYPE_FIRE;
-                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = 1;
+                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = CASTFORM_FORM_SUNNY;
                     *subscript = subscript_form_change;
                     result = TRUE;
                     break;
@@ -6331,7 +6334,7 @@ BOOL BattleSystem_TriggerFormChange(BattleSystem *battleSys, BattleContext *batt
                     && battleCtx->battleMons[battleCtx->msgBattlerTemp].type2 != TYPE_WATER) {
                     battleCtx->battleMons[battleCtx->msgBattlerTemp].type1 = TYPE_WATER;
                     battleCtx->battleMons[battleCtx->msgBattlerTemp].type2 = TYPE_WATER;
-                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = 2;
+                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = CASTFORM_FORM_RAINY;
                     *subscript = subscript_form_change;
                     result = TRUE;
                     break;
@@ -6340,7 +6343,7 @@ BOOL BattleSystem_TriggerFormChange(BattleSystem *battleSys, BattleContext *batt
                     && battleCtx->battleMons[battleCtx->msgBattlerTemp].type2 != TYPE_ICE) {
                     battleCtx->battleMons[battleCtx->msgBattlerTemp].type1 = TYPE_ICE;
                     battleCtx->battleMons[battleCtx->msgBattlerTemp].type2 = TYPE_ICE;
-                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = 3;
+                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = CASTFORM_FORM_SNOWY;
                     *subscript = subscript_form_change;
                     result = TRUE;
                     break;
@@ -6349,7 +6352,7 @@ BOOL BattleSystem_TriggerFormChange(BattleSystem *battleSys, BattleContext *batt
                 && battleCtx->battleMons[battleCtx->msgBattlerTemp].type2 != TYPE_NORMAL) {
                 battleCtx->battleMons[battleCtx->msgBattlerTemp].type1 = TYPE_NORMAL;
                 battleCtx->battleMons[battleCtx->msgBattlerTemp].type2 = TYPE_NORMAL;
-                battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = 0;
+                battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = CASTFORM_FORM_NORMAL;
                 *subscript = subscript_form_change;
                 result = TRUE;
                 break;
@@ -6360,29 +6363,29 @@ BOOL BattleSystem_TriggerFormChange(BattleSystem *battleSys, BattleContext *batt
             && battleCtx->battleMons[battleCtx->msgBattlerTemp].curHP) {
             if (NO_CLOUD_NINE) {
                 if ((battleCtx->fieldConditionsMask & FIELD_CONDITION_CASTFORM) == FALSE
-                    && battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum == 1) {
-                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = 0;
+                    && battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum == CHERRIM_FORM_SUNSHINE) {
+                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = CHERRIM_FORM_OVERCAST;
                     *subscript = subscript_form_change;
                     result = TRUE;
                     break;
-                } else if (WEATHER_IS_SUN && battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum == 0) {
-                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = 1;
+                } else if (WEATHER_IS_SUN && battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum == CHERRIM_FORM_OVERCAST) {
+                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = CHERRIM_FORM_SUNSHINE;
                     *subscript = subscript_form_change;
                     result = TRUE;
                     break;
-                } else if (WEATHER_IS_RAIN && battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum == 1) {
-                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = 0;
+                } else if (WEATHER_IS_RAIN && battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum == CHERRIM_FORM_SUNSHINE) {
+                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = CHERRIM_FORM_OVERCAST;
                     *subscript = subscript_form_change;
                     result = TRUE;
                     break;
-                } else if (WEATHER_IS_HAIL && battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum == 1) {
-                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = 0;
+                } else if (WEATHER_IS_HAIL && battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum == CHERRIM_FORM_SUNSHINE) {
+                    battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = CHERRIM_FORM_OVERCAST;
                     *subscript = subscript_form_change;
                     result = TRUE;
                     break;
                 }
             } else if (battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum == 1) {
-                battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = 0;
+                battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = CHERRIM_FORM_OVERCAST;
                 *subscript = subscript_form_change;
                 result = TRUE;
                 break;
@@ -6404,7 +6407,7 @@ BOOL BattleSystem_TriggerFormChange(BattleSystem *battleSys, BattleContext *batt
 
         if (battleCtx->battleMons[battleCtx->msgBattlerTemp].species == SPECIES_GIRATINA
             && battleCtx->battleMons[battleCtx->msgBattlerTemp].curHP
-            && battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum == 1
+            && battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum == GIRATINA_FORM_ORIGIN
             && ((battleCtx->battleMons[battleCtx->msgBattlerTemp].statusVolatile & VOLATILE_CONDITION_TRANSFORM)
                 || ((BattleSystem_BattleStatus(battleSys) & BATTLE_STATUS_DISTORTION) == FALSE
                     && battleCtx->battleMons[battleCtx->msgBattlerTemp].heldItem != ITEM_GRISEOUS_ORB))) {
@@ -6425,7 +6428,7 @@ BOOL BattleSystem_TriggerFormChange(BattleSystem *battleSys, BattleContext *batt
                 Pokemon_SetValue(mon, MON_DATA_HELD_ITEM, &tmp);
 
                 // Force Giratina-Altered form
-                tmp = 0;
+                tmp = GIRATINA_FORM_ALTERED;
                 Pokemon_SetValue(mon, MON_DATA_FORM, &tmp);
                 Pokemon_SetGiratinaFormByHeldItem(mon);
 
@@ -6435,7 +6438,7 @@ BOOL BattleSystem_TriggerFormChange(BattleSystem *battleSys, BattleContext *batt
                 battleCtx->battleMons[battleCtx->msgBattlerTemp].spAttack = Pokemon_GetValue(mon, MON_DATA_SP_ATK, 0);
                 battleCtx->battleMons[battleCtx->msgBattlerTemp].spDefense = Pokemon_GetValue(mon, MON_DATA_SP_DEF, 0);
                 battleCtx->battleMons[battleCtx->msgBattlerTemp].ability = Pokemon_GetValue(mon, MON_DATA_ABILITY, 0);
-                battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = 0;
+                battleCtx->battleMons[battleCtx->msgBattlerTemp].formNum = GIRATINA_FORM_ALTERED;
                 battleCtx->battleStatusMask2 |= SYSCTL_FORM_CHANGE;
 
                 BattleIO_UpdatePartyMon(battleSys, battleCtx, battleCtx->msgBattlerTemp);
@@ -7955,11 +7958,11 @@ int BattleAI_PostKOSwitchIn(BattleSystem *battleSys, int battler)
 
         for (i = 0; i < partySize; i++) {
             mon = BattleSystem_PartyPokemon(battleSys, battler, i);
-            monSpecies = Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL);
+            monSpecies = Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL);
 
             if (monSpecies != SPECIES_NONE
                 && monSpecies != SPECIES_EGG
-                && Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL)
+                && Pokemon_GetValue(mon, MON_DATA_HP, NULL)
                 && (battlersDisregarded & FlagIndex(i)) == FALSE
                 && battleCtx->selectedPartySlot[slot1] != i
                 && battleCtx->selectedPartySlot[slot2] != i
@@ -8030,11 +8033,11 @@ int BattleAI_PostKOSwitchIn(BattleSystem *battleSys, int battler)
     // party-order.
     for (i = 0; i < partySize; i++) {
         mon = BattleSystem_PartyPokemon(battleSys, battler, i);
-        monSpecies = Pokemon_GetValue(mon, MON_DATA_SPECIES_EGG, NULL);
+        monSpecies = Pokemon_GetValue(mon, MON_DATA_SPECIES_OR_EGG, NULL);
 
         if (monSpecies != SPECIES_NONE
             && monSpecies != SPECIES_EGG
-            && Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL)
+            && Pokemon_GetValue(mon, MON_DATA_HP, NULL)
             && battleCtx->selectedPartySlot[slot1] != i
             && battleCtx->selectedPartySlot[slot2] != i
             && i != battleCtx->aiSwitchedPartySlot[slot1]

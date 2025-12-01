@@ -180,8 +180,8 @@ static void ov56_02256294(UnkStruct_ov56_02256468 *param0)
     param0->unk_2D8.unk_02 = 0;
     param0->unk_2D8.unk_04 = 0;
     param0->unk_2D8.unk_06 = 0;
-    param0->unk_18 = StringTemplate_Default(HEAP_ID_FIELD);
-    param0->unk_1C = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNION_ROOM, HEAP_ID_FIELD);
+    param0->unk_18 = StringTemplate_Default(HEAP_ID_FIELD1);
+    param0->unk_1C = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNION_ROOM, HEAP_ID_FIELD1);
     param0->unk_20 = Graphics_GetScrnData(NARC_INDEX_GRAPHIC__UNIONROOM, 3, 1, &(param0->unk_24), 4);
 }
 
@@ -277,19 +277,18 @@ static void ov56_02256508(BgConfig *param0)
 
     {
         BgTemplate v0 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x6000,
-            GX_BG_CHARBASE_0x00000,
-            GX_BG_EXTPLTT_01,
-            1,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x6000,
+            .charBase = GX_BG_CHARBASE_0x00000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 1,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_SUB_0, &v0, 0);
@@ -299,19 +298,18 @@ static void ov56_02256508(BgConfig *param0)
 
     {
         BgTemplate v1 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x6800,
-            GX_BG_CHARBASE_0x00000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x6800,
+            .charBase = GX_BG_CHARBASE_0x00000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_SUB_1, &v1, 0);
@@ -321,19 +319,18 @@ static void ov56_02256508(BgConfig *param0)
 
     {
         BgTemplate v2 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x7000,
-            GX_BG_CHARBASE_0x00000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x7000,
+            .charBase = GX_BG_CHARBASE_0x00000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_SUB_2, &v2, 0);
@@ -343,28 +340,27 @@ static void ov56_02256508(BgConfig *param0)
 
     {
         BgTemplate v3 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x7800,
-            GX_BG_CHARBASE_0x00000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x7800,
+            .charBase = GX_BG_CHARBASE_0x00000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_SUB_3, &v3, 0);
         GXLayers_EngineBToggleLayers(GX_PLANEMASK_BG3, 0);
     }
 
-    Graphics_LoadPalette(NARC_INDEX_GRAPHIC__UNIONROOM, 0, 4, 0, 0x20 * 3, HEAP_ID_FIELD);
-    Graphics_LoadTilesToBgLayer(NARC_INDEX_GRAPHIC__UNIONROOM, 2, param0, 7, 0, (32 * 5) * 0x20, 1, HEAP_ID_FIELD);
-    Graphics_LoadTilemapToBgLayer(NARC_INDEX_GRAPHIC__UNIONROOM, 4, param0, 7, 0, 32 * 24 * 2, 1, HEAP_ID_FIELD);
+    Graphics_LoadPalette(NARC_INDEX_GRAPHIC__UNIONROOM, 0, 4, 0, 0x20 * 3, HEAP_ID_FIELD1);
+    Graphics_LoadTilesToBgLayer(NARC_INDEX_GRAPHIC__UNIONROOM, 2, param0, 7, 0, (32 * 5) * 0x20, 1, HEAP_ID_FIELD1);
+    Graphics_LoadTilemapToBgLayer(NARC_INDEX_GRAPHIC__UNIONROOM, 4, param0, 7, 0, 32 * 24 * 2, 1, HEAP_ID_FIELD1);
     FieldMessage_LoadTextPalettes(4, FALSE);
 }
 
@@ -372,16 +368,16 @@ static void ov56_02256634(UnkStruct_ov56_02256468 *param0)
 {
     int v0;
 
-    param0->unk_28 = SpriteList_InitRendering(10, &param0->unk_2C, HEAP_ID_FIELD);
+    param0->unk_28 = SpriteList_InitRendering(10, &param0->unk_2C, HEAP_ID_FIELD1);
 
     for (v0 = 0; v0 < 4; v0++) {
-        param0->unk_1B8[v0] = SpriteResourceCollection_New(1, v0, HEAP_ID_FIELD);
+        param0->unk_1B8[v0] = SpriteResourceCollection_New(1, v0, HEAP_ID_FIELD1);
     }
 
-    param0->unk_1C8[0] = SpriteResourceCollection_AddTiles(param0->unk_1B8[0], 74, 5, 1, 999, NNS_G2D_VRAM_TYPE_2DSUB, HEAP_ID_FIELD);
-    param0->unk_1C8[1] = SpriteResourceCollection_AddPalette(param0->unk_1B8[1], 74, 1, 0, 999, NNS_G2D_VRAM_TYPE_2DSUB, 1, HEAP_ID_FIELD);
-    param0->unk_1C8[2] = SpriteResourceCollection_Add(param0->unk_1B8[2], 74, 6, 1, 999, 2, HEAP_ID_FIELD);
-    param0->unk_1C8[3] = SpriteResourceCollection_Add(param0->unk_1B8[3], 74, 7, 1, 999, 3, HEAP_ID_FIELD);
+    param0->unk_1C8[0] = SpriteResourceCollection_AddTiles(param0->unk_1B8[0], 74, 5, 1, 999, NNS_G2D_VRAM_TYPE_2DSUB, HEAP_ID_FIELD1);
+    param0->unk_1C8[1] = SpriteResourceCollection_AddPalette(param0->unk_1B8[1], 74, 1, 0, 999, NNS_G2D_VRAM_TYPE_2DSUB, 1, HEAP_ID_FIELD1);
+    param0->unk_1C8[2] = SpriteResourceCollection_Add(param0->unk_1B8[2], 74, 6, 1, 999, 2, HEAP_ID_FIELD1);
+    param0->unk_1C8[3] = SpriteResourceCollection_Add(param0->unk_1B8[3], 74, 7, 1, 999, 3, HEAP_ID_FIELD1);
 
     SpriteTransfer_RequestCharAtEnd(param0->unk_1C8[0]);
     SpriteTransfer_RequestPlttFreeSpace(param0->unk_1C8[1]);
@@ -411,7 +407,7 @@ static void ov56_02256704(UnkStruct_ov56_02256468 *param0)
         v1.affineZRotation = 0;
         v1.priority = 0;
         v1.vramType = NNS_G2D_VRAM_TYPE_2DSUB;
-        v1.heapID = HEAP_ID_FIELD;
+        v1.heapID = HEAP_ID_FIELD1;
 
         for (v0 = 0; v0 < 3; v0++) {
             v1.position.x = FX32_CONST(256 - 24);

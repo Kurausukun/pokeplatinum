@@ -90,11 +90,11 @@ int ov61_0222B008(UnkStruct_ov62_022349A8 *param0, const UnkStruct_ov62_02241130
     param0->unk_14C = -1;
     param0->unk_3E8 = 23004;
     param0->unk_3EC = 23004;
-    param0->unk_3B4 = Heap_AllocFromHeap(param1->heapID, ov61_0222DE8C(-1));
+    param0->unk_3B4 = Heap_Alloc(param1->heapID, ov61_0222DE8C(-1));
 
     MI_CpuClear8(param0->unk_3B4, ov61_0222DE8C(-1));
 
-    param0->unk_3F4 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0695, param1->heapID);
+    param0->unk_3F4 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0695, param1->heapID);
     param0->unk_3F8 = StringTemplate_Default(param1->heapID);
     param0->unk_3FC = Strbuf_Init((16 * 8 * 2), param1->heapID);
     param0->unk_18C = ov61_0222BBF0(param1->heapID);
@@ -147,7 +147,7 @@ static int ov61_0222B168(UnkStruct_ov62_022349A8 *param0, UnkStruct_ov61_0222B13
 {
     int v0, v1;
 
-    v0 = ov4_021D1F3C(-param0->unk_3E0, param0->unk_3E4);
+    v0 = NintendoWFC_GetErrorCode(-param0->unk_3E0, param0->unk_3E4);
     ov61_0222BB60(param0, v0, -param0->unk_3E0);
 
     return 1;
@@ -785,7 +785,7 @@ static void *ov61_0222BBF0(int heapID)
     void *v2;
     int v3 = 0x2000;
 
-    v0 = Heap_AllocFromHeap(heapID, v3);
+    v0 = Heap_Alloc(heapID, v3);
     v2 = v0;
     v1 = (void *)((u32)v0 + v3);
     v0 = OS_InitAlloc(OS_ARENA_MAIN, v0, v1, 1);

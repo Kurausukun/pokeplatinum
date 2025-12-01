@@ -20,6 +20,7 @@
 
 #include "bg_window.h"
 #include "font.h"
+#include "font_special_chars.h"
 #include "game_options.h"
 #include "graphics.h"
 #include "gx_layers.h"
@@ -48,7 +49,6 @@
 #include "system_flags.h"
 #include "touch_pad.h"
 #include "trainer_info.h"
-#include "unk_0200C440.h"
 #include "unk_02015F84.h"
 #include "unk_020393C8.h"
 #include "unk_0208C098.h"
@@ -255,7 +255,7 @@ static int PokemonSummaryScreen_Init(ApplicationManager *appMan, int *state)
     SetVBlankCallback(PokemonSummaryScreenVBlank, summaryScreen);
     GXLayers_TurnBothDispOn();
     Sound_SetSceneAndPlayBGM(SOUND_SCENE_SUB_61, SEQ_NONE, 0);
-    DrawWifiConnectionIcon();
+    NetworkIcon_Init();
     NARC_dtor(narc);
 
     return TRUE;
@@ -267,7 +267,7 @@ static int PokemonSummaryScreen_Main(ApplicationManager *appMan, int *state)
 
     switch (*state) {
     case SUMMARY_STATE_TRANSITION_IN:
-        sub_0208C120(0, HEAP_ID_POKEMON_SUMMARY_SCREEN);
+        App_StartScreenFade(FALSE, HEAP_ID_POKEMON_SUMMARY_SCREEN);
         *state = SUMMARY_STATE_WAIT_TRANSITION;
         break;
     case SUMMARY_STATE_WAIT_TRANSITION:
@@ -416,7 +416,6 @@ static void SetupBgs(BgConfig *bgConfig)
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 0,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
 
@@ -435,7 +434,6 @@ static void SetupBgs(BgConfig *bgConfig)
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 1,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
 
@@ -455,7 +453,6 @@ static void SetupBgs(BgConfig *bgConfig)
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 3,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
 
@@ -473,7 +470,6 @@ static void SetupBgs(BgConfig *bgConfig)
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 0,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
 
@@ -492,7 +488,6 @@ static void SetupBgs(BgConfig *bgConfig)
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 1,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
 
@@ -537,15 +532,15 @@ static void SetAlphaBlending(void)
 
 static void InitializeStringsAndCopyOTName(PokemonSummaryScreen *summaryScreen)
 {
-    summaryScreen->msgLoader = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_POKEMON_SUMMARY_SCREEN, HEAP_ID_POKEMON_SUMMARY_SCREEN);
-    summaryScreen->ribbonLoader = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_RIBBON_NAMES, HEAP_ID_POKEMON_SUMMARY_SCREEN);
-    summaryScreen->unk_684 = sub_0200C440(1, 2, 0, HEAP_ID_POKEMON_SUMMARY_SCREEN);
+    summaryScreen->msgLoader = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_POKEMON_SUMMARY_SCREEN, HEAP_ID_POKEMON_SUMMARY_SCREEN);
+    summaryScreen->ribbonLoader = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_RIBBON_NAMES, HEAP_ID_POKEMON_SUMMARY_SCREEN);
+    summaryScreen->unk_684 = FontSpecialChars_Init(1, 2, 0, HEAP_ID_POKEMON_SUMMARY_SCREEN);
     summaryScreen->strFormatter = StringTemplate_Default(HEAP_ID_POKEMON_SUMMARY_SCREEN);
     summaryScreen->monData.speciesName = Strbuf_Init(MON_NAME_LEN + 2, HEAP_ID_POKEMON_SUMMARY_SCREEN);
     summaryScreen->monData.nickname = Strbuf_Init(MON_NAME_LEN + 2, HEAP_ID_POKEMON_SUMMARY_SCREEN);
     summaryScreen->monData.OTName = Strbuf_Init(TRAINER_NAME_LEN + 1, HEAP_ID_POKEMON_SUMMARY_SCREEN);
     summaryScreen->strbuf = Strbuf_Init(SUMMARY_STRBUF_LEN, HEAP_ID_POKEMON_SUMMARY_SCREEN);
-    summaryScreen->moveNameLoader = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_MOVE_NAMES, HEAP_ID_POKEMON_SUMMARY_SCREEN);
+    summaryScreen->moveNameLoader = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_MOVE_NAMES, HEAP_ID_POKEMON_SUMMARY_SCREEN);
     summaryScreen->playerName = Strbuf_Init(TRAINER_NAME_LEN + 1, HEAP_ID_POKEMON_SUMMARY_SCREEN);
 
     if (summaryScreen->data->OTName != NULL) {
@@ -558,7 +553,7 @@ static void FreeStrings(PokemonSummaryScreen *summaryScreen)
     MessageLoader_Free(summaryScreen->moveNameLoader);
     MessageLoader_Free(summaryScreen->ribbonLoader);
     MessageLoader_Free(summaryScreen->msgLoader);
-    sub_0200C560(summaryScreen->unk_684);
+    FontSpecialChars_Free(summaryScreen->unk_684);
     StringTemplate_Free(summaryScreen->strFormatter);
     Strbuf_Free(summaryScreen->monData.speciesName);
     Strbuf_Free(summaryScreen->monData.nickname);
@@ -987,7 +982,7 @@ static int SetupPoffinFeedConditionPage(PokemonSummaryScreen *summaryScreen)
         }
 
         Font_LoadScreenIndicatorsPalette(PAL_LOAD_MAIN_BG, PLTT_OFFSET(14), HEAP_ID_POKEMON_SUMMARY_SCREEN);
-        LoadMessageBoxGraphics(summaryScreen->bgConfig, BG_LAYER_MAIN_1, (1024 - (18 + 12)), 13, Options_Frame(summaryScreen->data->options), HEAP_ID_POKEMON_SUMMARY_SCREEN);
+        LoadMessageBoxGraphics(summaryScreen->bgConfig, BG_LAYER_MAIN_1, 1024 - (18 + 12), 13, Options_Frame(summaryScreen->data->options), HEAP_ID_POKEMON_SUMMARY_SCREEN);
 
         if (summaryScreen->pageState == STAT_INCREASE_NONE) {
             PokemonSummaryScreen_PrintPoffinFeedMsg(summaryScreen, SUMMARY_MSG_NOTHING_CHANGED);
@@ -1033,7 +1028,7 @@ static int WaitForPoffinFeedMsgInput(PokemonSummaryScreen *dummy)
 
 static u8 SummaryScreenTransitionOut(PokemonSummaryScreen *dummy)
 {
-    sub_0208C120(1, HEAP_ID_POKEMON_SUMMARY_SCREEN);
+    App_StartScreenFade(TRUE, HEAP_ID_POKEMON_SUMMARY_SCREEN);
     return SUMMARY_STATE_WAIT_EXIT;
 }
 
@@ -1084,7 +1079,7 @@ static void SetMonDataFromMon(PokemonSummaryScreen *summaryScreen, Pokemon *mon,
     monData->level = Pokemon_GetValue(mon, MON_DATA_LEVEL, NULL);
     monData->isEgg = Pokemon_GetValue(mon, MON_DATA_IS_EGG, NULL);
 
-    if (Pokemon_GetValue(mon, MON_DATA_NIDORAN_HAS_NICKNAME, NULL) == TRUE && monData->isEgg == FALSE) {
+    if (Pokemon_GetValue(mon, MON_DATA_NO_PRINT_GENDER, NULL) == TRUE && monData->isEgg == FALSE) {
         monData->hideGender = FALSE;
     } else {
         monData->hideGender = TRUE;
@@ -1095,7 +1090,7 @@ static void SetMonDataFromMon(PokemonSummaryScreen *summaryScreen, Pokemon *mon,
     monData->type1 = Pokemon_GetValue(mon, MON_DATA_TYPE_1, NULL);
     monData->type2 = Pokemon_GetValue(mon, MON_DATA_TYPE_2, NULL);
     monData->OTID = Pokemon_GetValue(mon, MON_DATA_OT_ID, NULL);
-    monData->curExp = Pokemon_GetValue(mon, MON_DATA_EXP, NULL);
+    monData->curExp = Pokemon_GetValue(mon, MON_DATA_EXPERIENCE, NULL);
     monData->OTGender = Pokemon_GetValue(mon, MON_DATA_OT_GENDER, NULL);
     monData->curLevelExp = Pokemon_GetSpeciesBaseExpAt(monData->species, monData->level);
 
@@ -1105,7 +1100,7 @@ static void SetMonDataFromMon(PokemonSummaryScreen *summaryScreen, Pokemon *mon,
         monData->nextLevelExp = Pokemon_GetSpeciesBaseExpAt(monData->species, monData->level + 1);
     }
 
-    monData->curHP = Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL);
+    monData->curHP = Pokemon_GetValue(mon, MON_DATA_HP, NULL);
     monData->maxHP = Pokemon_GetValue(mon, MON_DATA_MAX_HP, NULL);
     monData->attack = Pokemon_GetValue(mon, MON_DATA_ATK, NULL);
     monData->defense = Pokemon_GetValue(mon, MON_DATA_DEF, NULL);
@@ -1119,7 +1114,7 @@ static void SetMonDataFromMon(PokemonSummaryScreen *summaryScreen, Pokemon *mon,
     u8 maxPP;
     for (i = 0; i < LEARNED_MOVES_MAX; i++) {
         monData->moves[i] = Pokemon_GetValue(mon, MON_DATA_MOVE1 + i, NULL);
-        monData->curPP[i] = Pokemon_GetValue(mon, MON_DATA_MOVE1_CUR_PP + i, NULL);
+        monData->curPP[i] = Pokemon_GetValue(mon, MON_DATA_MOVE1_PP + i, NULL);
         maxPP = Pokemon_GetValue(mon, MON_DATA_MOVE1_PP_UPS + i, NULL);
         monData->maxPP[i] = MoveTable_CalcMaxPP(monData->moves[i], maxPP);
     }
@@ -1139,7 +1134,7 @@ static void SetMonDataFromMon(PokemonSummaryScreen *summaryScreen, Pokemon *mon,
         }
     }
 
-    monData->markings = Pokemon_GetValue(mon, MON_DATA_MARKS, NULL);
+    monData->markings = Pokemon_GetValue(mon, MON_DATA_MARKINGS, NULL);
     monData->form = Pokemon_GetValue(mon, MON_DATA_FORM, NULL);
     monData->status = PokemonSummaryScreen_StatusIconAnimIdx(mon);
 
@@ -1184,7 +1179,7 @@ static void PlayMonCry(PokemonSummaryScreen *summaryScreen)
     }
 
     u8 cryDelay;
-    PokeSprite_LoadCryDelay(summaryScreen->narcPlPokeData, &cryDelay, summaryScreen->monData.species, 1);
+    PokemonSprite_LoadCryDelay(summaryScreen->narcPlPokeData, &cryDelay, summaryScreen->monData.species, 1);
 
     if (summaryScreen->monData.species == SPECIES_CHATOT) {
         Sound_PlayDelayedChatotCry(summaryScreen->data->chatotCry, 0, 100, 0, cryDelay);
@@ -2172,7 +2167,7 @@ static int TryFeedPoffin(PokemonSummaryScreen *summaryScreen)
 {
     if (summaryScreen->monData.sheen == MAX_POKEMON_SHEEN) {
         Font_LoadScreenIndicatorsPalette(PAL_LOAD_MAIN_BG, PLTT_OFFSET(14), HEAP_ID_POKEMON_SUMMARY_SCREEN);
-        LoadMessageBoxGraphics(summaryScreen->bgConfig, BG_LAYER_MAIN_1, (1024 - (18 + 12)), 13, Options_Frame(summaryScreen->data->options), HEAP_ID_POKEMON_SUMMARY_SCREEN);
+        LoadMessageBoxGraphics(summaryScreen->bgConfig, BG_LAYER_MAIN_1, 1024 - (18 + 12), 13, Options_Frame(summaryScreen->data->options), HEAP_ID_POKEMON_SUMMARY_SCREEN);
         PokemonSummaryScreen_PrintPoffinFeedMsg(summaryScreen, SUMMARY_MSG_MON_WONT_EAT_MORE);
         summaryScreen->data->returnMode = SUMMARY_RETURN_CANCEL;
 
@@ -2212,9 +2207,9 @@ u32 PokemonSummaryScreen_StatusIconAnim(void)
 
 u32 PokemonSummaryScreen_StatusIconAnimIdx(Pokemon *mon)
 {
-    u32 statusCondition = Pokemon_GetValue(mon, MON_DATA_STATUS_CONDITION, NULL);
+    u32 statusCondition = Pokemon_GetValue(mon, MON_DATA_STATUS, NULL);
 
-    if (Pokemon_GetValue(mon, MON_DATA_CURRENT_HP, NULL) == 0) {
+    if (Pokemon_GetValue(mon, MON_DATA_HP, NULL) == 0) {
         return SUMMARY_CONDITION_FAINTED;
     } else if ((statusCondition & (MON_CONDITION_POISON | MON_CONDITION_TOXIC)) != MON_CONDITION_NONE) {
         return SUMMARY_CONDITION_POISON;

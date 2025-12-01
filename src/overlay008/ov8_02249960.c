@@ -33,7 +33,6 @@
 #include "overlay005/ov5_021F5A10.h"
 #include "overlay005/struct_ov5_021D57D8_decl.h"
 #include "overlay008/struct_ov8_02249FB8.h"
-#include "overlay101/struct_ov101_021D5D90_decl.h"
 
 #include "bg_window.h"
 #include "camera.h"
@@ -47,6 +46,7 @@
 #include "map_tile_behavior.h"
 #include "math_util.h"
 #include "message.h"
+#include "overworld_anim_manager.h"
 #include "persisted_map_features.h"
 #include "player_avatar.h"
 #include "render_window.h"
@@ -64,8 +64,9 @@
 #include "unk_0205F180.h"
 #include "unk_020655F4.h"
 #include "unk_02067A84.h"
-#include "unk_020711EC.h"
 #include "vars_flags.h"
+
+#include "res/text/bank/eterna_city_gym.h"
 
 typedef struct {
     int unk_00;
@@ -196,7 +197,7 @@ typedef struct {
     int unk_00;
     int unk_04;
     MapObject *unk_08;
-    UnkStruct_ov101_021D5D90 *unk_0C;
+    OverworldAnimManager *unk_0C;
 } UnkStruct_ov8_0224B80C;
 
 typedef struct {
@@ -285,7 +286,7 @@ typedef struct {
     int unk_04;
     int unk_08;
     SysTask *unk_0C;
-    UnkStruct_ov101_021D5D90 *unk_10;
+    OverworldAnimManager *unk_10;
     MapObject *unk_14;
     UnkStruct_ov8_0224C444 *unk_18;
 } UnkStruct_ov8_0224C4F8;
@@ -338,26 +339,25 @@ static void ov8_0224996C(const u8 param0, int *param1)
     (*param1) ^= (0x1 << param0);
 }
 
-void ov8_0224997C(FieldSystem *fieldSystem)
+void PastoriaGym_PressButton(FieldSystem *fieldSystem)
 {
-    TerrainCollisionHitbox v0;
-    int v1, v2;
-    BOOL v3;
-    int v4;
-    int v5[] = {
+    TerrainCollisionHitbox terrainCollision;
+    BOOL hasCollisionHit;
+    int mapPropModelID;
+    int pastoriaButtonTypes[] = {
         MAP_PROP_MODEL_PASTORIA_GYM_BLUE_BUTTON,
         MAP_PROP_MODEL_PASTORIA_GYM_GREEN_BUTTON,
         MAP_PROP_MODEL_PASTORIA_GYM_ORANGE_BUTTON
     };
 
-    v1 = Player_GetXPos(fieldSystem->playerAvatar);
-    v2 = Player_GetZPos(fieldSystem->playerAvatar);
+    int playerX = Player_GetXPos(fieldSystem->playerAvatar);
+    int playerY = Player_GetZPos(fieldSystem->playerAvatar);
 
-    TerrainCollisionHitbox_Init(v1, v2, 0, 0, 1, 1, &v0);
+    TerrainCollisionHitbox_Init(playerX, playerY, 0, 0, 1, 1, &terrainCollision);
 
-    v3 = FieldSystem_FindCollidingLoadedMapPropByModelIDs(fieldSystem, v5, NELEMS(v5), &v0, NULL, &v4);
+    hasCollisionHit = FieldSystem_FindCollidingLoadedMapPropByModelIDs(fieldSystem, pastoriaButtonTypes, NELEMS(pastoriaButtonTypes), &terrainCollision, NULL, &mapPropModelID);
 
-    if (v3) {
+    if (hasCollisionHit) {
         UnkStruct_ov8_0224997C *v6;
         PersistedMapFeatures *v7;
         UnkStruct_02071B10 *v8;
@@ -365,16 +365,16 @@ void ov8_0224997C(FieldSystem *fieldSystem)
         v7 = MiscSaveBlock_GetPersistedMapFeatures(FieldSystem_GetSaveData(fieldSystem));
         v8 = (UnkStruct_02071B10 *)PersistedMapFeatures_GetBuffer(v7, DYNAMIC_MAP_FEATURES_PASTORIA_GYM);
 
-        v6 = Heap_AllocFromHeapAtEnd(HEAP_ID_FIELDMAP, sizeof(UnkStruct_ov8_0224997C));
+        v6 = Heap_AllocAtEnd(HEAP_ID_FIELD2, sizeof(UnkStruct_ov8_0224997C));
         v6->unk_00 = 0;
 
-        if (v4 == 239) {
+        if (mapPropModelID == MAP_PROP_MODEL_PASTORIA_GYM_BLUE_BUTTON) {
             FieldTask_InitCall(fieldSystem->task, ov8_02249CD8, v6);
             v8->unk_00 = 2;
-        } else if (v4 == 240) {
+        } else if (mapPropModelID == MAP_PROP_MODEL_PASTORIA_GYM_GREEN_BUTTON) {
             FieldTask_InitCall(fieldSystem->task, ov8_02249B74, v6);
             v8->unk_00 = 1;
-        } else if (v4 == 241) {
+        } else if (mapPropModelID == MAP_PROP_MODEL_PASTORIA_GYM_ORANGE_BUTTON) {
             FieldTask_InitCall(fieldSystem->task, ov8_02249A94, v6);
             v8->unk_00 = 0;
         } else {
@@ -743,7 +743,7 @@ void include_ov8_02249960(void)
 
 void ov8_02249FB8(FieldSystem *fieldSystem)
 {
-    UnkStruct_ov8_0224997C *v0 = Heap_AllocFromHeapAtEnd(HEAP_ID_FIELDMAP, sizeof(UnkStruct_ov8_0224997C));
+    UnkStruct_ov8_0224997C *v0 = Heap_AllocAtEnd(HEAP_ID_FIELD2, sizeof(UnkStruct_ov8_0224997C));
     v0->unk_00 = 0;
 
     {
@@ -1238,7 +1238,7 @@ static void ov8_0224A254(UnkStruct_ov8_0224A1E4 *param0, const u8 param1)
     UnkStruct_ov8_0224997C *v2;
     PersistedMapFeatures *v3 = MiscSaveBlock_GetPersistedMapFeatures(FieldSystem_GetSaveData(param0->fieldSystem));
     UnkStruct_02071B30 *v4 = (UnkStruct_02071B30 *)PersistedMapFeatures_GetBuffer(v3, DYNAMIC_MAP_FEATURES_CANALAVE_GYM);
-    v2 = Heap_AllocFromHeapAtEnd(HEAP_ID_FIELDMAP, sizeof(UnkStruct_ov8_0224997C));
+    v2 = Heap_AllocAtEnd(HEAP_ID_FIELD2, sizeof(UnkStruct_ov8_0224997C));
 
     v2->unk_00 = 0;
     param0->unk_E8 = param1;
@@ -1554,7 +1554,7 @@ void CanalaveGym_DynamicMapFeaturesInit(FieldSystem *fieldSystem)
     PersistedMapFeatures *v1 = MiscSaveBlock_GetPersistedMapFeatures(FieldSystem_GetSaveData(fieldSystem));
     UnkStruct_02071B30 *v2 = (UnkStruct_02071B30 *)PersistedMapFeatures_GetBuffer(v1, DYNAMIC_MAP_FEATURES_CANALAVE_GYM);
 
-    fieldSystem->unk_04->dynamicMapFeaturesData = Heap_AllocFromHeap(HEAP_ID_FIELD, sizeof(UnkStruct_ov8_0224A1E4));
+    fieldSystem->unk_04->dynamicMapFeaturesData = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkStruct_ov8_0224A1E4));
 
     v0 = fieldSystem->unk_04->dynamicMapFeaturesData;
     v0->fieldSystem = fieldSystem;
@@ -2058,7 +2058,7 @@ void SunyshoreGym_DynamicMapFeaturesInit(FieldSystem *fieldSystem)
     PersistedMapFeatures *v1 = MiscSaveBlock_GetPersistedMapFeatures(FieldSystem_GetSaveData(fieldSystem));
     UnkStruct_02071B6C *v2 = (UnkStruct_02071B6C *)PersistedMapFeatures_GetBuffer(v1, DYNAMIC_MAP_FEATURES_SUNYSHORE_GYM);
 
-    fieldSystem->unk_04->dynamicMapFeaturesData = Heap_AllocFromHeap(HEAP_ID_FIELD, sizeof(UnkStruct_ov8_0224ABD4));
+    fieldSystem->unk_04->dynamicMapFeaturesData = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkStruct_ov8_0224ABD4));
 
     v0 = fieldSystem->unk_04->dynamicMapFeaturesData;
 
@@ -2140,7 +2140,7 @@ void ov8_0224AD34(FieldSystem *fieldSystem, const u8 param1)
     PersistedMapFeatures *v2 = MiscSaveBlock_GetPersistedMapFeatures(FieldSystem_GetSaveData(fieldSystem));
     UnkStruct_02071B6C *v3 = (UnkStruct_02071B6C *)PersistedMapFeatures_GetBuffer(v2, DYNAMIC_MAP_FEATURES_SUNYSHORE_GYM);
     v1 = (UnkStruct_ov8_0224ABD4 *)fieldSystem->unk_04->dynamicMapFeaturesData;
-    v0 = Heap_AllocFromHeapAtEnd(HEAP_ID_FIELDMAP, sizeof(UnkStruct_ov8_0224997C));
+    v0 = Heap_AllocAtEnd(HEAP_ID_FIELD2, sizeof(UnkStruct_ov8_0224997C));
 
     v0->unk_00 = 0;
 
@@ -2264,12 +2264,16 @@ static const u32 Unk_ov8_0224C700[2] = {
 };
 
 static const VecFx32 Unk_ov8_0224C7A0[2] = {
-    { ((11 << 4) * FX32_ONE) + ((16 * FX32_ONE) >> 1),
+    {
+        ((11 << 4) * FX32_ONE) + ((16 * FX32_ONE) >> 1),
         FX32_ONE * 12,
-        ((13 << 4) * FX32_ONE) + ((16 * FX32_ONE) >> 1) },
-    { ((11 << 4) * FX32_ONE) + ((16 * FX32_ONE) >> 1),
-        (FX32_ONE * 13),
-        ((13 << 4) * FX32_ONE) + ((16 * FX32_ONE) >> 1) }
+        ((13 << 4) * FX32_ONE) + ((16 * FX32_ONE) >> 1),
+    },
+    {
+        ((11 << 4) * FX32_ONE) + ((16 * FX32_ONE) >> 1),
+        FX32_ONE * 13,
+        ((13 << 4) * FX32_ONE) + ((16 * FX32_ONE) >> 1),
+    }
 };
 
 static const u16 Unk_ov8_0224C7B8[12] = {
@@ -2391,7 +2395,7 @@ void EternaGym_DynamicMapFeaturesInit(FieldSystem *fieldSystem)
 {
     PersistedMapFeatures *v0 = MiscSaveBlock_GetPersistedMapFeatures(FieldSystem_GetSaveData(fieldSystem));
     UnkStruct_02071BD0 *v1 = PersistedMapFeatures_GetBuffer(v0, DYNAMIC_MAP_FEATURES_ETERNA_GYM);
-    UnkStruct_ov8_0224AF00 *v2 = Heap_AllocFromHeap(HEAP_ID_FIELD, sizeof(UnkStruct_ov8_0224AF00));
+    UnkStruct_ov8_0224AF00 *v2 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkStruct_ov8_0224AF00));
 
     memset(v2, 0, sizeof(UnkStruct_ov8_0224AF00));
     fieldSystem->unk_04->dynamicMapFeaturesData = v2;
@@ -2516,7 +2520,7 @@ static void ov8_0224B18C(FieldSystem *fieldSystem, UnkStruct_ov8_0224B28C *param
 
     param1->unk_20 = MapObjectMan_AddMapObject(fieldSystem->mapObjMan, v0, v1, 0, 0x2000, 0x0, fieldSystem->location->mapId);
 
-    sub_020642F8(param1->unk_20);
+    MapObject_RecalculateObjectHeight(param1->unk_20);
     MapObject_SetHidden(param1->unk_20, 1);
     sub_02062D80(param1->unk_20, 0);
     MapObject_SetHeightCalculationDisabled(param1->unk_20, TRUE);
@@ -2797,7 +2801,7 @@ static BOOL ov8_0224B3D4(FieldTask *param0)
             v2->unk_00++;
 
             Sound_StopEffect(1593, 0);
-            MessageLoader_GetStrbuf(v2->unk_48, 12, v2->unk_4C);
+            MessageLoader_GetStrbuf(v2->unk_48, EternaGym_Text_FountainWaterLevelDropped, v2->unk_4C);
             FieldMessage_AddWindow(fieldSystem->bgConfig, v2->unk_44, 3);
             Window_EraseMessageBox(v2->unk_44, 0);
             FieldMessage_DrawWindow(v2->unk_44, SaveData_GetOptions(fieldSystem->saveData));
@@ -2845,7 +2849,7 @@ BOOL ov8_0224B67C(FieldSystem *fieldSystem, Window *param1, MessageLoader *param
         UnkStruct_ov8_0224AF00 *v3 = fieldSystem->unk_04->dynamicMapFeaturesData;
         const UnkStruct_ov8_0224C774 *v4 = &Unk_ov8_0224C774[v1->unk_00];
 
-        v2 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_ov8_0224B67C));
+        v2 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(UnkStruct_ov8_0224B67C));
         memset(v2, 0, sizeof(UnkStruct_ov8_0224B67C));
 
         v2->unk_44 = param1;
@@ -2925,7 +2929,7 @@ void VeilstoneGym_DynamicMapFeaturesInit(FieldSystem *fieldSystem)
 {
     PersistedMapFeatures *v0 = MiscSaveBlock_GetPersistedMapFeatures(FieldSystem_GetSaveData(fieldSystem));
     UnkStruct_02071BF8 *v1 = PersistedMapFeatures_GetBuffer(v0, DYNAMIC_MAP_FEATURES_VEILSTONE_GYM);
-    UnkStruct_ov8_0224B8D0 *v2 = Heap_AllocFromHeap(HEAP_ID_FIELD, sizeof(UnkStruct_ov8_0224B8D0));
+    UnkStruct_ov8_0224B8D0 *v2 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkStruct_ov8_0224B8D0));
 
     memset(v2, 0, sizeof(UnkStruct_ov8_0224B8D0));
 
@@ -3022,7 +3026,7 @@ static void ov8_0224B8A0(UnkStruct_ov8_0224B8A0 *param0)
     GF_ASSERT(param0->unk_08.unk_0C);
     GF_ASSERT(param0->unk_08.unk_08);
 
-    sub_0207136C(param0->unk_08.unk_0C);
+    OverworldAnimManager_Finish(param0->unk_08.unk_0C);
     MapObject_Delete(param0->unk_08.unk_08);
 
     param0->unk_00 = 0;
@@ -3211,7 +3215,7 @@ static int ov8_0224BBA0(UnkStruct_ov8_0224C098 *param0)
     int v3 = v1->unk_04;
 
     ov8_0224BAA0(param0->unk_3C, v2, v3, param0->unk_08, &param0->unk_1C);
-    sub_020715E4(v1->unk_0C, &param0->unk_20);
+    OverworldAnimManager_GetPosition(v1->unk_0C, &param0->unk_20);
 
     param0->unk_2C = ((FX32_ONE / 2) / 30);
     param0->unk_00 = 1;
@@ -3231,7 +3235,7 @@ static int ov8_0224BBD0(UnkStruct_ov8_0224C098 *param0)
 
     {
         UnkStruct_ov8_0224BCA8 *v1 = param0->unk_34;
-        UnkStruct_ov101_021D5D90 *v2 = v1->unk_08.unk_0C;
+        OverworldAnimManager *v2 = v1->unk_08.unk_0C;
 
         ov5_021F4698(v2, param0->unk_08, 1);
 
@@ -3251,7 +3255,7 @@ static int ov8_0224BBD0(UnkStruct_ov8_0224C098 *param0)
 static int ov8_0224BC48(UnkStruct_ov8_0224C098 *param0)
 {
     VecFx32_StepDirection(param0->unk_08, &param0->unk_20, param0->unk_2C);
-    sub_020715D4(param0->unk_34->unk_08.unk_0C, &param0->unk_20);
+    OverworldAnimManager_SetPosition(param0->unk_34->unk_08.unk_0C, &param0->unk_20);
 
     param0->unk_2C += ((FX32_ONE / 2) / 30);
     param0->unk_30 += param0->unk_2C;
@@ -3274,7 +3278,7 @@ static int ov8_0224BCA8(UnkStruct_ov8_0224C098 *param0)
     UnkStruct_ov8_0224BCA8 *v0 = param0->unk_34;
 
     VecFx32_StepDirection(param0->unk_08, &param0->unk_20, param0->unk_2C);
-    sub_020715D4(v0->unk_08.unk_0C, &param0->unk_20);
+    OverworldAnimManager_SetPosition(v0->unk_08.unk_0C, &param0->unk_20);
 
     param0->unk_30 += param0->unk_2C;
     param0->unk_04++;
@@ -3431,7 +3435,7 @@ static int (*const Unk_ov8_0224C818[11])(UnkStruct_ov8_0224C098 *) = {
 
 static UnkStruct_ov8_0224C098 *ov8_0224BED8(UnkStruct_ov8_0224B8D0 *param0, UnkStruct_ov8_0224BCA8 *param1, int param2)
 {
-    UnkStruct_ov8_0224C098 *v0 = Heap_AllocFromHeapAtEnd(HEAP_ID_FIELDMAP, sizeof(UnkStruct_ov8_0224C098));
+    UnkStruct_ov8_0224C098 *v0 = Heap_AllocAtEnd(HEAP_ID_FIELD2, sizeof(UnkStruct_ov8_0224C098));
     GF_ASSERT(v0 != NULL);
 
     memset(v0, 0, sizeof(UnkStruct_ov8_0224C098));
@@ -3518,7 +3522,7 @@ static void ov8_0224BFCC(FieldSystem *fieldSystem, UnkStruct_ov8_0224C098 *param
     v3->unk_14 = v1;
     v3->unk_30 = MapObjectMan_AddMapObject(fieldSystem->mapObjMan, v0, v1, 0, 0x2000, 0x0, fieldSystem->location->mapId);
 
-    sub_020642F8(v3->unk_30);
+    MapObject_RecalculateObjectHeight(v3->unk_30);
     MapObject_SetHidden(v3->unk_30, 1);
     sub_02062D80(v3->unk_30, 0);
     MapObject_SetHeightCalculationDisabled(v3->unk_30, TRUE);
@@ -3660,7 +3664,7 @@ void HearthomeGym_DynamicMapFeaturesInit(FieldSystem *fieldSystem)
 {
     PersistedMapFeatures *v0 = MiscSaveBlock_GetPersistedMapFeatures(FieldSystem_GetSaveData(fieldSystem));
     UnkStruct_02071C18 *v1 = PersistedMapFeatures_GetBuffer(v0, DYNAMIC_MAP_FEATURES_HEARTHOME_GYM);
-    UnkStruct_ov8_0224C444 *v2 = Heap_AllocFromHeap(HEAP_ID_FIELD, sizeof(UnkStruct_ov8_0224C444));
+    UnkStruct_ov8_0224C444 *v2 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkStruct_ov8_0224C444));
 
     memset(v2, 0, sizeof(UnkStruct_ov8_0224C444));
 

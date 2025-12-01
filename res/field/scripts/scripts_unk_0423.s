@@ -17,9 +17,9 @@ _001A:
     ApplyMovement LOCALID_PLAYER, _00D8
     WaitMovement
     Message 1
-    SetVar VAR_0x8004, 0x1B5
+    SetVar VAR_0x8004, ITEM_PAL_PAD
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     GoTo _0046
     End
 
@@ -114,7 +114,7 @@ _01A3:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    ScrCmd_2B7 VAR_RESULT
+    CheckPartyHasBadEgg VAR_RESULT
     GoToIfEq VAR_RESULT, 1, _0430
     GoTo _01C4
     End
@@ -195,14 +195,14 @@ _02AF:
     End
 
 _02CC:
-    ScrCmd_168 0, 0, 9, 5, 77
+    LoadDoorAnimation 0, 0, 9, 5, ANIMATION_TAG_DOOR_1
     Call _0320
     ApplyMovement LOCALID_PLAYER, _03C4
     WaitMovement
     Call _0328
     ApplyMovement LOCALID_PLAYER, _03CC
     WaitMovement
-    ScrCmd_168 0, 0, 9, 2, 77
+    LoadDoorAnimation 0, 0, 9, 2, ANIMATION_TAG_DOOR_1
     Call _0320
     ApplyMovement LOCALID_PLAYER, _03D4
     WaitMovement
@@ -211,18 +211,18 @@ _02CC:
     End
 
 _0320:
-    ScrCmd_16B 77
-    ScrCmd_169 77
+    PlayDoorOpenAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
     Return
 
 _0328:
-    ScrCmd_16C 77
-    ScrCmd_169 77
-    ScrCmd_16A 77
+    PlayDoorCloseAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
+    UnloadAnimation ANIMATION_TAG_DOOR_1
     Return
 
 _0333:
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     ScrCmd_1F8
     ScrCmd_2A4 VAR_RESULT
@@ -234,16 +234,16 @@ _035A:
     ScrCmd_0A3
 _035C:
     ReturnToField
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
-    ScrCmd_168 0, 0, 8, 2, 77
+    LoadDoorAnimation 0, 0, 8, 2, ANIMATION_TAG_DOOR_1
     Call _0320
     ApplyMovement LOCALID_PLAYER, _03EC
     WaitMovement
     Call _0328
     ApplyMovement LOCALID_PLAYER, _03FC
     WaitMovement
-    ScrCmd_168 0, 0, 8, 5, 77
+    LoadDoorAnimation 0, 0, 8, 5, ANIMATION_TAG_DOOR_1
     Call _0320
     ApplyMovement LOCALID_PLAYER, _0404
     WaitMovement
@@ -392,7 +392,7 @@ _0526:
     CloseMessage
     ApplyMovement LOCALID_PLAYER, _03B8
     WaitMovement
-    ScrCmd_168 0, 0, 5, 5, 77
+    LoadDoorAnimation 0, 0, 5, 5, ANIMATION_TAG_DOOR_1
     Call _0320
     ApplyMovement VAR_LAST_TALKED, _040C
     ApplyMovement LOCALID_PLAYER, _03C4
@@ -400,153 +400,55 @@ _0526:
     Call _0328
     ApplyMovement VAR_LAST_TALKED, _0414
     WaitMovement
-    ScrCmd_168 0, 0, 5, 2, 77
+    LoadDoorAnimation 0, 0, 5, 2, ANIMATION_TAG_DOOR_1
     Call _0320
     ApplyMovement LOCALID_PLAYER, _03E0
     ApplyMovement VAR_LAST_TALKED, _0424
     WaitMovement
     Call _0328
     SetVar VAR_MAP_LOCAL_3, 0
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     Warp MAP_HEADER_WIFI_PLAZA_ENTRANCE, 0, 20, 11, 0
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     End
 
-    .byte 188
-    .byte 0
-    .byte 6
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 189
-    .byte 0
-    .byte 248
-    .byte 1
-    .byte 179
-    .byte 0
-    .byte 12
-    .byte 128
-    .byte 41
-    .byte 0
-    .byte 4
-    .byte 128
-    .byte 12
-    .byte 128
-    .byte 247
-    .byte 2
-    .byte 4
-    .byte 128
-    .byte 161
-    .byte 0
-    .byte 188
-    .byte 0
-    .byte 6
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 189
-    .byte 0
-    .byte 104
-    .byte 1
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 5
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 77
-    .byte 26
-    .byte 0
-    .byte 15
-    .byte 253
-    .byte 0xFF
-    .byte 0xFF
-    .byte 94
-    .byte 0
-    .byte 0xFF
-    .byte 0
-    .byte 211
-    .byte 253
-    .byte 0xFF
-    .byte 0xFF
-    .byte 95
-    .byte 0
-    .byte 26
-    .byte 0
-    .byte 7
-    .byte 253
-    .byte 0xFF
-    .byte 0xFF
-    .byte 94
-    .byte 0
-    .byte 0xFF
-    .byte 0
-    .byte 211
-    .byte 253
-    .byte 0xFF
-    .byte 0xFF
-    .byte 95
-    .byte 0
-    .byte 104
-    .byte 1
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 5
-    .byte 0
-    .byte 5
-    .byte 0
-    .byte 77
-    .byte 26
-    .byte 0
-    .byte 228
-    .byte 252
-    .byte 0xFF
-    .byte 0xFF
-    .byte 94
-    .byte 0
-    .byte 0xFF
-    .byte 0
-    .byte 192
-    .byte 253
-    .byte 0xFF
-    .byte 0xFF
-    .byte 95
-    .byte 0
-    .byte 26
-    .byte 0
-    .byte 220
-    .byte 252
-    .byte 0xFF
-    .byte 0xFF
-    .byte 97
-    .byte 0
-    .byte 2
-    .byte 0
-
-_0650:
-    LockAll
-    ScrCmd_168 0, 0, 5, 2, 77
+Unk423_Unused:
+    FadeScreenOut
+    WaitFadeScreen
+    ScrCmd_1F8
+    ScrCmd_0B3 VAR_RESULT
+    SetVar VAR_0x8004, VAR_RESULT
+    ScrCmd_2F7 VAR_0x8004
+    ReturnToField
+    FadeScreenIn
+    WaitFadeScreen
+    LoadDoorAnimation 0, 0, 5, 2, ANIMATION_TAG_DOOR_1
     Call _0320
     ApplyMovement LOCALID_PLAYER, _03EC
     WaitMovement
     Call _0328
     ApplyMovement LOCALID_PLAYER, _03FC
     WaitMovement
-    ScrCmd_168 0, 0, 5, 5, 77
+    LoadDoorAnimation 0, 0, 5, 5, ANIMATION_TAG_DOOR_1
+    Call _0320
+    ApplyMovement LOCALID_PLAYER, _0404
+    WaitMovement
+    Call _0328
+    ReleaseAll
+    End
+
+_0650:
+    LockAll
+    LoadDoorAnimation 0, 0, 5, 2, ANIMATION_TAG_DOOR_1
+    Call _0320
+    ApplyMovement LOCALID_PLAYER, _03EC
+    WaitMovement
+    Call _0328
+    ApplyMovement LOCALID_PLAYER, _03FC
+    WaitMovement
+    LoadDoorAnimation 0, 0, 5, 5, ANIMATION_TAG_DOOR_1
     Call _0320
     ApplyMovement LOCALID_PLAYER, _0404
     WaitMovement

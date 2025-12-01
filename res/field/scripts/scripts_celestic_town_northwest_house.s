@@ -13,8 +13,8 @@ _0012:
     LockAll
     FacePlayer
     Message 0
-    CallCommonScript 0x7E3
-    ScrCmd_035
+    VendorGreeting
+    CloseMessageWithoutErasing
     PokeMartCommon
     ReleaseAll
     End
@@ -23,8 +23,8 @@ _002B:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    CallCommonScript 0x7E3
-    ScrCmd_035
+    VendorGreeting
+    CloseMessageWithoutErasing
     PokeMartCommon
     ReleaseAll
     End
@@ -33,8 +33,8 @@ _0041:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    CallCommonScript 0x7E3
-    ScrCmd_035
+    VendorGreeting
+    CloseMessageWithoutErasing
     PokeMartSpecialties MART_SPECIALTIES_ID_CELESTIC
     ReleaseAll
     End
@@ -56,7 +56,7 @@ _0093:
     SetVar VAR_0x8004, ITEM_CHOICE_SPECS
     SetVar VAR_0x8005, 1
     GoToIfCannotFitItem VAR_0x8004, VAR_0x8005, VAR_RESULT, _0174
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     SetFlag FLAG_UNK_0x0134
     Message 3
     GoTo _0153
@@ -67,7 +67,7 @@ _00D3:
     SetVar VAR_0x8004, ITEM_BLACKGLASSES
     SetVar VAR_0x8005, 1
     GoToIfCannotFitItem VAR_0x8004, VAR_0x8005, VAR_RESULT, _0174
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     SetFlag FLAG_UNK_0x0135
     Message 4
     GoTo _015E
@@ -78,7 +78,7 @@ _0113:
     SetVar VAR_0x8004, ITEM_WISE_GLASSES
     SetVar VAR_0x8005, 1
     GoToIfCannotFitItem VAR_0x8004, VAR_0x8005, VAR_RESULT, _0174
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     SetFlag FLAG_UNK_0x0136
     Message 5
     GoTo _0169
@@ -111,4 +111,4 @@ _0174:
     ReleaseAll
     End
 
-    .byte 0
+    .balign 4, 0

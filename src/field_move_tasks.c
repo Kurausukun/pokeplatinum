@@ -10,10 +10,10 @@
 #include "generated/object_events.h"
 
 #include "struct_decls/struct_02061AB4_decl.h"
-#include "struct_defs/struct_0203D8AC.h"
 #include "struct_defs/struct_020708E0.h"
 #include "struct_defs/struct_020711C8.h"
 
+#include "applications/town_map/main.h"
 #include "field/field_system.h"
 #include "overlay005/ov5_021DFB54.h"
 #include "overlay005/ov5_021F101C.h"
@@ -38,7 +38,6 @@
 #include "unk_0203C954.h"
 #include "unk_0203D1B8.h"
 #include "unk_0205F180.h"
-#include "unk_0206B70C.h"
 #include "unk_020711C8.h"
 #include "vars_flags.h"
 
@@ -257,7 +256,7 @@ static void FieldMoves_CanUseSurfDistortionWorld(FieldSystem *fieldSystem, Field
 
 static FieldMoveTaskData *FieldMoves_AllocateTaskData(const FieldMovePokemon *fieldMoveMon, const FieldMoveContext *fieldMoveContext)
 {
-    FieldMoveTaskData *taskData = Heap_AllocFromHeap(HEAP_ID_FIELD_TASK, sizeof(FieldMoveTaskData));
+    FieldMoveTaskData *taskData = Heap_Alloc(HEAP_ID_FIELD3, sizeof(FieldMoveTaskData));
 
     taskData->magicNumber = 0x19740205;
     taskData->mapObj = fieldMoveContext->mapObj;
@@ -343,14 +342,14 @@ static void FieldMoves_SetFlyTask(FieldMovePokemon *fieldMoveMon, const FieldMov
     FieldSystem *fieldSystem = FieldTask_GetFieldSystem(fieldMoveMon->fieldTask);
     StartMenu *menu = FieldTask_GetEnv(fieldMoveMon->fieldTask);
 
-    u32 *fieldMonID = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(u32));
+    u32 *fieldMonID = Heap_Alloc(HEAP_ID_FIELD2, sizeof(u32));
     *fieldMonID = fieldMoveMon->fieldMonId;
     menu->unk_260 = fieldMonID;
 
-    menu->taskData = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_0203D8AC));
+    menu->taskData = Heap_Alloc(HEAP_ID_FIELD2, sizeof(TownMapContext));
 
-    sub_0206B70C(fieldSystem, menu->taskData, 1);
-    sub_0203D884(fieldSystem, menu->taskData);
+    TownMapContext_Init(fieldSystem, menu->taskData, TOWN_MAP_MODE_FLY);
+    FieldSystem_OpenTownMap(fieldSystem, menu->taskData);
     sub_0203B674(menu, sub_0203C434);
 }
 
@@ -681,7 +680,7 @@ static void FieldMoves_SetTeleportTask(FieldMovePokemon *fieldMoveMon, const Fie
 
     FieldSystem_StartFieldMap(fieldSystem);
 
-    UnkStruct_020711C8 *v2 = sub_020711C8(HEAP_ID_FIELDMAP, fieldMoveMon->fieldMonId, fieldSystem->saveData);
+    UnkStruct_020711C8 *v2 = sub_020711C8(HEAP_ID_FIELD2, fieldMoveMon->fieldMonId, fieldSystem->saveData);
 
     menu->callback = FieldMoves_TeleportTask;
     menu->taskData = v2;
@@ -692,7 +691,7 @@ static BOOL FieldMoves_TeleportTask(FieldTask *param0)
 {
     FieldSystem *fieldSystem = FieldTask_GetFieldSystem(param0);
     UnkStruct_020711C8 *v1 = FieldTask_GetEnv(param0);
-    void *v2 = ov6_02247530(fieldSystem, v1->unk_00, HEAP_ID_FIELD);
+    void *v2 = ov6_02247530(fieldSystem, v1->unk_00, HEAP_ID_FIELD1);
 
     Heap_Free(v1);
     FieldTask_InitJump(param0, ov6_02247554, v2);
@@ -724,7 +723,7 @@ static void FieldMoves_SetDigTask(FieldMovePokemon *fieldMoveMon, const FieldMov
 
     FieldSystem_StartFieldMap(fieldSystem);
 
-    UnkStruct_020711C8 *v2 = sub_020711C8(HEAP_ID_FIELDMAP, fieldMoveMon->fieldMonId, fieldSystem->saveData);
+    UnkStruct_020711C8 *v2 = sub_020711C8(HEAP_ID_FIELD2, fieldMoveMon->fieldMonId, fieldSystem->saveData);
 
     v1->callback = FieldMoves_DigTask;
     v1->taskData = v2;
@@ -735,9 +734,9 @@ static BOOL FieldMoves_DigTask(FieldTask *param0)
 {
     FieldSystem *fieldSystem = FieldTask_GetFieldSystem(param0);
     UnkStruct_020711C8 *v1 = FieldTask_GetEnv(param0);
-    void *v2 = ov6_02247488(fieldSystem, v1->unk_00, HEAP_ID_FIELDMAP);
+    void *v2 = ov6_02247488(fieldSystem, v1->unk_00, HEAP_ID_FIELD2);
 
-    void *journalEntryLocationEvent = JournalEntry_CreateEventUsedMove(LOCATION_EVENT_USED_DIG - LOCATION_EVENT_USED_CUT, fieldSystem->location->mapId, HEAP_ID_FIELD);
+    void *journalEntryLocationEvent = JournalEntry_CreateEventUsedMove(LOCATION_EVENT_USED_DIG - LOCATION_EVENT_USED_CUT, fieldSystem->location->mapId, HEAP_ID_FIELD1);
     JournalEntry_SaveData(fieldSystem->journalEntry, journalEntryLocationEvent, JOURNAL_LOCATION);
 
     Heap_Free(v1);
@@ -763,7 +762,7 @@ static void FieldMoves_SetSweetScentTask(FieldMovePokemon *fieldMoveMon, const F
 {
     FieldSystem *fieldSystem = FieldTask_GetFieldSystem(fieldMoveMon->fieldTask);
     StartMenu *startMenu = FieldTask_GetEnv(fieldMoveMon->fieldTask);
-    UnkStruct_020711C8 *v2 = sub_020711C8(HEAP_ID_FIELDMAP, fieldMoveMon->fieldMonId, fieldSystem->saveData);
+    UnkStruct_020711C8 *v2 = sub_020711C8(HEAP_ID_FIELD2, fieldMoveMon->fieldMonId, fieldSystem->saveData);
     int unused;
     void *v4;
 
@@ -773,7 +772,7 @@ static void FieldMoves_SetSweetScentTask(FieldMovePokemon *fieldMoveMon, const F
     startMenu->taskData = v2;
     startMenu->state = START_MENU_STATE_10;
 
-    v4 = JournalEntry_CreateEventUsedMove(LOCATION_EVENT_LURED_POKEMON - LOCATION_EVENT_USED_CUT, fieldSystem->location->mapId, HEAP_ID_FIELDMAP);
+    v4 = JournalEntry_CreateEventUsedMove(LOCATION_EVENT_LURED_POKEMON - LOCATION_EVENT_USED_CUT, fieldSystem->location->mapId, HEAP_ID_FIELD2);
     JournalEntry_SaveData(fieldSystem->journalEntry, v4, JOURNAL_LOCATION);
 }
 

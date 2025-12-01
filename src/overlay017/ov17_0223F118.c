@@ -36,7 +36,7 @@
 #include "unk_02012744.h"
 
 FS_EXTERN_OVERLAY(overlay11);
-FS_EXTERN_OVERLAY(overlay12);
+FS_EXTERN_OVERLAY(battle_anim);
 FS_EXTERN_OVERLAY(overlay22);
 
 static void ov17_0223F6E8(SysTask *param0, void *param1);
@@ -73,7 +73,7 @@ static const struct {
 static void NitroStaticInit(void)
 {
     Overlay_LoadByID(FS_OVERLAY_ID(overlay11), 2);
-    Overlay_LoadByID(FS_OVERLAY_ID(overlay12), 2);
+    Overlay_LoadByID(FS_OVERLAY_ID(battle_anim), 2);
     Overlay_LoadByID(FS_OVERLAY_ID(overlay22), 2);
 }
 
@@ -155,7 +155,7 @@ void ov17_0223F1E8(int heapID, BgConfig *param1, SpriteManager *param2, UnkStruc
         sub_02012A90(v4, param8);
     }
 
-    sub_020128C4(v4, param10, param11);
+    FontOAM_SetXY(v4, param10, param11);
     Window_Remove(&v1);
 
     param4->unk_00 = v4;
@@ -176,12 +176,12 @@ void ov17_0223F2F8(UnkStruct_ov17_0223F2E4 *param0, int param1, int param2, int 
     }
 
     param2 += 0 - 8;
-    sub_020128C4(param0->unk_00, param1, param2);
+    FontOAM_SetXY(param0->unk_00, param1, param2);
 }
 
 Strbuf *ov17_0223F310(u32 param0, u32 heapID)
 {
-    MessageLoader *v0 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_CONTEST_JUDGE_NAMES, heapID);
+    MessageLoader *v0 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_CONTEST_JUDGE_NAMES, heapID);
     Strbuf *v1 = MessageLoader_GetNewStrbuf(v0, param0);
 
     MessageLoader_Free(v0);
@@ -393,7 +393,7 @@ static void ov17_0223F6E8(SysTask *param0, void *param1)
 
 UnkStruct_ov17_0223F744 *ov17_0223F70C(int heapID, PaletteData *param1, const u16 *param2, int param3, int param4, u32 param5)
 {
-    UnkStruct_ov17_0223F744 *v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_ov17_0223F744));
+    UnkStruct_ov17_0223F744 *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_ov17_0223F744));
     MI_CpuClear8(v0, sizeof(UnkStruct_ov17_0223F744));
 
     v0->unk_04 = param1;

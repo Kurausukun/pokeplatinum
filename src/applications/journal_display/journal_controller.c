@@ -89,7 +89,7 @@ int JournalController_Init(ApplicationManager *appMan, int *state)
     journalManager->journalEntry = SaveData_GetJournal(saveData);
     journalManager->trainerInfo = SaveData_GetTrainerInfo(saveData);
 
-    sub_0208C120(0, HEAP_ID_JOURNAL);
+    App_StartScreenFade(FALSE, HEAP_ID_JOURNAL);
     Font_UseImmediateGlyphAccess(FONT_SYSTEM, HEAP_ID_JOURNAL);
 
     JournalController_SetVRAMBanks();
@@ -190,75 +190,71 @@ static void JournalController_SetupBgs(BgConfig *bgConfig)
     SetAllGraphicsModes(&graphicsModes);
 
     BgTemplate bgTemplate1 = {
-        0,
-        0,
-        0x800,
-        0,
-        1,
-        GX_BG_COLORMODE_16,
-        GX_BG_SCRBASE_0xf800,
-        GX_BG_CHARBASE_0x10000,
-        GX_BG_EXTPLTT_01,
-        0,
-        0,
-        0,
-        0
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0x800,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xf800,
+        .charBase = GX_BG_CHARBASE_0x10000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0,
+        .areaOver = 0,
+        .mosaic = FALSE,
     };
 
     Bg_InitFromTemplate(bgConfig, BG_LAYER_MAIN_0, &bgTemplate1, BG_TYPE_STATIC);
     Bg_ClearTilemap(bgConfig, BG_LAYER_MAIN_0);
 
     BgTemplate bgTemplate2 = {
-        0,
-        0,
-        0x800,
-        0,
-        1,
-        GX_BG_COLORMODE_16,
-        GX_BG_SCRBASE_0xf000,
-        GX_BG_CHARBASE_0x20000,
-        GX_BG_EXTPLTT_01,
-        2,
-        0,
-        0,
-        0
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0x800,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xf000,
+        .charBase = GX_BG_CHARBASE_0x20000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 2,
+        .areaOver = 0,
+        .mosaic = FALSE,
     };
 
     Bg_InitFromTemplate(bgConfig, BG_LAYER_MAIN_1, &bgTemplate2, BG_TYPE_STATIC);
     Bg_ClearTilemap(bgConfig, BG_LAYER_MAIN_1);
 
     BgTemplate bgTemplate3 = {
-        0,
-        0,
-        0x800,
-        0,
-        1,
-        GX_BG_COLORMODE_16,
-        GX_BG_SCRBASE_0xe800,
-        GX_BG_CHARBASE_0x00000,
-        GX_BG_EXTPLTT_01,
-        1,
-        0,
-        0,
-        0
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0x800,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xe800,
+        .charBase = GX_BG_CHARBASE_0x00000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 1,
+        .areaOver = 0,
+        .mosaic = FALSE,
     };
 
     Bg_InitFromTemplate(bgConfig, BG_LAYER_MAIN_2, &bgTemplate3, BG_TYPE_STATIC);
 
     BgTemplate bgTemplate4 = {
-        0,
-        0,
-        0x800,
-        0,
-        1,
-        GX_BG_COLORMODE_16,
-        GX_BG_SCRBASE_0xe000,
-        GX_BG_CHARBASE_0x00000,
-        GX_BG_EXTPLTT_01,
-        3,
-        0,
-        0,
-        0
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0x800,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xe000,
+        .charBase = GX_BG_CHARBASE_0x00000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 3,
+        .areaOver = 0,
+        .mosaic = FALSE,
     };
 
     Bg_InitFromTemplate(bgConfig, BG_LAYER_MAIN_3, &bgTemplate4, BG_TYPE_STATIC);
@@ -304,7 +300,7 @@ static void JournalController_LoadGraphics(JournalManager *journalManager)
 
 static void JournalController_InitStringUtil(JournalManager *journalManager)
 {
-    journalManager->loader = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_JOURNAL_ENTRIES, HEAP_ID_JOURNAL);
+    journalManager->loader = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_JOURNAL_ENTRIES, HEAP_ID_JOURNAL);
     journalManager->template = StringTemplate_Default(HEAP_ID_JOURNAL);
     journalManager->strbuf = Strbuf_Init(128, HEAP_ID_JOURNAL);
 }
@@ -349,13 +345,13 @@ static int JournalController_HandleInput(JournalManager *journalManager)
                 return JOURNAL_STATE_TURN_LEFT;
             }
         } else {
-            sub_0208C120(1, HEAP_ID_JOURNAL);
+            App_StartScreenFade(TRUE, HEAP_ID_JOURNAL);
             return JOURNAL_STATE_CLOSE;
         }
     }
 
     if (gSystem.pressedKeys & PAD_BUTTON_START) {
-        sub_0208C120(1, HEAP_ID_JOURNAL);
+        App_StartScreenFade(TRUE, HEAP_ID_JOURNAL);
         return JOURNAL_STATE_CLOSE;
     }
 

@@ -148,14 +148,14 @@ UnkStruct_ov104_0223BFFC *ov104_02237DD8(SaveData *saveData, u16 param1, u8 para
     static UnkStruct_ov104_0223BFFC *v9;
     UnkStruct_020305B8 *v10;
 
-    v9 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_ov104_0223BFFC));
+    v9 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(UnkStruct_ov104_0223BFFC));
     MI_CpuClear8(v9, sizeof(UnkStruct_ov104_0223BFFC));
 
     v9->unk_08 = sub_020304A0(saveData);
     v9->saveData = saveData;
     v9->unk_00 = 11;
-    v9->unk_70 = Party_New(HEAP_ID_FIELDMAP);
-    v9->unk_74 = Party_New(HEAP_ID_FIELDMAP);
+    v9->unk_70 = Party_New(HEAP_ID_FIELD2);
+    v9->unk_74 = Party_New(HEAP_ID_FIELD2);
     v9->unk_A80 = param6;
     v9->unk_13 = 32;
 
@@ -219,7 +219,7 @@ UnkStruct_ov104_0223BFFC *ov104_02237DD8(SaveData *saveData, u16 param1, u8 para
 
         if (Pokemon_GetValue(v3, MON_DATA_LEVEL, NULL) > 50) {
             v1 = Pokemon_GetSpeciesBaseExpAt(Pokemon_GetValue(v3, MON_DATA_SPECIES, NULL), 50);
-            Pokemon_SetValue(v3, MON_DATA_EXP, &v1);
+            Pokemon_SetValue(v3, MON_DATA_EXPERIENCE, &v1);
             Pokemon_CalcLevelAndStats(v3);
         }
     }
@@ -279,9 +279,9 @@ static void ov104_02238114(UnkStruct_ov104_0223BFFC *param0)
         param0->unk_314[v1] = v6[v1];
     }
 
-    ov104_0222E330(v4, v6, v5, NULL, v7, 4, HEAP_ID_FIELDMAP, NARC_INDEX_BATTLE__B_PL_TOWER__PL_BTDPM);
+    ov104_0222E330(v4, v6, v5, NULL, v7, 4, HEAP_ID_FIELD2, NARC_INDEX_BATTLE__B_PL_TOWER__PL_BTDPM);
 
-    Pokemon *v2 = Pokemon_New(HEAP_ID_FIELDMAP);
+    Pokemon *v2 = Pokemon_New(HEAP_ID_FIELD2);
 
     for (v1 = 0; v1 < 4; v1++) {
         ov104_0222DF40(&v4[v1], v2, ov104_0223BFFC(param0));
@@ -444,7 +444,7 @@ u16 ov104_02238464(UnkStruct_ov104_0223BFFC *param0, u8 param1)
     FrontierTrainerDataDTO v0;
     u8 v2 = ov104_02238498(param0, param1);
 
-    Heap_Free(ov104_0222DD04(&v0, param0->unk_78[v2], HEAP_ID_FIELDMAP, NARC_INDEX_BATTLE__B_PL_TOWER__PL_BTDTR));
+    Heap_Free(ov104_0222DD04(&v0, param0->unk_78[v2], HEAP_ID_FIELD2, NARC_INDEX_BATTLE__B_PL_TOWER__PL_BTDTR));
 
     return ov104_0222E10C(v0.trainerType);
 }
@@ -562,13 +562,13 @@ static int ov104_02238584(UnkStruct_ov104_0223BFFC *param0, Party *param1, Party
             continue;
         }
 
-        v0 = Pokemon_GetValue(v5, MON_DATA_CURRENT_HP, NULL);
+        v0 = Pokemon_GetValue(v5, MON_DATA_HP, NULL);
 
         if (v0 == 0) {
             v1++;
         }
 
-        if (Pokemon_GetValue(v5, MON_DATA_STATUS_CONDITION, NULL) != 0) {
+        if (Pokemon_GetValue(v5, MON_DATA_STATUS, NULL) != 0) {
             v2++;
         }
     }
@@ -581,13 +581,13 @@ static int ov104_02238584(UnkStruct_ov104_0223BFFC *param0, Party *param1, Party
                 continue;
             }
 
-            v0 = Pokemon_GetValue(v5, MON_DATA_CURRENT_HP, NULL);
+            v0 = Pokemon_GetValue(v5, MON_DATA_HP, NULL);
 
             if (v0 == 0) {
                 v1++;
             }
 
-            if (Pokemon_GetValue(v5, MON_DATA_STATUS_CONDITION, NULL) != 0) {
+            if (Pokemon_GetValue(v5, MON_DATA_STATUS, NULL) != 0) {
                 v2++;
             }
         }
@@ -860,7 +860,7 @@ void ov104_02238AB4(u8 param0, u8 param1)
         v1 = (9 * 16) * 2;
     }
 
-    v5 = Heap_AllocFromHeap(HEAP_ID_94, 0x1000 * 2);
+    v5 = Heap_Alloc(HEAP_ID_94, 0x1000 * 2);
     memset(v5, 0, 0x1000 * 2);
 
     v4 = NARC_ctor(NARC_INDEX_RESOURCE__ENG__FRONTIER_GRAPHIC__FRONTIER_BG, HEAP_ID_94);
@@ -1079,7 +1079,7 @@ static void ov104_02238BBC(UnkStruct_ov104_0223BFFC *param0, Party *param1, u8 p
         v2 -= v1;
         v2 = (v1 - v2);
 
-        Pokemon_SetValue(v3, MON_DATA_CURRENT_HP, &v2);
+        Pokemon_SetValue(v3, MON_DATA_HP, &v2);
     }
 
     return;
@@ -1103,7 +1103,7 @@ static void ov104_02238C18(UnkStruct_ov104_0223BFFC *param0, Party *param1, u8 p
             v1++;
         } else {
             v2 = MON_CONDITION_POISON;
-            Pokemon_SetValue(v6, MON_DATA_STATUS_CONDITION, &v2);
+            Pokemon_SetValue(v6, MON_DATA_STATUS, &v2);
         }
     }
 
@@ -1132,7 +1132,7 @@ static void ov104_02238C9C(UnkStruct_ov104_0223BFFC *param0, Party *param1, u8 p
             v1++;
         } else {
             v2 = MON_CONDITION_PARALYSIS;
-            Pokemon_SetValue(v6, MON_DATA_STATUS_CONDITION, &v2);
+            Pokemon_SetValue(v6, MON_DATA_STATUS, &v2);
         }
     }
 
@@ -1161,7 +1161,7 @@ static void ov104_02238D14(UnkStruct_ov104_0223BFFC *param0, Party *param1, u8 p
             v1++;
         } else {
             v2 = MON_CONDITION_BURN;
-            Pokemon_SetValue(v6, MON_DATA_STATUS_CONDITION, &v2);
+            Pokemon_SetValue(v6, MON_DATA_STATUS, &v2);
         }
     }
 
@@ -1195,7 +1195,7 @@ static void ov104_02238D8C(UnkStruct_ov104_0223BFFC *param0, Party *param1, u8 p
             }
         } else {
             v3 = (LCRNG_Next() % 4 + 2);
-            Pokemon_SetValue(v5, MON_DATA_STATUS_CONDITION, &v3);
+            Pokemon_SetValue(v5, MON_DATA_STATUS, &v3);
             break;
         }
     }
@@ -1232,7 +1232,7 @@ static void ov104_02238E08(UnkStruct_ov104_0223BFFC *param0, Party *param1, u8 p
             }
         } else {
             v3 = MON_CONDITION_FREEZE;
-            Pokemon_SetValue(v7, MON_DATA_STATUS_CONDITION, &v3);
+            Pokemon_SetValue(v7, MON_DATA_STATUS, &v3);
 
             break;
         }
@@ -1323,7 +1323,7 @@ static void ov104_02238F54(UnkStruct_ov104_0223BFFC *param0, Party *param1, u8 p
 
         v1 = Pokemon_GetSpeciesBaseExpAt(Pokemon_GetValue(v3, MON_DATA_SPECIES, NULL), v2);
 
-        Pokemon_SetValue(v3, MON_DATA_EXP, &v1);
+        Pokemon_SetValue(v3, MON_DATA_EXPERIENCE, &v1);
         Pokemon_CalcLevelAndStats(v3);
     }
 

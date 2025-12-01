@@ -3,16 +3,18 @@
 #include <nitro.h>
 #include <string.h>
 
+#include "constants/tv_broadcast.h"
+
 #include "struct_decls/struct_0202440C_decl.h"
 #include "struct_decls/struct_0202E4D4_decl.h"
 #include "struct_decls/struct_0202E768_decl.h"
 #include "struct_decls/struct_0202E794_decl.h"
 
 #include "field/field_system.h"
-#include "overlay006/struct_ov6_022465F4_decl.h"
 #include "savedata/save_table.h"
 
 #include "charcode_util.h"
+#include "field_battle_data_transfer.h"
 #include "heap.h"
 #include "save_player.h"
 #include "trainer_info.h"
@@ -92,7 +94,7 @@ int ov6_022464A4(const UnkStruct_ov6_022465F4 *param0)
 
 static UnkStruct_ov6_022465F4 *ov6_022464A8(FieldSystem *fieldSystem, UnkStruct_0202E794 *param1)
 {
-    UnkStruct_ov6_022465F4 *v0 = Heap_AllocFromHeap(HEAP_ID_FIELD, sizeof(UnkStruct_ov6_022465F4));
+    UnkStruct_ov6_022465F4 *v0 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkStruct_ov6_022465F4));
 
     ov6_02246444(v0);
     ov6_0224645C(v0, sub_0202E4C8(param1));
@@ -106,7 +108,7 @@ static UnkStruct_ov6_022465F4 *ov6_022464A8(FieldSystem *fieldSystem, UnkStruct_
 static UnkStruct_ov6_022465F4 *ov6_022464F8(FieldSystem *fieldSystem, UnkStruct_0202E768 *param1)
 {
     TrainerInfo *v0 = SaveData_GetTrainerInfo(fieldSystem->saveData);
-    UnkStruct_ov6_022465F4 *v1 = Heap_AllocFromHeap(HEAP_ID_FIELD, sizeof(UnkStruct_ov6_022465F4));
+    UnkStruct_ov6_022465F4 *v1 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkStruct_ov6_022465F4));
 
     ov6_02246444(v1);
     ov6_0224645C(v1, TrainerInfo_Name(v0));
@@ -121,7 +123,7 @@ static UnkStruct_ov6_022465F4 *ov6_022464F8(FieldSystem *fieldSystem, UnkStruct_
 static UnkStruct_ov6_022465F4 *ov6_02246550(FieldSystem *fieldSystem, int param1)
 {
     TrainerInfo *v0 = SaveData_GetTrainerInfo(fieldSystem->saveData);
-    UnkStruct_ov6_022465F4 *v1 = Heap_AllocFromHeap(HEAP_ID_FIELD, sizeof(UnkStruct_ov6_022465F4));
+    UnkStruct_ov6_022465F4 *v1 = Heap_Alloc(HEAP_ID_FIELD1, sizeof(UnkStruct_ov6_022465F4));
 
     ov6_02246444(v1);
     v1->unk_00 = param1;
@@ -134,19 +136,19 @@ static UnkStruct_ov6_022465F4 *ov6_02246550(FieldSystem *fieldSystem, int param1
     return v1;
 }
 
-UnkStruct_ov6_022465F4 *ov6_022465A0(FieldSystem *fieldSystem, int param1, int param2)
+UnkStruct_ov6_022465F4 *ov6_022465A0(FieldSystem *fieldSystem, int programType, int param2)
 {
     TVBroadcast *broadcast = SaveData_GetTVBroadcast(fieldSystem->saveData);
 
-    if ((param1 == 4) || (param1 == 5)) {
+    if ((programType == TV_PROGRAM_TYPE_SINNOH_NOW) || (programType == TV_PROGRAM_TYPE_VARIETY_HOUR)) {
         return ov6_02246550(fieldSystem, param2);
     }
 
     if (sub_0202E7C0(param2) == 0) {
-        UnkStruct_0202E794 *v1 = sub_0202E794(broadcast, param1, param2);
+        UnkStruct_0202E794 *v1 = sub_0202E794(broadcast, programType, param2);
         return ov6_022464A8(fieldSystem, v1);
     } else {
-        UnkStruct_0202E768 *v2 = sub_0202E768(broadcast, param1, param2);
+        UnkStruct_0202E768 *v2 = sub_0202E768(broadcast, programType, param2);
         return ov6_022464F8(fieldSystem, v2);
     }
 }

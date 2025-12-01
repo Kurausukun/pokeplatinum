@@ -1,14 +1,13 @@
 #ifndef POKEPLATINUM_SHOP_MENU_H
 #define POKEPLATINUM_SHOP_MENU_H
 
-#include "struct_decls/struct_0200C440_decl.h"
-
 #include "field/field_system_decl.h"
-#include "overlay005/struct_ov5_021D30A8.h"
+#include "overlay005/sprite_resource_manager.h"
 
 #include "bg_window.h"
 #include "camera.h"
 #include "field_task.h"
+#include "font_special_chars.h"
 #include "game_options.h"
 #include "game_records.h"
 #include "journal.h"
@@ -88,7 +87,7 @@ typedef struct {
     MessageLoader *msgLoader;
     StringTemplate *strTemplate;
     Camera *camera;
-    UnkStruct_ov5_021D30A8 unk_94;
+    SpriteResourceManager spriteManager;
     Sprite *sprites[SHOP_SPRITE_MAX];
     u16 spriteDrawFlags[2];
     TrainerInfo *trainerInfo;
@@ -116,7 +115,7 @@ typedef struct {
     s16 itemAmount;
     u16 itemAmountMax;
     u32 itemPrice;
-    UnkStruct_0200C440 *unk_2B4;
+    FontSpecialCharsContext *unk_2B4;
 } ShopMenu;
 
 void Shop_Start(FieldTask *task, FieldSystem *fieldSystem, u16 *shopItems, u8 martType, BOOL incBuyCount);

@@ -23,7 +23,7 @@ _000E:
     End
 
 _0053:
-    CallCommonScript 0x7E1
+    MessageBagIsFull
     CloseMessage
     ReleaseAll
     End
@@ -55,5 +55,4 @@ _007B:
     ReleaseAll
     End
 
-    .byte 0
-    .byte 0
+    .balign 4, 0

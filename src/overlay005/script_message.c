@@ -85,7 +85,7 @@ void ScriptMessage_ShowSentence(ScriptContext *ctx, u16 sentenceType, u16 senten
     OpenMessageBox(ctx->fieldSystem, &msgData);
     GetStrBufFromSentence(&msgData, sentenceType, sentenceID, word1, word2);
 
-    if (canSkipDelay != 0xFF) {
+    if (canSkipDelay != FIELD_MESSAGE_SENTENCE_INSTANT) {
         PrintFieldMessage(&msgData, FONT_MESSAGE, GetTextFrameDelay(ctx), canSkipDelay, FALSE);
     } else {
         PrintTextMessage(&msgData, FONT_MESSAGE);
@@ -154,7 +154,7 @@ static void GetStrBufFromSentence(ScriptMessage *msgData, u16 sentenceType, u16 
     sub_02014CF8(&sentence, 0, word1);
     sub_02014CF8(&sentence, 1, word2);
 
-    strBuf = sub_02014B34(&sentence, HEAP_ID_FIELD_TASK);
+    strBuf = sub_02014B34(&sentence, HEAP_ID_FIELD3);
 
     Strbuf_Copy(msgData->msgBuf, strBuf);
     Strbuf_Free(strBuf);

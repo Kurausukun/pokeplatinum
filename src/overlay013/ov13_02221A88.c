@@ -9,6 +9,7 @@
 
 #include "bg_window.h"
 #include "font.h"
+#include "font_special_chars.h"
 #include "heap.h"
 #include "item.h"
 #include "message.h"
@@ -20,7 +21,6 @@
 #include "strbuf.h"
 #include "string_template.h"
 #include "text.h"
-#include "unk_0200C440.h"
 #include "unk_0208C098.h"
 #include "unk_02094EDC.h"
 
@@ -358,7 +358,7 @@ static void ov13_02221E08(BattleParty *param0, u32 param1, u16 param2, u8 param3
 {
     BattlePartyPokemon *v0 = &param0->partyPokemon[param2];
 
-    sub_0200C648(param0->unk_1FA0, 1, v0->level, 3, 0, &param0->unk_206C[param1], param3 + 8, param4);
+    FontSpecialChars_DrawPartyScreenText(param0->unk_1FA0, 1, v0->level, 3, 0, &param0->unk_206C[param1], param3 + 8, param4);
     Window_ScheduleCopyToVRAM(&param0->unk_206C[param1]);
 }
 
@@ -366,9 +366,9 @@ static void ov13_02221E50(BattleParty *param0, u32 param1, u16 param2, u8 param3
 {
     BattlePartyPokemon *v0 = &param0->partyPokemon[param2];
 
-    sub_0200C5BC(param0->unk_1FA0, v0->curHP, 3, 1, &param0->unk_206C[param1], param3, param4);
-    sub_0200C578(param0->unk_1FA0, 0, &param0->unk_206C[param1], param3 + 8 * 3, param4);
-    sub_0200C5BC(param0->unk_1FA0, v0->maxHP, 3, 0, &param0->unk_206C[param1], param3 + 8 * 3 + 8, param4);
+    FontSpecialChars_DrawPartyScreenHPText(param0->unk_1FA0, v0->curHP, 3, 1, &param0->unk_206C[param1], param3, param4);
+    FontSpecialChars_DrawPartyScreenLevelText(param0->unk_1FA0, 0, &param0->unk_206C[param1], param3 + 8 * 3, param4);
+    FontSpecialChars_DrawPartyScreenHPText(param0->unk_1FA0, v0->maxHP, 3, 0, &param0->unk_206C[param1], param3 + 8 * 3 + 8, param4);
     Window_ScheduleCopyToVRAM(&param0->unk_206C[param1]);
 }
 
@@ -776,7 +776,7 @@ static void ov13_02222AF4(BattleParty *param0, u32 param1)
 
     v0 = &param0->partyPokemon[param1];
     v3 = 22 * param0->unk_2071;
-    v1 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_ABILITY_DESCRIPTIONS, param0->context->heapID);
+    v1 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_ABILITY_DESCRIPTIONS, param0->context->heapID);
     v2 = MessageLoader_GetNewStrbuf(v1, v0->ability);
 
     Text_AddPrinterWithParamsAndColor(&param0->unk_206C[2 + v3], FONT_SYSTEM, v2, 0, 0, TEXT_SPEED_NO_TRANSFER, TEXT_COLOR(1, 2, 0), NULL);
@@ -882,7 +882,7 @@ static void ov13_02222DCC(BattleParty *param0, u32 param1, u32 param2)
     Strbuf *v2;
 
     v1 = &param0->unk_206C[param1];
-    v0 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_MOVE_DESCRIPTIONS, param0->context->heapID);
+    v0 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_MOVE_DESCRIPTIONS, param0->context->heapID);
     v2 = MessageLoader_GetNewStrbuf(v0, param2);
 
     Text_AddPrinterWithParamsAndColor(v1, FONT_SYSTEM, v2, 0, 0, TEXT_SPEED_NO_TRANSFER, TEXT_COLOR(1, 2, 0), NULL);
@@ -902,7 +902,7 @@ static void ov13_02222E2C(BattleParty *param0, u32 param1, u32 param2)
     v1 = &param0->unk_206C[param1];
     v3 = MoveTable_LoadParam(param2, MOVEATTRIBUTE_CONTEST_EFFECT);
     v4 = sub_0209577C(v3);
-    v0 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_CONTEST_EFFECTS, param0->context->heapID);
+    v0 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_CONTEST_EFFECTS, param0->context->heapID);
     v2 = MessageLoader_GetNewStrbuf(v0, v4);
 
     Text_AddPrinterWithParamsAndColor(v1, FONT_SYSTEM, v2, 0, 0, TEXT_SPEED_NO_TRANSFER, TEXT_COLOR(1, 2, 0), NULL);
@@ -1526,7 +1526,7 @@ void BattlePartyText_DisplayMessage(BattleParty *battleParty)
 
 void ov13_02224108(BattleParty *param0)
 {
-    RenderControlFlags_SetCanABSpeedUpPrint(1);
+    RenderControlFlags_SetCanABSpeedUpPrint(TRUE);
     param0->textPrinterID = Text_AddPrinterWithParams(&param0->messageBoxWindows[1], FONT_MESSAGE, param0->strbuf, 0, 0, BattleSystem_TextSpeed(param0->context->battleSystem), NULL);
 }
 
@@ -1543,7 +1543,7 @@ void ov13_02224144(BattleParty *param0)
     v1 = param0->context;
     v2 = Item_Load(v1->selectedBattleBagItem, 0, v1->heapID);
     v0 = BattleSystem_PartyPokemon(v1->battleSystem, v1->battler, v1->pokemonPartySlots[v1->selectedPartyIndex]);
-    v4 = Pokemon_GetValue(v0, MON_DATA_CURRENT_HP, NULL);
+    v4 = Pokemon_GetValue(v0, MON_DATA_HP, NULL);
     v5 = 0;
 
     if (Item_Get(v2, 15) != 0) {

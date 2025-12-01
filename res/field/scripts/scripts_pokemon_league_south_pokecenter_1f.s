@@ -15,16 +15,15 @@ _001A:
     End
 
 _0020:
-    SetVar VAR_0x8007, 0
-    CallCommonScript 0x7D2
+    CallPokecenterNurse 0
     End
 
 _002C:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    CallCommonScript 0x7E3
-    ScrCmd_035
+    VendorGreeting
+    CloseMessageWithoutErasing
     PokeMartCommon
     ReleaseAll
     End
@@ -33,8 +32,8 @@ _0042:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    CallCommonScript 0x7E3
-    ScrCmd_035
+    VendorGreeting
+    CloseMessageWithoutErasing
     PokeMartSpecialties MART_SPECIALTIES_ID_POKEMON_LEAGUE
     ReleaseAll
     End
@@ -59,5 +58,4 @@ _006B:
     ReleaseAll
     End
 
-    .byte 0
-    .byte 0
+    .balign 4, 0

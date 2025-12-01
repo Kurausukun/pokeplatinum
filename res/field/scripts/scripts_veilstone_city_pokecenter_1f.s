@@ -8,8 +8,7 @@
     ScriptEntryEnd
 
 _000E:
-    SetVar VAR_0x8007, 0
-    CallCommonScript 0x7D2
+    CallPokecenterNurse 0
     End
 
 _001A:
@@ -33,6 +32,4 @@ _0032:
     ReleaseAll
     End
 
-    .byte 0
-    .byte 0
-    .byte 0
+    .balign 4, 0

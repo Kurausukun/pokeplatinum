@@ -35,7 +35,7 @@ s32 ov83_0223F7F4(int param0, int param1, int param2, int param3, int param4, in
     param2 -= param4;
     param3 -= param5;
 
-    v3 = CalcDotProduct2D(param2, param3, param0, param1, 0);
+    v3 = ApproximateArcLength(param2, param3, param0, param1, 0);
     v3 = ((v3) * 160);
 
     return v3;
@@ -772,7 +772,7 @@ void ov83_0223FFD4(UnkStruct_ov83_0223FDB0 *param0, Poffin *param1, const UnkStr
         v16[v1] = v6[v1];
     }
 
-    param0->unk_04 = sub_0202A9E4(param1, v16, v7, v10);
+    param0->unk_04 = Poffin_MakePoffin(param1, v16, v7, v10);
     param0->unk_08 = Poffin_CalcLevel(param1);
 }
 

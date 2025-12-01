@@ -3,7 +3,6 @@
 #include <nitro.h>
 #include <string.h>
 
-#include "struct_decls/struct_0200C440_decl.h"
 #include "struct_decls/struct_020302DC_decl.h"
 #include "struct_decls/struct_0203041C_decl.h"
 #include "struct_defs/battle_frontier.h"
@@ -24,6 +23,7 @@
 #include "communication_information.h"
 #include "communication_system.h"
 #include "font.h"
+#include "font_special_chars.h"
 #include "game_options.h"
 #include "game_overlay.h"
 #include "graphics.h"
@@ -51,7 +51,6 @@
 #include "system.h"
 #include "text.h"
 #include "trainer_info.h"
-#include "unk_0200C440.h"
 #include "unk_020302D0.h"
 #include "unk_0203061C.h"
 #include "unk_020363E8.h"
@@ -102,7 +101,7 @@ struct UnkStruct_ov107_02246170_t {
     ListMenu *unk_138;
     StringList *unk_13C;
     PaletteData *unk_140;
-    UnkStruct_0200C440 *unk_144;
+    FontSpecialCharsContext *unk_144;
     Options *options;
     SaveData *saveData;
     UnkStruct_020302DC *unk_150;
@@ -390,7 +389,7 @@ static BOOL ov107_02246170(UnkStruct_ov107_02246170 *param0)
     switch (param0->unk_08) {
     case 0:
         if (ov104_0223BA14(param0->unk_09) == 1) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTiming_StartSync(216);
         }
 
@@ -399,7 +398,7 @@ static BOOL ov107_02246170(UnkStruct_ov107_02246170 *param0)
     case 1:
         if (ov104_0223BA14(param0->unk_09) == 1) {
             if (CommTiming_IsSyncState(216) == 1) {
-                sub_020365F4();
+                CommTool_ClearReceivedTempDataAllPlayers();
                 param0->unk_08++;
             }
         } else {
@@ -956,7 +955,7 @@ static BOOL ov107_02246BDC(UnkStruct_ov107_02246170 *param0)
         param0->unk_16--;
 
         if (param0->unk_16 == 0) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTiming_StartSync(133);
             param0->unk_08++;
             break;
@@ -971,7 +970,7 @@ static BOOL ov107_02246BDC(UnkStruct_ov107_02246170 *param0)
         v0 = ov107_02249C9C(param0->unk_15, param0->unk_11);
 
         if (ov107_02248674(param0, v0, param0->unk_13) == 1) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTool_Init(100);
             param0->unk_11 = 0xff;
             param0->unk_436 = 0;
@@ -1000,14 +999,14 @@ static BOOL ov107_02246CD0(UnkStruct_ov107_02246170 *param0)
         }
 
         if (param0->unk_16 == 0) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTiming_StartSync(134);
             param0->unk_08++;
         }
         break;
     case 2:
         if (CommTiming_IsSyncState(134) == 1) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             ov107_02248860(&param0->unk_50[7]);
             return 1;
         }
@@ -1059,7 +1058,7 @@ static void ov107_02246D84(UnkStruct_ov107_02246170 *param0)
         ov107_02249B8C(param0->unk_394[v1]);
     }
 
-    sub_02039794();
+    NetworkIcon_Destroy();
 
     PaletteData_FreeBuffer(param0->unk_140, 2);
     PaletteData_FreeBuffer(param0->unk_140, 0);
@@ -1073,7 +1072,7 @@ static void ov107_02246D84(UnkStruct_ov107_02246170 *param0)
     StringTemplate_Free(param0->unk_24);
     Strbuf_Free(param0->unk_28);
     Strbuf_Free(param0->unk_2C);
-    sub_0200C560(param0->unk_144);
+    FontSpecialChars_Free(param0->unk_144);
 
     for (v1 = 0; v1 < 3; v1++) {
         Strbuf_Free(param0->unk_30[v1]);
@@ -1113,7 +1112,7 @@ static void ov107_02246EE4(UnkStruct_ov107_02246170 *param0)
     ov107_02247220(param0);
     ov107_02247280(param0);
 
-    param0->unk_20 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0201, HEAP_ID_100);
+    param0->unk_20 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0201, HEAP_ID_100);
     param0->unk_24 = StringTemplate_Default(HEAP_ID_100);
     param0->unk_28 = Strbuf_Init(600, HEAP_ID_100);
     param0->unk_2C = Strbuf_Init(600, HEAP_ID_100);
@@ -1125,7 +1124,7 @@ static void ov107_02246EE4(UnkStruct_ov107_02246170 *param0)
     Font_LoadTextPalette(0, 13 * 32, HEAP_ID_100);
     Font_LoadScreenIndicatorsPalette(0, 12 * 32, HEAP_ID_100);
 
-    param0->unk_144 = sub_0200C440(1, 2, 0, HEAP_ID_100);
+    param0->unk_144 = FontSpecialChars_Init(1, 2, 0, HEAP_ID_100);
 
     ov107_02249D14(param0->unk_4C, param0->unk_50, 1);
     ov107_022484DC(param0, &v7, &v8, &v9, &v10);
@@ -1196,8 +1195,8 @@ static void ov107_02247220(UnkStruct_ov107_02246170 *param0)
 
     param0->unk_140 = PaletteData_New(HEAP_ID_100);
 
-    PaletteData_AllocBuffer(param0->unk_140, 2, (32 * 16), HEAP_ID_100);
-    PaletteData_AllocBuffer(param0->unk_140, 0, (32 * 16), HEAP_ID_100);
+    PaletteData_AllocBuffer(param0->unk_140, 2, 32 * 16, HEAP_ID_100);
+    PaletteData_AllocBuffer(param0->unk_140, 0, 32 * 16, HEAP_ID_100);
 
     ov107_02247484(param0, 3);
     ov107_022474F8();
@@ -1280,19 +1279,18 @@ static void ov107_02247340(BgConfig *param0)
 
     {
         BgTemplate v1 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0000,
-            GX_BG_CHARBASE_0x04000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0000,
+            .charBase = GX_BG_CHARBASE_0x04000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_1, &v1, 0);
@@ -1302,19 +1300,18 @@ static void ov107_02247340(BgConfig *param0)
 
     {
         BgTemplate v2 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0800,
-            GX_BG_CHARBASE_0x0c000,
-            GX_BG_EXTPLTT_01,
-            0,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0800,
+            .charBase = GX_BG_CHARBASE_0x0c000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_0, &v2, 0);
@@ -1324,19 +1321,18 @@ static void ov107_02247340(BgConfig *param0)
 
     {
         BgTemplate v3 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x1000,
-            GX_BG_CHARBASE_0x14000,
-            GX_BG_EXTPLTT_01,
-            1,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x1000,
+            .charBase = GX_BG_CHARBASE_0x14000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 1,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_2, &v3, 0);
@@ -1346,19 +1342,18 @@ static void ov107_02247340(BgConfig *param0)
 
     {
         BgTemplate v4 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x2000,
-            GX_BG_CHARBASE_0x08000,
-            GX_BG_EXTPLTT_01,
-            3,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x2000,
+            .charBase = GX_BG_CHARBASE_0x08000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 3,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_3, &v4, 0);
@@ -1368,19 +1363,18 @@ static void ov107_02247340(BgConfig *param0)
 
     {
         BgTemplate v5 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x3000,
-            GX_BG_CHARBASE_0x10000,
-            GX_BG_EXTPLTT_01,
-            0,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x3000,
+            .charBase = GX_BG_CHARBASE_0x10000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_SUB_0, &v5, 0);
@@ -1413,8 +1407,8 @@ static void ov107_022474F8(void)
 
     v0 = Graphics_GetPlttData(NARC_INDEX_RESOURCE__ENG__FRONTIER_GRAPHIC__FRONTIER_BG, 138, &v1, HEAP_ID_100);
 
-    DC_FlushRange(v1->pRawData, (sizeof(u16) * 16 * 4));
-    GX_LoadBGPltt(v1->pRawData, 0, (sizeof(u16) * 16 * 4));
+    DC_FlushRange(v1->pRawData, sizeof(u16) * 16 * 4);
+    GX_LoadBGPltt(v1->pRawData, 0, sizeof(u16) * 16 * 4);
     Heap_Free(v0);
 
     return;
@@ -1435,8 +1429,8 @@ static void ov107_02247574(void)
 
     v0 = Graphics_GetPlttData(NARC_INDEX_RESOURCE__ENG__FRONTIER_GRAPHIC__FRONTIER_BG, 138, &v1, HEAP_ID_100);
 
-    DC_FlushRange(v1->pRawData, (sizeof(u16) * 16 * 4));
-    GX_LoadBGPltt(v1->pRawData, 0, (sizeof(u16) * 16 * 4));
+    DC_FlushRange(v1->pRawData, sizeof(u16) * 16 * 4);
+    GX_LoadBGPltt(v1->pRawData, 0, sizeof(u16) * 16 * 4);
     Heap_Free(v0);
 
     return;
@@ -1618,9 +1612,9 @@ static void ov107_02247B78(UnkStruct_ov107_02246170 *param0, Window *param1)
 
         v3 = Party_GetPokemonBySlotIndex(param0->unk_3DC, v2);
 
-        sub_0200C5BC(param0->unk_144, Pokemon_GetValue(v3, MON_DATA_CURRENT_HP, NULL), 3, 1, param1, v0 + (64 * v2), 1);
-        sub_0200C578(param0->unk_144, 0, param1, 24 + v0 + (64 * v2), 1);
-        sub_0200C5BC(param0->unk_144, Pokemon_GetValue(v3, MON_DATA_MAX_HP, NULL), 3, 0, param1, 32 + v0 + (64 * v2), 1);
+        FontSpecialChars_DrawPartyScreenHPText(param0->unk_144, Pokemon_GetValue(v3, MON_DATA_HP, NULL), 3, 1, param1, v0 + (64 * v2), 1);
+        FontSpecialChars_DrawPartyScreenLevelText(param0->unk_144, 0, param1, 24 + v0 + (64 * v2), 1);
+        FontSpecialChars_DrawPartyScreenHPText(param0->unk_144, Pokemon_GetValue(v3, MON_DATA_MAX_HP, NULL), 3, 0, param1, 32 + v0 + (64 * v2), 1);
     }
 
     Window_ScheduleCopyToVRAM(param1);
@@ -1649,7 +1643,7 @@ static void ov107_02247C64(UnkStruct_ov107_02246170 *param0, Window *param1)
 
     for (v4 = 0; v4 < v3; v4++) {
         v5 = Party_GetPokemonBySlotIndex(param0->unk_3DC, v4);
-        sub_0200C648(param0->unk_144, 1, Pokemon_GetValue(v5, MON_DATA_LEVEL, NULL), 3, 0, param1, v1 + (64 * v4), 1);
+        FontSpecialChars_DrawPartyScreenText(param0->unk_144, 1, Pokemon_GetValue(v5, MON_DATA_LEVEL, NULL), 3, 0, param1, v1 + (64 * v4), 1);
 
         v0 = Pokemon_GetValue(v5, MON_DATA_GENDER, NULL);
         ov107_022481FC(param0, param1, v2 + (64 * v4), 1, 0, v0);
@@ -1764,7 +1758,7 @@ static void ov107_02247E5C(UnkStruct_ov107_02246170 *param0)
     ov107_02249D84(param0->unk_4C, &param0->unk_50[5]);
     Window_FillTilemap(&param0->unk_50[5], 15);
 
-    param0->unk_13C = StringList_New((NELEMS(Unk_ov107_0224A1BC)), HEAP_ID_100);
+    param0->unk_13C = StringList_New(NELEMS(Unk_ov107_0224A1BC), HEAP_ID_100);
 
     for (v0 = 0; v0 < (NELEMS(Unk_ov107_0224A1BC)); v0++) {
         StringList_AddFromMessageBank(param0->unk_13C, param0->unk_20, Unk_ov107_0224A1BC[v0][0], Unk_ov107_0224A1BC[v0][1]);
@@ -1826,7 +1820,7 @@ static void ov107_02247F6C(UnkStruct_ov107_02246170 *param0)
     ov107_02249D84(param0->unk_4C, &param0->unk_50[6]);
     Window_FillTilemap(&param0->unk_50[6], 15);
 
-    param0->unk_13C = StringList_New((NELEMS(Unk_ov107_0224A19C)), HEAP_ID_100);
+    param0->unk_13C = StringList_New(NELEMS(Unk_ov107_0224A19C), HEAP_ID_100);
 
     for (v0 = 0; v0 < (NELEMS(Unk_ov107_0224A19C)); v0++) {
         StringList_AddFromMessageBank(param0->unk_13C, param0->unk_20, Unk_ov107_0224A19C[v0][0], Unk_ov107_0224A19C[v0][1]);
@@ -1932,7 +1926,7 @@ static void ov107_0224812C(UnkStruct_ov107_02246170 *param0, Window *param1, u32
     Strbuf *v2;
 
     v1 = SaveData_GetTrainerInfo(param0->saveData);
-    v2 = Strbuf_Init((7 + 1), HEAP_ID_100);
+    v2 = Strbuf_Init(7 + 1, HEAP_ID_100);
 
     Strbuf_CopyChars(v2, TrainerInfo_Name(v1));
 
@@ -2897,15 +2891,15 @@ static void ov107_022490E8(UnkStruct_ov107_02246170 *param0, u8 param1, u8 param
 
     if (param0->unk_3D0[ov107_02249C98(param0->unk_14, param1)] == 0) {
         v0 = Pokemon_GetSpeciesBaseExpAt(Pokemon_GetValue(v1, MON_DATA_SPECIES, NULL), 50);
-        Pokemon_SetValue(v1, MON_DATA_EXP, &v0);
+        Pokemon_SetValue(v1, MON_DATA_EXPERIENCE, &v0);
         Pokemon_CalcLevelAndStats(v1);
     } else if (param0->unk_3D0[ov107_02249C98(param0->unk_14, param1)] == 1) {
         v0 = Pokemon_GetSpeciesBaseExpAt(Pokemon_GetValue(v1, MON_DATA_SPECIES, NULL), 55);
-        Pokemon_SetValue(v1, MON_DATA_EXP, &v0);
+        Pokemon_SetValue(v1, MON_DATA_EXPERIENCE, &v0);
         Pokemon_CalcLevelAndStats(v1);
     } else {
         v0 = Pokemon_GetSpeciesBaseExpAt(Pokemon_GetValue(v1, MON_DATA_SPECIES, NULL), 45);
-        Pokemon_SetValue(v1, MON_DATA_EXP, &v0);
+        Pokemon_SetValue(v1, MON_DATA_EXPERIENCE, &v0);
         Pokemon_CalcLevelAndStats(v1);
     }
 
@@ -2953,7 +2947,7 @@ static void ov107_022492A8(UnkStruct_ov107_02246170 *param0)
 
     for (v0 = 0; v0 < v1; v0++) {
         v3 = Party_GetPokemonBySlotIndex(param0->unk_3DC, v0);
-        v2 = ov104_0222E240(Pokemon_GetValue(v3, MON_DATA_CURRENT_HP, NULL), Pokemon_GetValue(v3, MON_DATA_MAX_HP, NULL));
+        v2 = ov104_0222E240(Pokemon_GetValue(v3, MON_DATA_HP, NULL), Pokemon_GetValue(v3, MON_DATA_MAX_HP, NULL));
 
         if (param0->unk_368[v0] != NULL) {
             ov107_02249C1C(param0->unk_368[v0], v2);
@@ -3037,7 +3031,7 @@ static void ov107_022493CC(UnkStruct_ov107_02246170 *param0, u8 param1, u8 param
             v4 = ov107_02249CAC(param0->saveData, param0->unk_09, v2);
 
             v5[0] = (v4 + 1);
-            sub_020306E4(SaveData_GetBattleFrontier(param0->saveData), sub_0205E5B4(param0->unk_09, v2), sub_0205E6A8(sub_0205E5B4(param0->unk_09, v2)), (v4 + 1));
+            sub_020306E4(SaveData_GetBattleFrontier(param0->saveData), sub_0205E5B4(param0->unk_09, v2), sub_0205E6A8(sub_0205E5B4(param0->unk_09, v2)), v4 + 1);
 
             if (ov104_0223BA14(param0->unk_09) == 1) {
                 param0->unk_0F_3 = 2;
@@ -3062,7 +3056,7 @@ static void ov107_022493CC(UnkStruct_ov107_02246170 *param0, u8 param1, u8 param
             v4 = ov107_02249CAC(param0->saveData, param0->unk_09, v2);
 
             v5[0] = (v4 + 1);
-            sub_020306E4(SaveData_GetBattleFrontier(param0->saveData), sub_0205E5B4(param0->unk_09, v2), sub_0205E6A8(sub_0205E5B4(param0->unk_09, v2)), (v4 + 1));
+            sub_020306E4(SaveData_GetBattleFrontier(param0->saveData), sub_0205E5B4(param0->unk_09, v2), sub_0205E6A8(sub_0205E5B4(param0->unk_09, v2)), v4 + 1);
 
             if (ov104_0223BA14(param0->unk_09) == 1) {
                 param0->unk_0F_3 = 2;

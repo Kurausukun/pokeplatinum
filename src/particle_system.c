@@ -1,6 +1,7 @@
 #include "particle_system.h"
 
 #include <nitro.h>
+#include <nitro/fx/fx_trig.h>
 #include <string.h>
 
 #include "camera.h"
@@ -12,12 +13,9 @@
 #include "sys_task.h"
 #include "sys_task_manager.h"
 
-#define MAX_PARTICLE_SYSTEMS 16
-#define MAX_EMITTERS         20
-#define MAX_PARTICLES        200
-#define FIXED_POLYGON_ID     5
-#define MIN_POLYGON_ID       6
-#define MAX_POLYGON_ID       63
+#define FIXED_POLYGON_ID 5
+#define MIN_POLYGON_ID   6
+#define MAX_POLYGON_ID   63
 
 enum SPLBehaviorType {
     SPL_BEHAVIOR_GRAVITY = 0,
@@ -88,7 +86,7 @@ void ParticleSystem_ZeroAll(void)
     }
 }
 
-ParticleSystem *ParticleSystem_New(SPLTexVRAMAllocFunc texAllocFunc, SPLPalVRAMAllocFunc palAllocFunc, void *heap, int heapSize, BOOL hasCamera, enum HeapId heapID)
+ParticleSystem *ParticleSystem_New(SPLTexVRAMAllocFunc texAllocFunc, SPLPalVRAMAllocFunc palAllocFunc, void *heap, int heapSize, BOOL hasCamera, enum HeapID heapID)
 {
     ParticleSystem *particleSystem;
     int id;
@@ -103,7 +101,7 @@ ParticleSystem *ParticleSystem_New(SPLTexVRAMAllocFunc texAllocFunc, SPLPalVRAMA
         return NULL;
     }
 
-    particleSystem = Heap_AllocFromHeap(heapID, sizeof(ParticleSystem));
+    particleSystem = Heap_Alloc(heapID, sizeof(ParticleSystem));
     if (particleSystem == NULL) {
         GF_ASSERT(FALSE);
     }
@@ -128,7 +126,7 @@ ParticleSystem *ParticleSystem_New(SPLTexVRAMAllocFunc texAllocFunc, SPLPalVRAMA
         particleSystem->camera = Camera_Alloc(heapID);
 
         VEC_Set(&particleSystem->unused1, 0, 0, 0);
-        particleSystem->cameraFov = 8192;
+        particleSystem->cameraFov = FX_DEG_TO_IDX(FX32_CONST(45.0f));
 
         Camera_InitWithTargetAndPosition(
             &sParticleSystemDefaultCameraTarget,
@@ -310,7 +308,7 @@ static void *ParticleSystem15_AllocMemory(u32 size)
     return ParticleSystem_AllocMemory(sParticleSystems[15], size);
 }
 
-void *ParticleSystem_LoadResourceFromNARC(enum NarcID narcID, int memberIndex, enum HeapId heapID)
+void *ParticleSystem_LoadResourceFromNARC(enum NarcID narcID, int memberIndex, enum HeapID heapID)
 {
     return NARC_AllocAndReadWholeMemberByIndexPair(narcID, memberIndex, heapID);
 }

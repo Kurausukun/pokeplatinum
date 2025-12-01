@@ -29,10 +29,10 @@ _003A:
     CloseMessage
     PlayFanfare SEQ_SE_PL_SYUWA
     SetPartyGiratinaForm GIRATINA_FORM_ALTERED
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     Warp MAP_HEADER_SPEAR_PILLAR_DISTORTED, 0, 31, 33, 1
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     End
 
@@ -46,11 +46,11 @@ _0070:
     ApplyMovement 128, _017C
     WaitMovement
     Message 0
-    ScrCmd_035
+    CloseMessageWithoutErasing
     ApplyMovement 128, _0198
     WaitMovement
     Message 1
-    ScrCmd_035
+    CloseMessageWithoutErasing
     ApplyMovement 128, _01A4
     WaitMovement
     Message 2

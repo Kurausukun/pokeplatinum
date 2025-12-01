@@ -9,7 +9,6 @@
 #include "overlay095/ov95_02246C20.h"
 #include "overlay095/ov95_022476F0.h"
 #include "overlay095/struct_ov95_02247568.h"
-#include "overlay095/struct_ov95_02247628_decl.h"
 #include "overlay095/struct_ov95_0224773C_decl.h"
 #include "overlay095/struct_ov95_02247958_decl.h"
 
@@ -33,13 +32,15 @@
 #include "unk_0202419C.h"
 #include "unk_020393C8.h"
 
+#include "res/text/bank/trade.h"
+
 typedef struct {
-    UnkStruct_ov95_02247628 *unk_00;
+    TradeSequenceData *unk_00;
     int unk_04;
     int unk_08;
     PokemonSpriteManager *unk_0C;
     PokemonSprite *unk_10;
-    SpriteAnimationFrame unk_14[10];
+    SpriteAnimFrame unk_14[10];
     Sprite *unk_3C[2];
     UnkStruct_ov95_02247568 unk_44;
     BgConfig *unk_54;
@@ -92,9 +93,9 @@ static int ov95_0224847C(UnkStruct_ov95_02247C6C *param0);
 static void ov95_02248490(UnkStruct_ov95_02247C6C *param0);
 static void ov95_022484B0(SysTask *param0, void *param1);
 
-void *ov95_02247B6C(UnkStruct_ov95_02247628 *param0)
+void *ov95_02247B6C(TradeSequenceData *param0)
 {
-    UnkStruct_ov95_02247C6C *v0 = Heap_AllocFromHeap(HEAP_ID_58, sizeof(UnkStruct_ov95_02247C6C));
+    UnkStruct_ov95_02247C6C *v0 = Heap_Alloc(HEAP_ID_58, sizeof(UnkStruct_ov95_02247C6C));
 
     if (v0) {
         int v1;
@@ -210,34 +211,32 @@ static int ov95_02247CB4(UnkStruct_ov95_02247C6C *param0, int *param1)
         GX_BG0_AS_3D
     };
     static const BgTemplate v2 = {
-        0,
-        0,
-        0x800,
-        0,
-        1,
-        GX_BG_COLORMODE_16,
-        GX_BG_SCRBASE_0xf800,
-        GX_BG_CHARBASE_0x00000,
-        GX_BG_EXTPLTT_01,
-        0,
-        0,
-        0,
-        0
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0x800,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xf800,
+        .charBase = GX_BG_CHARBASE_0x00000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 0,
+        .areaOver = 0,
+        .mosaic = FALSE,
     };
     static const BgTemplate v3 = {
-        0,
-        0,
-        0,
-        0,
-        1,
-        GX_BG_COLORMODE_16,
-        GX_BG_SCRBASE_0xf000,
-        GX_BG_CHARBASE_0x04000,
-        GX_BG_EXTPLTT_01,
-        2,
-        0,
-        0,
-        0
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_16,
+        .screenBase = GX_BG_SCRBASE_0xf000,
+        .charBase = GX_BG_CHARBASE_0x04000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 2,
+        .areaOver = 0,
+        .mosaic = FALSE,
     };
 
     GXLayers_SetBanks(&v0);
@@ -318,11 +317,11 @@ static int ov95_02247F04(UnkStruct_ov95_02247C6C *param0, int *param1)
             StringTemplate *v1 = ov95_0224762C(param0->unk_00);
             int v2, v3;
 
-            if (ov95_02247680(param0->unk_00) == 1) {
-                v2 = 0;
+            if (TradeSequence_GetTradeType(param0->unk_00) == TRADE_TYPE_NORMAL) {
+                v2 = pl_msg_00000350_00000;
                 v3 = 2;
             } else {
-                v2 = 4;
+                v2 = pl_msg_00000350_00004;
                 v3 = 3;
             }
 
@@ -344,13 +343,13 @@ static int ov95_02247F04(UnkStruct_ov95_02247C6C *param0, int *param1)
             StringTemplate_Format(v5, param0->unk_6C, param0->unk_68);
 
             {
-                const BoxPokemon *v6 = ov95_02247634(param0->unk_00);
+                const BoxPokemon *v6 = TradeSequence_GetSendingPokemon(param0->unk_00);
 
                 if (BoxPokemon_GetValue((BoxPokemon *)v6, MON_DATA_IS_EGG, NULL) == 0) {
                     u8 delay;
 
                     PokemonSprite_InitAnim(param0->unk_10, 1);
-                    PokeSprite_LoadCryDelay(param0->unk_80, &delay, ov95_0224764C(param0->unk_00), 1);
+                    PokemonSprite_LoadCryDelay(param0->unk_80, &delay, ov95_0224764C(param0->unk_00), 1);
                     Sound_PlayDelayedPokemonCry(ov95_0224764C(param0->unk_00), delay, ov95_02247654(param0->unk_00));
                 }
 
@@ -454,10 +453,10 @@ static PokemonSprite *ov95_02248240(UnkStruct_ov95_02247C6C *param0)
     BoxPokemon *v1;
     int v2;
 
-    v1 = (BoxPokemon *)ov95_02247634(param0->unk_00);
+    v1 = (BoxPokemon *)TradeSequence_GetSendingPokemon(param0->unk_00);
 
     BoxPokemon_BuildSpriteTemplate(&v0, v1, 2, 0);
-    PokeSprite_LoadAnimationFrames(param0->unk_80, param0->unk_14, ov95_0224764C(param0->unk_00), 1);
+    PokemonSprite_LoadAnimFrames(param0->unk_80, param0->unk_14, ov95_0224764C(param0->unk_00), 1);
 
     v2 = (100 - 20) + BoxPokemon_SpriteYOffset(v1, 2, 0);
 
@@ -503,7 +502,7 @@ static void ov95_02248340(UnkStruct_ov95_02247C6C *param0)
 
 static void ov95_02248364(UnkStruct_ov95_02247C6C *param0, int param1, int param2, int param3)
 {
-    UnkStruct_ov95_02248364 *v0 = Heap_AllocFromHeap(HEAP_ID_58, sizeof(UnkStruct_ov95_02248364));
+    UnkStruct_ov95_02248364 *v0 = Heap_Alloc(HEAP_ID_58, sizeof(UnkStruct_ov95_02248364));
 
     if (v0) {
         v0->unk_00 = param0;
@@ -549,7 +548,7 @@ static void ov95_022483E4(SysTask *param0, void *param1)
 
 static void ov95_02248420(UnkStruct_ov95_02247C6C *param0)
 {
-    UnkStruct_ov95_02248420 *v0 = Heap_AllocFromHeap(HEAP_ID_58, sizeof(UnkStruct_ov95_02248420));
+    UnkStruct_ov95_02248420 *v0 = Heap_Alloc(HEAP_ID_58, sizeof(UnkStruct_ov95_02248420));
 
     if (v0) {
         v0->unk_00 = param0;

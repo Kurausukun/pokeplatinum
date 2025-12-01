@@ -169,7 +169,7 @@ static inline void CalcCrossProduct(const VecFx32 *a, const VecFx32 *b, VecFx32 
     outResult->z = FX_Mul(a->x, b->y) - FX_Mul(b->x, a->y);
 }
 
-s32 CalcDotProduct2D(s32 x0, s32 y0, s32 x1, s32 y1, u32 unused)
+s32 ApproximateArcLength(s32 x0, s32 y0, s32 x1, s32 y1, u32 unused)
 {
     VecFx32 vec0, vec1, vecResult, cross;
     fx32 crossMagnitude;
@@ -240,9 +240,9 @@ u16 CalcCRC16Checksum(const void *data, u32 dataLen)
     return MATH_CalcCRC16CCITT(sCRC16Table, data, dataLen);
 }
 
-void InitCRC16Table(enum HeapId heapID)
+void InitCRC16Table(enum HeapID heapID)
 {
     GF_ASSERT(sCRC16Table == NULL);
-    sCRC16Table = Heap_AllocFromHeap(heapID, sizeof(MATHCRC16Table));
+    sCRC16Table = Heap_Alloc(heapID, sizeof(MATHCRC16Table));
     MATH_CRC16CCITTInitTable(sCRC16Table);
 }

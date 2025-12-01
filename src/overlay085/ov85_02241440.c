@@ -3,7 +3,6 @@
 #include <nitro.h>
 #include <string.h>
 
-#include "struct_decls/struct_0200C440_decl.h"
 #include "struct_defs/struct_020972FC.h"
 #include "struct_defs/struct_02099F80.h"
 
@@ -11,6 +10,7 @@
 #include "bg_window.h"
 #include "camera.h"
 #include "font.h"
+#include "font_special_chars.h"
 #include "graphics.h"
 #include "gx_layers.h"
 #include "heap.h"
@@ -23,7 +23,6 @@
 #include "system.h"
 #include "text.h"
 #include "touch_pad.h"
-#include "unk_0200C440.h"
 #include "unk_0202419C.h"
 #include "unk_020393C8.h"
 #include "unk_0208C098.h"
@@ -41,7 +40,7 @@ typedef struct {
     Window unk_04[12];
     MessageLoader *unk_C4;
     StringTemplate *unk_C8;
-    UnkStruct_0200C440 *unk_CC;
+    FontSpecialCharsContext *unk_CC;
     Camera *camera;
     UnkStruct_ov85_022420A8 unk_D4[4];
     UnkStruct_ov85_022420A8 unk_134[4];
@@ -221,7 +220,7 @@ int ov85_02241440(ApplicationManager *appMan, int *param1)
     v0->unk_00 = BgConfig_New(HEAP_ID_36);
     v0->unk_1FC = BerryData_Load(v0->unk_1F8->unk_08, 36);
 
-    sub_0208C120(0, HEAP_ID_36);
+    App_StartScreenFade(FALSE, HEAP_ID_36);
 
     v1 = NARC_ctor(NARC_INDEX_GRAPHIC__NTAG_GRA, HEAP_ID_36);
 
@@ -242,7 +241,7 @@ int ov85_02241440(ApplicationManager *appMan, int *param1)
     ov85_02242218(v0);
 
     SetVBlankCallback(ov85_022415F4, v0);
-    DrawWifiConnectionIcon();
+    NetworkIcon_Init();
     GXLayers_EngineAToggleLayers(GX_PLANEMASK_OBJ, 1);
     NARC_dtor(v1);
 
@@ -341,19 +340,18 @@ static void ov85_02241634(BgConfig *param0)
 
     {
         BgTemplate v1 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xf800,
-            GX_BG_CHARBASE_0x10000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xf800,
+            .charBase = GX_BG_CHARBASE_0x10000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_1, &v1, 0);
@@ -362,19 +360,18 @@ static void ov85_02241634(BgConfig *param0)
 
     {
         BgTemplate v2 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xf000,
-            GX_BG_CHARBASE_0x00000,
-            GX_BG_EXTPLTT_01,
-            3,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xf000,
+            .charBase = GX_BG_CHARBASE_0x00000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 3,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_2, &v2, 0);
@@ -383,19 +380,18 @@ static void ov85_02241634(BgConfig *param0)
 
     {
         BgTemplate v3 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xe800,
-            GX_BG_CHARBASE_0x00000,
-            GX_BG_EXTPLTT_01,
-            1,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xe800,
+            .charBase = GX_BG_CHARBASE_0x00000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 1,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_3, &v3, 0);
@@ -424,7 +420,7 @@ static void ov85_02241718(UnkStruct_ov85_022417E4 *param0, NARC *param1)
         u16 *v0;
         u32 v1;
 
-        v0 = (u16 *)Heap_AllocFromHeap(HEAP_ID_36, 8 * 8 * 2);
+        v0 = (u16 *)Heap_Alloc(HEAP_ID_36, 8 * 8 * 2);
 
         for (v1 = 0; v1 < 8 * 8; v1++) {
             v0[v1] = (3 << 12) + 1 + v1;
@@ -445,15 +441,15 @@ static void ov85_022417CC(void)
 
 static void ov85_022417E4(UnkStruct_ov85_022417E4 *param0)
 {
-    param0->unk_C4 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0398, HEAP_ID_36);
-    param0->unk_CC = sub_0200C440(15, 2, 0, HEAP_ID_36);
+    param0->unk_C4 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_BERRY_TAGS, HEAP_ID_36);
+    param0->unk_CC = FontSpecialChars_Init(15, 2, 0, HEAP_ID_36);
     param0->unk_C8 = StringTemplate_Default(HEAP_ID_36);
 }
 
 static void ov85_0224181C(UnkStruct_ov85_022417E4 *param0)
 {
     MessageLoader_Free(param0->unk_C4);
-    sub_0200C560(param0->unk_CC);
+    FontSpecialChars_Free(param0->unk_CC);
     StringTemplate_Free(param0->unk_C8);
 }
 
@@ -535,7 +531,7 @@ static void ov85_0224198C(UnkStruct_ov85_022417E4 *param0)
     v0 = &param0->unk_04[1];
 
     Window_FillTilemap(v0, 0);
-    sub_0200C578(param0->unk_CC, 2, v0, 0, 5);
+    FontSpecialChars_DrawPartyScreenLevelText(param0->unk_CC, 2, v0, 0, 5);
 
     v1 = MessageLoader_GetNewStrbuf(param0->unk_C4, 6);
     v2 = Strbuf_Init((2 + 1) * 2, HEAP_ID_36);
@@ -743,7 +739,7 @@ static int ov85_02241D10(UnkStruct_ov85_022417E4 *param0)
     }
 
     if ((gSystem.pressedKeys & PAD_BUTTON_B) || (gSystem.touchPressed)) {
-        sub_0208C120(1, HEAP_ID_36);
+        App_StartScreenFade(TRUE, HEAP_ID_36);
         return 3;
     }
 
@@ -881,7 +877,7 @@ static void ov85_02241F5C(void)
 
 static void ov85_02241FF0(UnkStruct_ov85_022417E4 *param0)
 {
-    sub_020241B4();
+    G3_ResetG3X();
     Camera_ComputeViewMatrix();
 
     G3_MtxMode(GX_MTXMODE_PROJECTION);

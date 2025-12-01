@@ -112,7 +112,7 @@ static BOOL Sound_Impl_PlayFieldBGM(u16 seqID, u8 playerID, enum SoundHandleType
         seqID);
 }
 
-BOOL sub_02005588(u8 scene, u16 seqID)
+BOOL Sound_SetBGM(u8 scene, u16 seqID)
 {
     if (scene != SOUND_SCENE_FIELD) {
         GF_ASSERT(FALSE);
@@ -366,7 +366,7 @@ BOOL Sound_PlayPokemonCry(u16 species, u8 form)
 
 BOOL Sound_PlayDelayedPokemonCry(u16 species, u8 delay, u8 form)
 {
-    Sound_PlayDelayedPokemonCryEx(POKECRY_NORMAL, species, 0, SOUND_VOLUME_MAX, HEAP_ID_FIELDMAP, delay, form);
+    Sound_PlayDelayedPokemonCryEx(POKECRY_NORMAL, species, 0, SOUND_VOLUME_MAX, HEAP_ID_FIELD2, delay, form);
     return TRUE;
 }
 
@@ -606,7 +606,7 @@ void Sound_SetPokemonCryDuration(int duration, int heapID)
 
     Sound_Impl_DestroyCryDurationTask();
 
-    param = Heap_AllocFromHeap(heapID, sizeof(PokemonCryDurationParam));
+    param = Heap_Alloc(heapID, sizeof(PokemonCryDurationParam));
     if (param == NULL) {
         GF_ASSERT(FALSE);
         return;

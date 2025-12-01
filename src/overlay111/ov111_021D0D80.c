@@ -3,7 +3,6 @@
 #include <nitro.h>
 #include <string.h>
 
-#include "struct_decls/struct_0200C440_decl.h"
 #include "struct_decls/struct_02015920_decl.h"
 #include "struct_defs/struct_02015958.h"
 #include "struct_defs/struct_0203E608.h"
@@ -19,6 +18,7 @@
 
 #include "bg_window.h"
 #include "font.h"
+#include "font_special_chars.h"
 #include "game_options.h"
 #include "graphics.h"
 #include "gx_layers.h"
@@ -42,7 +42,6 @@
 #include "text.h"
 #include "touch_pad.h"
 #include "touch_screen.h"
-#include "unk_0200C440.h"
 #include "unk_0201567C.h"
 #include "unk_02015920.h"
 #include "vram_transfer.h"
@@ -81,7 +80,7 @@ struct UnkStruct_ov111_021D0F7C_t {
     BgConfig *unk_58;
     Window unk_5C[16];
     PaletteData *unk_15C;
-    UnkStruct_0200C440 *unk_160;
+    FontSpecialCharsContext *unk_160;
     Options *options;
     SaveData *saveData;
     UnkStruct_ov111_021D2F80 unk_16C;
@@ -1114,7 +1113,7 @@ static void ov111_021D1C0C(UnkStruct_ov111_021D0F7C *param0)
     StringTemplate_Free(param0->unk_3C);
     Strbuf_Free(param0->unk_40);
     Strbuf_Free(param0->unk_44);
-    sub_0200C560(param0->unk_160);
+    FontSpecialChars_Free(param0->unk_160);
     Heap_Free(param0->unk_3F0);
     Heap_Free(param0->unk_3F8);
 
@@ -1147,7 +1146,7 @@ static void ov111_021D1D68(UnkStruct_ov111_021D0F7C *param0)
     ov111_021D1FC4(param0);
     ov111_021D2034(param0);
 
-    param0->unk_38 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0540, HEAP_ID_115);
+    param0->unk_38 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0540, HEAP_ID_115);
     param0->unk_3C = StringTemplate_Default(HEAP_ID_115);
     param0->unk_40 = Strbuf_Init(600, HEAP_ID_115);
     param0->unk_44 = Strbuf_Init(600, HEAP_ID_115);
@@ -1158,7 +1157,7 @@ static void ov111_021D1D68(UnkStruct_ov111_021D0F7C *param0)
     Font_LoadScreenIndicatorsPalette(4, 12 * 32, HEAP_ID_115);
     Font_InitManager(FONT_SUBSCREEN, HEAP_ID_115);
 
-    param0->unk_160 = sub_0200C440(15, 14, 0, HEAP_ID_115);
+    param0->unk_160 = FontSpecialChars_Init(15, 14, 0, HEAP_ID_115);
     ov111_021D3548(param0->unk_58, param0->unk_5C);
     param0->unk_34 = sub_0201567C(NULL, 1, 12, HEAP_ID_115);
 
@@ -1324,19 +1323,18 @@ static void ov111_021D20EC(BgConfig *param0)
 
     {
         BgTemplate v1 = {
-            0,
-            0,
-            0x1000,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0000,
-            GX_BG_CHARBASE_0x04000,
-            GX_BG_EXTPLTT_01,
-            0,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x1000,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0000,
+            .charBase = GX_BG_CHARBASE_0x04000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_SUB_0, &v1, 0);
@@ -1346,19 +1344,18 @@ static void ov111_021D20EC(BgConfig *param0)
 
     {
         BgTemplate v2 = {
-            0,
-            0,
-            0x1000,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x1000,
-            GX_BG_CHARBASE_0x0c000,
-            GX_BG_EXTPLTT_01,
-            3,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x1000,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x1000,
+            .charBase = GX_BG_CHARBASE_0x0c000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 3,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_SUB_3, &v2, 0);
@@ -1367,19 +1364,18 @@ static void ov111_021D20EC(BgConfig *param0)
 
     {
         BgTemplate v3 = {
-            0,
-            0,
-            0x1000,
-            0,
-            3,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x3000,
-            GX_BG_CHARBASE_0x14000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x1000,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_512x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x3000,
+            .charBase = GX_BG_CHARBASE_0x14000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_SUB_2, &v3, 0);
@@ -1388,19 +1384,18 @@ static void ov111_021D20EC(BgConfig *param0)
 
     {
         BgTemplate v4 = {
-            0,
-            0,
-            0x1000,
-            0,
-            3,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0000,
-            GX_BG_CHARBASE_0x04000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x1000,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_512x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0000,
+            .charBase = GX_BG_CHARBASE_0x04000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_1, &v4, 0);
@@ -1409,19 +1404,18 @@ static void ov111_021D20EC(BgConfig *param0)
 
     {
         BgTemplate v5 = {
-            0,
-            0,
-            0x1000,
-            0,
-            3,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x1000,
-            GX_BG_CHARBASE_0x0c000,
-            GX_BG_EXTPLTT_01,
-            1,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x1000,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_512x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x1000,
+            .charBase = GX_BG_CHARBASE_0x0c000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 1,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_0, &v5, 0);
@@ -1430,19 +1424,18 @@ static void ov111_021D20EC(BgConfig *param0)
 
     {
         BgTemplate v6 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x2000,
-            GX_BG_CHARBASE_0x14000,
-            GX_BG_EXTPLTT_01,
-            0,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x2000,
+            .charBase = GX_BG_CHARBASE_0x14000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_2, &v6, 0);
@@ -2118,7 +2111,7 @@ static void ov111_021D2E4C(UnkStruct_ov111_021D0F7C *param0)
 
 static void ov111_021D2E8C(UnkStruct_ov111_021D0F7C *param0)
 {
-    param0->unk_3F8 = Heap_AllocFromHeap(HEAP_ID_115, param0->unk_3F4->szByte);
+    param0->unk_3F8 = Heap_Alloc(HEAP_ID_115, param0->unk_3F4->szByte);
 
     if (param0->unk_3F8 == NULL) {
         GF_ASSERT(param0->unk_3F8 != NULL);

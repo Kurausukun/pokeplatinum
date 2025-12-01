@@ -22,7 +22,7 @@
     ScriptEntryEnd
 
 _0046:
-    ScrCmd_238 19, VAR_MAP_LOCAL_0
+    CheckTVInterviewEligible TV_PROGRAM_SEGMENT_BATTLE_FRONTIER_FRONTLINE_NEWS_MULTI, VAR_MAP_LOCAL_0
     GoToIfEq VAR_MAP_LOCAL_0, 0, _005F
     ClearFlag FLAG_UNK_0x02C3
     End
@@ -50,7 +50,7 @@ _0081:
     End
 
 _009D:
-    ScrCmd_313 0
+    RecordHeapMemory
     CallIfEq VAR_MAP_LOCAL_4, 0, _0678
     CallIfEq VAR_MAP_LOCAL_4, 1, _067D
     GoTo _00C3
@@ -116,32 +116,32 @@ _01B8:
 
 _01E5:
     Message 8
-    ScrCmd_1FF 9, 3, 0, 0
+    MessageSeenBanlistSpecies 9, 3
     GoTo _0145
     End
 
 _01F8:
     Message 8
-    ScrCmd_1FF 9, 2, 0, 0
+    MessageSeenBanlistSpecies 9, 2
     GoTo _0145
     End
 
 _020B:
     Message 7
     CloseMessage
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     ScrCmd_2D9 4, VAR_UNK_0x40BE, VAR_RESULT
     ScrCmd_2DB VAR_MAP_LOCAL_2, VAR_MAP_LOCAL_5, VAR_MAP_LOCAL_6
     ReturnToField
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     GoToIfEq VAR_MAP_LOCAL_2, 0xFF, _0145
-    ScrCmd_31E VAR_MAP_LOCAL_2, VAR_RESULT
+    TryRevertPokemonForm VAR_MAP_LOCAL_2, VAR_RESULT
     GoToIfEq VAR_RESULT, 0xFF, _05E1
-    ScrCmd_31E VAR_MAP_LOCAL_5, VAR_RESULT
+    TryRevertPokemonForm VAR_MAP_LOCAL_5, VAR_RESULT
     GoToIfEq VAR_RESULT, 0xFF, _05E1
-    ScrCmd_31E VAR_MAP_LOCAL_6, VAR_RESULT
+    TryRevertPokemonForm VAR_MAP_LOCAL_6, VAR_RESULT
     GoToIfEq VAR_RESULT, 0xFF, _05E1
     GetPartyMonSpecies VAR_MAP_LOCAL_2, VAR_MAP_LOCAL_1
     GoToIfEq VAR_MAP_LOCAL_1, 0, _0145
@@ -183,9 +183,9 @@ _0335:
     ShowYesNoMenu VAR_RESULT
     GoToIfEq VAR_RESULT, MENU_NO, _02F1
     CloseMessage
-    ScrCmd_0F2 32, 0, 0, VAR_RESULT
-    GoToIfEq VAR_RESULT, 1, _0377
-    GoToIfEq VAR_RESULT, 3, _037F
+    StartBattleClient 32, 0, 0, VAR_RESULT
+    GoToIfEq VAR_RESULT, COMM_CLUB_RET_CANCEL, _0377
+    GoToIfEq VAR_RESULT, COMM_CLUB_RET_ERROR, _037F
     GoTo _03DD
     End
 
@@ -194,7 +194,7 @@ _0377:
     End
 
 _037F:
-    ScrCmd_150
+    EndCommunication
     GoTo _02F1
     End
 
@@ -203,9 +203,9 @@ _0389:
     ShowYesNoMenu VAR_RESULT
     GoToIfEq VAR_RESULT, MENU_NO, _02F1
     CloseMessage
-    ScrCmd_0F3 32, 0, 0, VAR_RESULT
-    GoToIfEq VAR_RESULT, 1, _03CB
-    GoToIfEq VAR_RESULT, 3, _03D3
+    StartBattleServer 32, 0, 0, VAR_RESULT
+    GoToIfEq VAR_RESULT, COMM_CLUB_RET_CANCEL, _03CB
+    GoToIfEq VAR_RESULT, COMM_CLUB_RET_ERROR, _03D3
     GoTo _03DD
     End
 
@@ -214,12 +214,12 @@ _03CB:
     End
 
 _03D3:
-    ScrCmd_150
+    EndCommunication
     GoTo _02F1
     End
 
 _03DD:
-    ScrCmd_136
+    ClearReceivedTempDataAllPlayers
     ScrCmd_135 154
     GetPartyMonSpecies VAR_MAP_LOCAL_2, VAR_0x8000
     GetPartyMonSpecies VAR_MAP_LOCAL_5, VAR_0x8001
@@ -228,7 +228,7 @@ _03DD:
     GoToIfEq VAR_0x8008, 1, _0450
     GoToIfEq VAR_0x8008, 2, _0466
     GoToIfEq VAR_0x8008, 3, _047C
-    ScrCmd_136
+    ClearReceivedTempDataAllPlayers
     ScrCmd_135 156
     Message 45
     CallIfEq VAR_UNK_0x40BE, 2, _0448
@@ -267,9 +267,9 @@ _0497:
     End
 
 _049F:
-    ScrCmd_136
+    ClearReceivedTempDataAllPlayers
     ScrCmd_135 157
-    ScrCmd_150
+    EndCommunication
     Return
 
 _04A9:
@@ -281,7 +281,7 @@ _04A9:
     End
 
 _04DC:
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     CallIfEq VAR_UNK_0x40BE, 0, _05A5
     CallIfEq VAR_UNK_0x40BE, 1, _05B9
@@ -292,13 +292,13 @@ _04DC:
     ScrCmd_2C4 15
     CallIfEq VAR_UNK_0x40BE, 2, _0545
     ReturnToField
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
-    ScrCmd_313 1
+    AssertHeapMemory
     End
 
 _0545:
-    ScrCmd_150
+    EndCommunication
     Return
 
 _0549:
@@ -320,9 +320,9 @@ _0564:
     Return
 
 _057F:
-    ScrCmd_02E 32
+    MessageNoSkip 32
     WaitTime 10, VAR_RESULT
-    ScrCmd_136
+    ClearReceivedTempDataAllPlayers
     ScrCmd_135 155
     CloseMessage
     ApplyMovement LOCALID_PLAYER, _0604
@@ -443,7 +443,7 @@ _06B3:
     Return
 
 _06B8:
-    ScrCmd_313 0
+    RecordHeapMemory
     SetVar VAR_MAP_LOCAL_3, 1
     SetVar VAR_UNK_0x40BF, 0
     Message 33
@@ -453,9 +453,9 @@ _06B8:
     End
 
 _06DF:
-    ScrCmd_18D
-    ScrCmd_12D VAR_RESULT
-    ScrCmd_18E
+    ShowSavingIcon
+    TrySaveGame VAR_RESULT
+    HideSavingIcon
     PlayFanfare SEQ_SE_DP_SAVE
     WaitFanfare SEQ_SE_DP_SAVE
     Return
@@ -499,41 +499,19 @@ _0759:
 
 _0774:
     GoTo _0145
+    End
 
-    .byte 2
-    .byte 0
-    .byte 12
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 12
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 12
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 12
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+BattleArcade_UnusedMovement:
+    WalkNormalNorth 2
+    Delay8
+    WalkNormalNorth
+    EndMovement
+
+BattleArcade_UnusedMovement2:
+    WalkNormalNorth 2
+    Delay8
+    WalkNormalNorth
+    EndMovement
 
 _079C:
     PlayFanfare SEQ_SE_CONFIRM
@@ -633,5 +611,4 @@ _0845:
     ReleaseAll
     End
 
-    .byte 0
-    .byte 0
+    .balign 4, 0

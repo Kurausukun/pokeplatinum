@@ -1,0 +1,36 @@
+#ifndef POKEPLATINUM_CONSTANTS_UNDERGROUND_H
+#define POKEPLATINUM_CONSTANTS_UNDERGROUND_H
+
+#define MAX_TREASURE_SLOTS  40
+#define MAX_SPHERE_SLOTS    40
+#define MAX_TRAP_SLOTS      40
+#define MAX_GOODS_BAG_SLOTS 40
+#define MAX_GOODS_PC_SLOTS  200
+
+#define MAX_PLACED_GOODS   15
+#define MAX_BURIED_SPHERES 100
+#define MAX_PLACED_TRAPS   16
+#define MAX_SPAWNED_TRAPS  64
+
+#define MAX_SPHERE_SIZE 99
+
+enum SphereTypes {
+    SPHERE_NONE = 0,
+    PRISM_SPHERE,
+    PALE_SPHERE,
+    RED_SPHERE,
+    BLUE_SPHERE,
+    GREEN_SPHERE,
+};
+
+typedef struct Coordinates {
+    u16 x;
+    u16 z;
+} Coordinates;
+
+typedef struct Coordinates2D {
+    u16 x;
+    u16 y;
+} Coordinates2D;
+
+#endif // POKEPLATINUM_UNDERGROUND_TYPES_H

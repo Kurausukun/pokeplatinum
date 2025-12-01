@@ -3,6 +3,7 @@
 
 #include <nitro/rtc.h>
 
+#include "constants/flavor.h"
 #include "constants/forms.h"
 #include "constants/pokemon.h"
 #include "constants/sound.h"
@@ -32,6 +33,8 @@
 #define FACE_FRONT 2
 
 #define INIT_IVS_RANDOM 32
+
+#define BATTLE_FRONTIER_BANLIST_SIZE 18
 
 enum EvolutionClass {
     EVO_CLASS_BY_LEVEL = 0,
@@ -629,7 +632,7 @@ void BoxPokemon_FromPokemon(Pokemon *src, BoxPokemon *dest);
  * @param flavor
  * @return 1 if liked flavor, -1 if disliked flavor, else 0
  */
-s8 Pokemon_GetFlavorAffinity(Pokemon *mon, int flavor);
+s8 Pokemon_GetFlavorAffinity(Pokemon *mon, enum Flavor flavor);
 
 /**
  * @brief Gets the affinitiy of a given Pokemon personality to a given flavor
@@ -638,7 +641,7 @@ s8 Pokemon_GetFlavorAffinity(Pokemon *mon, int flavor);
  * @param flavor
  * @return 1 if liked flavor, -1 if disliked flavor, else 0
  */
-s8 Pokemon_GetFlavorAffinityOf(u32 monPersonality, int flavor);
+s8 Pokemon_GetFlavorAffinityOf(u32 monPersonality, enum Flavor flavor);
 
 /**
  * @brief Gets all moves that the given pokemon species and form can learn by leveling up
@@ -787,7 +790,7 @@ void Pokemon_LoadLevelUpMovesOf(int monSpecies, int monForm, u16 *monLevelUpMove
  * @param forceDefaultChatot    If TRUE, force usage of Chatot's default cry.
  * @param heapID
  */
-void Pokemon_PlayCry(ChatotCry *chatotCry, enum PokemonCryMod cryMod, u16 species, int form, int pan, int volume, int forceDefaultChatot, int heapID);
+void PlayCryWithParams(ChatotCry *chatotCry, enum PokemonCryMod cryMod, u16 species, int form, int pan, int volume, int forceDefaultChatot, int heapID);
 
 /**
  * @brief Play a Pokemon's cry, according to the given species and form number.
@@ -803,9 +806,9 @@ void Pokemon_PlayCry(ChatotCry *chatotCry, enum PokemonCryMod cryMod, u16 specie
  * @param heapID
  * @param delay                 Number of frames until playback will begin.
  */
-void Pokemon_PlayDelayedCry(ChatotCry *chatotCry, enum PokemonCryMod crymod, u16 species, int form, int pan, int volume, int forceDefaultChatot, int heapID, u8 delay);
-BOOL Pokemon_IsEligibleForAction(Pokemon *mon);
-void Pokemon_SetCatchData(Pokemon *mon, TrainerInfo *trainerInfo, int monPokeball, int metLocation, int metTerrain, enum HeapId heapID);
+void Species_PlayDelayedCry(ChatotCry *chatotCry, enum PokemonCryMod crymod, u16 species, int form, int pan, int volume, int forceDefaultChatot, int heapID, u8 delay);
+BOOL Pokemon_PlayCry(Pokemon *mon);
+void Pokemon_SetCatchData(Pokemon *mon, TrainerInfo *trainerInfo, int monPokeball, int metLocation, int metTerrain, enum HeapID heapID);
 void Pokemon_UpdateAfterCatch(Pokemon *mon, TrainerInfo *param1, int monPokeball, int param3, int param4, int param5);
 void Pokemon_GiveHeldItem(Pokemon *mon, u32 battleType, int itemRates);
 BOOL Pokemon_CanLearnTM(Pokemon *mon, u8 tmID);
@@ -820,12 +823,12 @@ void Pokemon_CalcAbility(Pokemon *mon);
 
 void sub_020780C4(Pokemon *mon, u32 monPersonality);
 
-BOOL sub_02078804(u16 param0);
-u16 sub_02078824(u8 index);
+BOOL Pokemon_IsOnBattleFrontierBanlist(u16 species);
+u16 Pokemon_GetBattleFrontierBanlistEntry(u8 index);
 BOOL sub_02078838(Pokemon *mon);
 BOOL sub_0207884C(BoxPokemon *boxMon, TrainerInfo *param1, int heapID);
 int sub_020788D0(int param0);
-void sub_0207893C(Pokemon *mon);
+void Pokemon_ClearBallCapsuleData(Pokemon *mon);
 void BoxPokemon_RestorePP(BoxPokemon *boxMon);
 
 /**
@@ -837,7 +840,7 @@ void BoxPokemon_RestorePP(BoxPokemon *boxMon);
  * @param species       Species to be loaded
  * @param clientType    Client-type of who made the load request
  */
-void PokeSprite_LoadAnimationFrames(NARC *narc, SpriteAnimationFrame *frames, u16 species, u16 clientType);
+void PokemonSprite_LoadAnimFrames(NARC *narc, SpriteAnimFrame *frames, u16 species, u16 clientType);
 
 /**
  * @brief Load the animation data for a given species and a client type.
@@ -850,7 +853,7 @@ void PokeSprite_LoadAnimationFrames(NARC *narc, SpriteAnimationFrame *frames, u1
  * @param reverse       If TRUE, reverse the sprite + animation
  * @param frame         Which frame of the animation to initialize
  */
-void PokeSprite_LoadAnimation(NARC *narc, PokemonAnimationSys *animationSys, PokemonSprite *sprite, u16 species, int face, int reverse, int frame);
+void PokemonSprite_LoadAnim(NARC *narc, PokemonAnimationSys *animationSys, PokemonSprite *sprite, u16 species, int face, int reverse, int frame);
 
 /**
  * @brief Load the cry delay for a given species and a client type.
@@ -860,7 +863,7 @@ void PokeSprite_LoadAnimation(NARC *narc, PokemonAnimationSys *animationSys, Pok
  * @param species       Species to be loaded
  * @param clientType    Client-type of who made the load request
  */
-void PokeSprite_LoadCryDelay(NARC *narc, u8 *cryDelay, u16 species, u16 clientType);
+void PokemonSprite_LoadCryDelay(NARC *narc, u8 *cryDelay, u16 species, u16 clientType);
 
 /**
  * @brief Load the vertical offset for a given species and a client type.
@@ -870,7 +873,7 @@ void PokeSprite_LoadCryDelay(NARC *narc, u8 *cryDelay, u16 species, u16 clientTy
  * @param species       Species to be loaded
  * @param clientType    Client-type of who made the load request
  */
-void PokeSprite_LoadYOffset(NARC *narc, s8 *yOffset, u16 species);
+void PokemonSprite_LoadYOffset(NARC *narc, s8 *yOffset, u16 species);
 
 /**
  * @brief Load the shadow's horizontal offset for a given species and a client type.
@@ -880,7 +883,7 @@ void PokeSprite_LoadYOffset(NARC *narc, s8 *yOffset, u16 species);
  * @param species               Species to be loaded
  * @param clientType            Client-type of who made the load request
  */
-void PokeSprite_LoadXOffsetShadow(NARC *narc, s8 *xOffsetShadow, u16 species);
+void PokemonSprite_LoadXOffsetShadow(NARC *narc, s8 *xOffsetShadow, u16 species);
 
 /**
  * @brief Load the shadow size for a given species and a client type.
@@ -890,7 +893,7 @@ void PokeSprite_LoadXOffsetShadow(NARC *narc, s8 *xOffsetShadow, u16 species);
  * @param species           Species to be loaded
  * @param clientType        Client-type of who made the load request
  */
-void PokeSprite_LoadShadowSize(NARC *narc, u8 *shadowSize, u16 species);
+void PokemonSprite_LoadShadowSize(NARC *narc, u8 *shadowSize, u16 species);
 BOOL Pokemon_SetBallSeal(int param0, Pokemon *mon, int heapID);
 void sub_02078B40(Pokemon *mon, UnkStruct_02078B40 *param1);
 void sub_02078E0C(UnkStruct_02078B40 *param0, Pokemon *mon);

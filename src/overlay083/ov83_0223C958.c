@@ -7,7 +7,6 @@
 
 #include "struct_defs/struct_02099F80.h"
 
-#include "overlay022/struct_ov22_022550D4.h"
 #include "overlay083/ov83_0223D6A8.h"
 #include "overlay083/struct_ov83_0223B784.h"
 
@@ -19,11 +18,11 @@
 #include "narc.h"
 #include "pltt_transfer.h"
 #include "render_oam.h"
+#include "software_sprite.h"
 #include "sprite.h"
 #include "strbuf.h"
 #include "string_template.h"
 #include "system.h"
-#include "unk_02015064.h"
 #include "unk_0202419C.h"
 
 static void ov83_0223CC30(BgConfig **param0, int heapID);
@@ -111,7 +110,7 @@ int ov83_0223CB8C(UnkStruct_ov83_0223B784 *param0, int *param1)
 
 void ov83_0223CBA4(UnkStruct_ov83_0223B784 *param0)
 {
-    sub_020241B4();
+    G3_ResetG3X();
 
     NNS_G3dGePushMtx();
 
@@ -120,7 +119,7 @@ void ov83_0223CBA4(UnkStruct_ov83_0223B784 *param0)
         NNS_G2dSetupSoftwareSpriteCamera();
 
         if (param0->unk_320) {
-            sub_020150EC(param0->unk_320);
+            SoftwareSpriteManager_DrawVisible(param0->unk_320);
         }
     }
 
@@ -186,64 +185,60 @@ static void ov83_0223CC30(BgConfig **param0, int heapID)
     {
         BgTemplate v3[] = {
             {
-                0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0xf000,
-                GX_BG_CHARBASE_0x08000,
-                GX_BG_EXTPLTT_01,
-                1,
-                0,
-                0,
-                0,
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0xf000,
+                .charBase = GX_BG_CHARBASE_0x08000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 1,
+                .areaOver = 0,
+                .mosaic = FALSE,
             },
             {
-                0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0xe800,
-                GX_BG_CHARBASE_0x00000,
-                GX_BG_EXTPLTT_01,
-                0,
-                0,
-                0,
-                0,
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0xe800,
+                .charBase = GX_BG_CHARBASE_0x00000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 0,
+                .areaOver = 0,
+                .mosaic = FALSE,
             },
             {
-                0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0xb000,
-                GX_BG_CHARBASE_0x00000,
-                GX_BG_EXTPLTT_01,
-                0,
-                0,
-                0,
-                0,
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0xb000,
+                .charBase = GX_BG_CHARBASE_0x00000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 0,
+                .areaOver = 0,
+                .mosaic = FALSE,
             },
             {
-                0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0xa800,
-                GX_BG_CHARBASE_0x08000,
-                GX_BG_EXTPLTT_01,
-                1,
-                0,
-                0,
-                0,
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0xa800,
+                .charBase = GX_BG_CHARBASE_0x08000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 1,
+                .areaOver = 0,
+                .mosaic = FALSE,
             },
         };
 
@@ -280,20 +275,20 @@ static void ov83_0223CD1C(UnkStruct_ov83_0223B784 *param0)
 
 static void ov83_0223CD28(UnkStruct_ov83_0223B784 *param0)
 {
-    UnkStruct_ov22_022550D4 v0 = {
-        .unk_00 = 48,
-        .unk_04 = 32,
-        .unk_08 = 32,
+    SoftwareSpriteManagerTemplate v0 = {
+        .numSprites = 48,
+        .numChars = 32,
+        .numPalettes = 32,
         .heapID = HEAP_ID_SYSTEM
     };
 
     v0.heapID = param0->heapID;
-    param0->unk_320 = sub_02015064(&v0);
+    param0->unk_320 = SoftwareSpriteManager_New(&v0);
 }
 
 static void ov83_0223CD54(UnkStruct_ov83_0223B784 *param0)
 {
-    sub_020150A8(param0->unk_320);
+    SoftwareSpriteManager_Free(param0->unk_320);
 }
 
 static void ov83_0223CD64(UnkStruct_ov83_0223B784 *param0)
@@ -383,7 +378,7 @@ static void ov83_0223CF2C(UnkStruct_ov83_0223B784 *param0)
 {
     int v0;
 
-    param0->unk_15E0.unk_00 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0464, param0->heapID);
+    param0->unk_15E0.unk_00 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_POFFIN_MAKING, param0->heapID);
     param0->unk_15E0.unk_04 = StringTemplate_New(4, 64, param0->heapID);
     param0->unk_15E0.unk_08 = Strbuf_Init(64, param0->heapID);
     param0->unk_15E0.unk_0C = MessageLoader_GetNewStrbuf(param0->unk_15E0.unk_00, 0);

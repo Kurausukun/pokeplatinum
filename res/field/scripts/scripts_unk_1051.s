@@ -1,5 +1,5 @@
 #include "macros/scrcmd.inc"
-#include "res/text/bank/unk_0552.h"
+#include "res/text/bank/counterpart_talk.h"
 
 
     ScriptEntry _0006
@@ -38,9 +38,9 @@ _0064:
     Return
 
 _006C:
-    ScrCmd_282 VAR_RESULT
-    GoToIfEq VAR_RESULT, 1, _0133
-    ScrCmd_1E8 VAR_RESULT
+    CheckIsTodayPlayerBirthday VAR_RESULT
+    GoToIfEq VAR_RESULT, TRUE, _0133
+    CheckLocalDexCompleted VAR_RESULT
     GoToIfEq VAR_RESULT, 1, _00B2
     GoToIfUnset FLAG_UNK_0x0145, _0332
     Call _04A4
@@ -52,7 +52,7 @@ _00B2:
     GoToIfEq VAR_RESULT, 0, _030D
     GoToIfUnset FLAG_UNK_0x00F0, _02E8
     GoToIfUnset FLAG_UNK_0x0131, _02C3
-    ScrCmd_1E9 VAR_RESULT
+    CheckNationalDexCompleted VAR_RESULT
     GoToIfEq VAR_RESULT, 1, _0158
     GoTo _00F3
     End
@@ -350,5 +350,4 @@ _04C6:
     SetVar VAR_RESULT, 0
     Return
 
-    .byte 0
-    .byte 0
+    .balign 4, 0

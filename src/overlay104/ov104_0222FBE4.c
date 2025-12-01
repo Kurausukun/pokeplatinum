@@ -8,6 +8,7 @@
 #include "struct_decls/struct_0202440C_decl.h"
 #include "struct_decls/struct_0202B370_decl.h"
 
+#include "applications/naming_screen.h"
 #include "overlay004/ov4_021D0D80.h"
 #include "overlay063/ov63_0222BE18.h"
 #include "overlay063/ov63_0222CCE4.h"
@@ -84,6 +85,7 @@
 #include "system.h"
 #include "text.h"
 #include "trainer_info.h"
+#include "tv_episode_segment.h"
 #include "unk_0202ACE0.h"
 #include "unk_0202D05C.h"
 #include "unk_0202F1D4.h"
@@ -91,13 +93,10 @@
 #include "unk_020363E8.h"
 #include "unk_020366A0.h"
 #include "unk_0205DFC4.h"
-#include "unk_0206CCB0.h"
-#include "unk_0208694C.h"
 #include "unk_0209B6F8.h"
 #include "vars_flags.h"
 
 #include "constdata/const_020EA358.h"
-#include "constdata/const_020F2DAC.h"
 
 typedef struct {
     s16 unk_00;
@@ -821,7 +820,7 @@ static BOOL ov104_0222FF90(UnkStruct_ov104_0222E930 *param0)
     u16 v2 = ov104_0222EA48(param0);
     u16 v3 = ov104_0222EA48(param0);
 
-    StartScreenFade(FADE_BOTH_SCREENS, v2, v2, v3, v0, v1, HEAP_ID_FIELDMAP);
+    StartScreenFade(FADE_BOTH_SCREENS, v2, v2, v3, v0, v1, HEAP_ID_FIELD2);
     ResetVisibleHardwareWindows(DS_SCREEN_MAIN);
     ResetVisibleHardwareWindows(DS_SCREEN_SUB);
 
@@ -990,7 +989,7 @@ static BOOL ov104_02230260(UnkStruct_ov104_0222E930 *param0)
     u16 v2 = ov104_0222EA48(param0);
     u8 v3 = (*((param0)->unk_1C++));
 
-    v0->unk_74 = Menu_MakeYesNoChoiceWithCursorAt(v1->unk_00, &Unk_ov104_0223F640, ((1024 - (18 + 12)) - 9), 12, v3, v0->heapID);
+    v0->unk_74 = Menu_MakeYesNoChoiceWithCursorAt(v1->unk_00, &Unk_ov104_0223F640, (1024 - (18 + 12)) - 9, 12, v3, v0->heapID);
     param0->unk_78[0] = v2;
 
     ov104_0222E974(param0, ov104_022302B4);
@@ -1193,7 +1192,7 @@ static BOOL ov104_0223050C(UnkStruct_ov104_0222E930 *param0)
 
 static void ov104_0223056C(u16 param0, UnkStruct_ov104_0223C634 *param1, const UnkStruct_ov104_02232B78_sub1 *param2, UnkStruct_ov63_0222D77C *param3, u8 *param4, int heapID)
 {
-    UnkStruct_ov104_02232B78 *v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_ov104_02232B78));
+    UnkStruct_ov104_02232B78 *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_ov104_02232B78));
     MI_CpuClear8(v0, sizeof(UnkStruct_ov104_02232B78));
 
     v0->unk_14 = param1;
@@ -1203,7 +1202,7 @@ static void ov104_0223056C(u16 param0, UnkStruct_ov104_0223C634 *param1, const U
     v0->unk_08 = param4;
 
     GF_ASSERT(param1->unk_38 == NULL);
-    param1->unk_38 = SysTask_Start(ov104_02232B78, v0, (60000 + 100));
+    param1->unk_38 = SysTask_Start(ov104_02232B78, v0, 60000 + 100);
 }
 
 static BOOL ov104_022305B8(UnkStruct_ov104_0222E930 *param0)
@@ -1420,7 +1419,7 @@ static void ov104_0223088C(UnkStruct_ov104_0222E930 *param0, int param1, int par
 
     GF_ASSERT(param2 <= 7);
 
-    v1 = Heap_AllocFromHeap(v0->heapID, sizeof(s16) * param2);
+    v1 = Heap_Alloc(v0->heapID, sizeof(s16) * param2);
     v2 = ov104_0222FC00(param0);
 
     for (v3 = 0; v3 < 3; v3++) {
@@ -1448,16 +1447,16 @@ static BOOL ov104_02230900(UnkStruct_ov104_0222E930 *param0)
 static BOOL ov104_02230910(UnkStruct_ov104_0222E930 *param0)
 {
     UnkStruct_ov104_02230BE4 *v1 = sub_0209B970(param0->unk_00->unk_00);
-    void *v0 = sub_0208712C(HEAP_ID_FIELDMAP, 0, 0, 8, (void *)v1->options);
+    void *v0 = NamingScreenArgs_Init(HEAP_ID_FIELD2, NAMING_SCREEN_TYPE_PLAYER, 0, 8, (void *)v1->options);
 
-    sub_0209B988(param0->unk_00->unk_00, &Unk_020F2DAC, v0, 0, ov104_02230950);
+    sub_0209B988(param0->unk_00->unk_00, &gNamingScreenAppTemplate, v0, 0, ov104_02230950);
 
     return 1;
 }
 
 static void ov104_02230950(void *param0)
 {
-    sub_0208716C(param0);
+    NamingScreenArgs_Free(param0);
 }
 
 static BOOL ov104_02230958(UnkStruct_ov104_0222E930 *param0)
@@ -1465,7 +1464,7 @@ static BOOL ov104_02230958(UnkStruct_ov104_0222E930 *param0)
     int v0;
     UnkStruct_ov104_02230BE4 *v1 = sub_0209B970(param0->unk_00->unk_00);
 
-    sub_0202F1F8(v1->saveData, HEAP_ID_FIELDMAP, &v0);
+    sub_0202F1F8(v1->saveData, HEAP_ID_FIELD2, &v0);
     return 0;
 }
 
@@ -1633,7 +1632,7 @@ static BOOL ov104_02230B50(UnkStruct_ov104_0222E930 *param0)
     FieldBattleDTO *v1;
     UnkStruct_ov104_02230BE4 *v2 = sub_0209B970(param0->unk_00->unk_00);
 
-    v1 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(FieldBattleDTO));
+    v1 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(FieldBattleDTO));
     MI_CpuClear8(v1, sizeof(FieldBattleDTO));
 
     sub_0202F298(v2->saveData, 11, &v0, v1, 0);
@@ -1730,7 +1729,7 @@ static BOOL ov104_02230CAC(UnkStruct_ov104_0222E930 *param0)
 {
     UnkStruct_ov104_022320B4 *v0 = param0->unk_00;
 
-    v0->unk_7C = Window_AddWaitDial(&v0->unk_64, (1024 - (18 + 12)));
+    v0->unk_7C = Window_AddWaitDial(&v0->unk_64, 1024 - (18 + 12));
     return 0;
 }
 
@@ -1816,7 +1815,7 @@ BOOL ov104_02230E40(UnkStruct_ov104_0222E930 *param0)
     u16 v1 = ov104_0222FC00(param0);
     u16 v2 = ov104_0222EA48(param0);
     u8 v3 = (*((param0)->unk_1C++));
-    Strbuf *v4 = ov104_02230E90(v1, HEAP_ID_FIELDMAP);
+    Strbuf *v4 = ov104_02230E90(v1, HEAP_ID_FIELD2);
 
     StringTemplate_SetStrbuf(param0->unk_00->unk_44, v0, v4, v2, v3, GAME_LANGUAGE);
     Strbuf_Free(v4);
@@ -1826,7 +1825,7 @@ BOOL ov104_02230E40(UnkStruct_ov104_0222E930 *param0)
 
 static Strbuf *ov104_02230E90(u16 param0, u32 heapID)
 {
-    MessageLoader *v0 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SPECIES_NAME, heapID);
+    MessageLoader *v0 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SPECIES_NAME, heapID);
     Strbuf *v1 = MessageLoader_GetNewStrbuf(v0, param0);
 
     MessageLoader_Free(v0);
@@ -1913,7 +1912,7 @@ static BOOL ov104_02230FCC(UnkStruct_ov104_0222E930 *param0)
 
 static BOOL ov104_02230FEC(UnkStruct_ov104_0222E930 *param0)
 {
-    sub_020365F4();
+    CommTool_ClearReceivedTempDataAllPlayers();
     return 0;
 }
 
@@ -2046,7 +2045,7 @@ static BOOL ov104_02231148(UnkStruct_ov104_02231148 *param0)
 
         ResetVisibleHardwareWindows(DS_SCREEN_MAIN);
         ResetVisibleHardwareWindows(DS_SCREEN_SUB);
-        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_UNK_32, FADE_TYPE_UNK_32, COLOR_BLACK, 12, 1, HEAP_ID_FIELDMAP);
+        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_UNK_32, FADE_TYPE_UNK_32, COLOR_BLACK, 12, 1, HEAP_ID_FIELD2);
         param0->unk_04++;
         break;
     default:
@@ -2071,14 +2070,14 @@ static BOOL ov104_022311BC(UnkStruct_ov104_02231148 *param0)
             break;
         }
 
-        param0->unk_28 = Window_New(HEAP_ID_FIELDMAP, 1);
+        param0->unk_28 = Window_New(HEAP_ID_FIELD2, 1);
 
         Window_Add(param0->unk_00->unk_00, param0->unk_28, 1, 0, 0, 32, 32, 0, 0);
         PaletteData_FillBufferRange(param0->unk_00->unk_04, 0, 2, 0x0, 0, 16);
         Window_FillTilemap(param0->unk_28, 0);
         Window_ScheduleCopyToVRAM(param0->unk_28);
 
-        param0->unk_2C = ov104_0223EBA0(HEAP_ID_FIELDMAP);
+        param0->unk_2C = ov104_0223EBA0(HEAP_ID_FIELD2);
         param0->unk_04++;
     case 2:
         ov104_0223EBF0(param0->unk_2C, 1, 1, param0->unk_28, 15);
@@ -2102,7 +2101,7 @@ static BOOL ov104_022311BC(UnkStruct_ov104_02231148 *param0)
             Windows_Delete(param0->unk_28, 1);
             SetScreenColorBrightness(DS_SCREEN_MAIN, COLOR_BLACK);
             SetScreenColorBrightness(DS_SCREEN_SUB, COLOR_BLACK);
-            Bg_ClearTilesRange(BG_LAYER_MAIN_1, 32, 0, HEAP_ID_FIELDMAP);
+            Bg_ClearTilesRange(BG_LAYER_MAIN_1, 32, 0, HEAP_ID_FIELD2);
             Bg_ClearTilemap(param0->unk_00->unk_00, 1);
 
             return 0;
@@ -2125,14 +2124,14 @@ static BOOL ov104_022312D8(UnkStruct_ov104_02231148 *param0)
             break;
         }
 
-        param0->unk_28 = Window_New(HEAP_ID_FIELDMAP, 1);
+        param0->unk_28 = Window_New(HEAP_ID_FIELD2, 1);
 
         Window_Add(param0->unk_00->unk_00, param0->unk_28, 1, 0, 0, 32, 32, 0, 0);
         PaletteData_FillBufferRange(param0->unk_00->unk_04, 0, 2, 0x0, 0, 16);
         Window_FillTilemap(param0->unk_28, 0);
         Window_ScheduleCopyToVRAM(param0->unk_28);
 
-        param0->unk_2C = ov104_0223EBA0(HEAP_ID_FIELDMAP);
+        param0->unk_2C = ov104_0223EBA0(HEAP_ID_FIELD2);
         param0->unk_04++;
     case 2:
         ov104_0223EBF0(param0->unk_2C, 1, 1, param0->unk_28, 15);
@@ -2159,7 +2158,7 @@ static BOOL ov104_022312D8(UnkStruct_ov104_02231148 *param0)
             SetScreenColorBrightness(DS_SCREEN_MAIN, COLOR_BLACK);
             SetScreenColorBrightness(DS_SCREEN_SUB, COLOR_BLACK);
 
-            Bg_ClearTilesRange(BG_LAYER_MAIN_1, 32, 0, HEAP_ID_FIELDMAP);
+            Bg_ClearTilesRange(BG_LAYER_MAIN_1, 32, 0, HEAP_ID_FIELD2);
             Bg_ClearTilemap(param0->unk_00->unk_00, 1);
 
             return 0;
@@ -2330,9 +2329,9 @@ static BOOL ov104_02231720(UnkStruct_ov104_02231148 *param0)
         MI_CpuClear8(&v0, sizeof(UnkStruct_ov104_0223F1B4));
 
         param0->unk_10 = 0;
-        param0->unk_24 = Heap_AllocFromHeap(HEAP_ID_94, sizeof(UnkStruct_ov104_022313FC));
+        param0->unk_24 = Heap_Alloc(HEAP_ID_94, sizeof(UnkStruct_ov104_022313FC));
         param0->unk_24->unk_604 = 1;
-        param0->unk_24->unk_600 = ov104_0223F1B4(((u32)&reg_G2_BG2PA), &v0, HEAP_ID_94);
+        param0->unk_24->unk_600 = ov104_0223F1B4((u32)&reg_G2_BG2PA, &v0, HEAP_ID_94);
 
         {
             int v1;
@@ -2390,9 +2389,9 @@ static BOOL ov104_02231864(UnkStruct_ov104_02231148 *param0)
         MI_CpuClear8(&v0, sizeof(UnkStruct_ov104_0223F1B4));
 
         param0->unk_10 = 0;
-        param0->unk_24 = Heap_AllocFromHeap(HEAP_ID_94, sizeof(UnkStruct_ov104_022313FC));
+        param0->unk_24 = Heap_Alloc(HEAP_ID_94, sizeof(UnkStruct_ov104_022313FC));
         param0->unk_24->unk_604 = 2;
-        param0->unk_24->unk_600 = ov104_0223F1B4(((u32)&reg_G2_BG2PA), &v0, HEAP_ID_94);
+        param0->unk_24->unk_600 = ov104_0223F1B4((u32)&reg_G2_BG2PA, &v0, HEAP_ID_94);
 
         {
             int v1;
@@ -2451,7 +2450,7 @@ static BOOL ov104_022319CC(UnkStruct_ov104_02231148 *param0)
         param0->unk_04++;
         break;
     case 1:
-        ov104_0223F0B0(&param0->unk_18, 0, 191, ((0xffff / 192) * 2), (FX32_CONST(18)), (4 * 100), REG_BG3HOFS_ADDR, 0, (5 - 1));
+        ov104_0223F0B0(&param0->unk_18, 0, 191, (0xffff / 192) * 2, FX32_CONST(18), 4 * 100, REG_BG3HOFS_ADDR, 0, 5 - 1);
         param0->unk_04++;
         break;
     default:
@@ -2471,7 +2470,7 @@ static BOOL ov104_02231A28(UnkStruct_ov104_0222E930 *param0)
 
     Sound_SetSceneAndPlayBGM(SOUND_SCENE_BATTLE, SEQ_BATTLE_TRAINER, 1);
 
-    v1 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_ov104_02231148));
+    v1 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(UnkStruct_ov104_02231148));
     v1->unk_14 = sub_0209B978(param0->unk_00->unk_00);
     v1->unk_04 = 0;
     v1->unk_08 = param0->unk_78[0];
@@ -2691,7 +2690,7 @@ static BOOL ov104_02231D1C(UnkStruct_ov104_0222E930 *param0)
     v8 = 8;
     v9 = (GX_RGB(0, 0, 0));
 
-    ov104_02232CE0(v3, v1, HEAP_ID_FIELDMAP, v7, v5, v6, 0, 0, v8, v9);
+    ov104_02232CE0(v3, v1, HEAP_ID_FIELD2, v7, v5, v6, 0, 0, v8, v9);
     return 0;
 }
 

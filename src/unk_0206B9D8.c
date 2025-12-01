@@ -9,9 +9,10 @@
 #include "struct_decls/struct_0202D750_decl.h"
 #include "struct_defs/battle_frontier.h"
 #include "struct_defs/struct_0206BC70.h"
-#include "struct_defs/struct_02098C44.h"
 #include "struct_defs/underground.h"
 
+#include "applications/party_menu/defs.h"
+#include "applications/party_menu/main.h"
 #include "applications/pokemon_summary_screen/main.h"
 #include "field/field_system.h"
 
@@ -35,7 +36,6 @@
 #include "unk_0203D1B8.h"
 #include "unk_0204AEE8.h"
 
-#include "constdata/const_020F1E88.h"
 #include "constdata/const_020F410C.h"
 
 typedef struct {
@@ -70,43 +70,43 @@ static int sub_0206B9D8(UnkStruct_0206B9D8 *param0, FieldSystem *fieldSystem, in
 {
     u8 v0;
     SaveData *saveData;
-    PartyManagementData *partyMan = Heap_AllocFromHeapAtEnd(heapID, sizeof(PartyManagementData));
+    PartyMenu *partyMenu = Heap_AllocAtEnd(heapID, sizeof(PartyMenu));
 
     saveData = fieldSystem->saveData;
-    MI_CpuClear8(partyMan, sizeof(PartyManagementData));
+    MI_CpuClear8(partyMenu, sizeof(PartyMenu));
 
-    partyMan->options = SaveData_GetOptions(saveData);
-    partyMan->party = SaveData_GetParty(saveData);
-    partyMan->bag = SaveData_GetBag(saveData);
-    partyMan->unk_21 = 0;
-    partyMan->unk_20 = param0->unk_08;
-    partyMan->unk_32_0 = param0->unk_0A;
-    partyMan->unk_32_4 = param0->unk_0B;
-    partyMan->unk_33 = param0->unk_0C;
-    partyMan->selectedMonSlot = param0->unk_0D;
+    partyMenu->options = SaveData_GetOptions(saveData);
+    partyMenu->party = SaveData_GetParty(saveData);
+    partyMenu->bag = SaveData_GetBag(saveData);
+    partyMenu->type = PARTY_MENU_TYPE_BASIC;
+    partyMenu->mode = param0->unk_08;
+    partyMenu->minSelectionSlots = param0->unk_0A;
+    partyMenu->maxSelectionSlots = param0->unk_0B;
+    partyMenu->reqLevel = param0->unk_0C;
+    partyMenu->selectedMonSlot = param0->unk_0D;
 
     for (v0 = 0; v0 < 6; v0++) {
-        partyMan->unk_2C[v0] = param0->unk_0E[v0];
+        partyMenu->selectionOrder[v0] = param0->unk_0E[v0];
     }
 
-    FieldSystem_StartChildProcess(fieldSystem, &Unk_020F1E88, partyMan);
+    FieldSystem_StartChildProcess(fieldSystem, &gPokemonPartyAppTemplate, partyMenu);
 
-    *(param0->unk_14) = partyMan;
+    *(param0->unk_14) = partyMenu;
     return 1;
 }
 
 static int sub_0206BA84(UnkStruct_0206B9D8 *param0, FieldSystem *fieldSystem)
 {
     int v0;
-    PartyManagementData *partyMan;
+    PartyMenu *partyMenu;
 
     if (FieldSystem_IsRunningApplication(fieldSystem)) {
         return 1;
     }
 
-    partyMan = *(param0->unk_14);
+    partyMenu = *(param0->unk_14);
 
-    switch (partyMan->selectedMonSlot) {
+    switch (partyMenu->selectedMonSlot) {
     case 7:
         param0->unk_00 = 0;
         return 4;
@@ -117,9 +117,9 @@ static int sub_0206BA84(UnkStruct_0206B9D8 *param0, FieldSystem *fieldSystem)
         break;
     }
 
-    MI_CpuCopy8(partyMan->unk_2C, param0->unk_0E, 6);
-    param0->unk_0D = partyMan->selectedMonSlot;
-    Heap_Free(partyMan);
+    MI_CpuCopy8(partyMenu->selectionOrder, param0->unk_0E, 6);
+    param0->unk_0D = partyMenu->selectedMonSlot;
+    Heap_Free(partyMenu);
     *(param0->unk_14) = NULL;
 
     return 2;
@@ -134,7 +134,7 @@ static int sub_0206BAE0(UnkStruct_0206B9D8 *param0, FieldSystem *fieldSystem, in
     };
 
     saveData = fieldSystem->saveData;
-    v0 = Heap_AllocFromHeapAtEnd(heapID, sizeof(PokemonSummary));
+    v0 = Heap_AllocAtEnd(heapID, sizeof(PokemonSummary));
     MI_CpuClear8(v0, sizeof(PokemonSummary));
 
     v0->options = SaveData_GetOptions(saveData);
@@ -179,13 +179,13 @@ static BOOL sub_0206BB94(FieldTask *param0)
 
     switch (v1->unk_04) {
     case 0:
-        v1->unk_04 = sub_0206B9D8(v1, v0, HEAP_ID_FIELDMAP);
+        v1->unk_04 = sub_0206B9D8(v1, v0, HEAP_ID_FIELD2);
         break;
     case 1:
         v1->unk_04 = sub_0206BA84(v1, v0);
         break;
     case 2:
-        v1->unk_04 = sub_0206BAE0(v1, v0, HEAP_ID_FIELDMAP);
+        v1->unk_04 = sub_0206BAE0(v1, v0, HEAP_ID_FIELD2);
         break;
     case 3:
         v1->unk_04 = sub_0206BB6C(v1, v0);
@@ -201,7 +201,7 @@ static BOOL sub_0206BB94(FieldTask *param0)
 void sub_0206BBFC(FieldTask *param0, void **param1, u8 param2, u8 param3, u8 param4, u8 param5, u8 param6, u8 param7)
 {
     FieldSystem *fieldSystem = FieldTask_GetFieldSystem(param0);
-    UnkStruct_0206B9D8 *v1 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_0206B9D8));
+    UnkStruct_0206B9D8 *v1 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(UnkStruct_0206B9D8));
 
     MI_CpuClear8(v1, sizeof(UnkStruct_0206B9D8));
 
@@ -220,7 +220,7 @@ static int sub_0206BC48(UnkStruct_0206BC48 *param0, FieldSystem *fieldSystem)
 {
     SaveData *saveData;
 
-    if (sub_02039074(fieldSystem->saveData)) {
+    if (WiFiList_HasValidLogin(fieldSystem->saveData)) {
         param0->unk_08 = sub_0203E1AC(fieldSystem, param0->unk_12, param0->unk_14);
         return 1;
     } else {
@@ -270,7 +270,7 @@ static BOOL sub_0206BC94(FieldTask *param0)
 void sub_0206BCE4(FieldTask *param0, u16 param1, u16 param2, u16 param3)
 {
     FieldSystem *fieldSystem = FieldTask_GetFieldSystem(param0);
-    UnkStruct_0206BC48 *v1 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_0206BC48));
+    UnkStruct_0206BC48 *v1 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(UnkStruct_0206BC48));
 
     MI_CpuClear8(v1, sizeof(UnkStruct_0206BC48));
 
@@ -314,7 +314,7 @@ static BOOL sub_0206BD1C(FieldTask *param0)
 void sub_0206BD88(FieldTask *param0, u16 param1, u16 param2)
 {
     FieldSystem *fieldSystem = FieldTask_GetFieldSystem(param0);
-    UnkStruct_0206BD88 *v1 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_0206BD88));
+    UnkStruct_0206BD88 *v1 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(UnkStruct_0206BD88));
 
     MI_CpuClear8(v1, sizeof(UnkStruct_0206BD88));
 
@@ -354,7 +354,7 @@ u16 sub_0206BDBC(SaveData *saveData)
     v2 = SaveData_GetUnderground(saveData);
 
     if (!v4) {
-        if (sub_02028984(v2, 85)) {
+        if (Underground_IsRoomForGoodsInPC(v2, 85)) {
             sub_0202D414(v1, 13, 1);
             return 1;
         } else {
@@ -371,7 +371,7 @@ u16 sub_0206BDBC(SaveData *saveData)
     }
 
     if (!v5) {
-        if (sub_02028984(v2, 86)) {
+        if (Underground_IsRoomForGoodsInPC(v2, 86)) {
             sub_0202D414(v1, 0, 1);
             return 2;
         } else {
@@ -387,7 +387,7 @@ u16 sub_0206BDBC(SaveData *saveData)
         return 0;
     }
 
-    if (sub_02028984(v2, 87)) {
+    if (Underground_IsRoomForGoodsInPC(v2, 87)) {
         sub_0202D414(v1, 1, 1);
         return 3;
     } else {

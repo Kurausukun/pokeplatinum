@@ -126,7 +126,7 @@ BOOL ov104_0223740C(UnkStruct_ov104_0222E930 *param0)
     };
 
     v1 = sub_0209B978(param0->unk_00->unk_00);
-    v2 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_ov104_02238240));
+    v2 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(UnkStruct_ov104_02238240));
 
     MI_CpuClear8(v2, sizeof(UnkStruct_ov104_02238240));
     v2->saveData = v3->saveData;
@@ -180,7 +180,7 @@ BOOL ov104_02237460(UnkStruct_ov104_0222E930 *param0)
             v7 -= 3;
             v6 = Pokemon_GetSpeciesBaseExpAt(Pokemon_GetValue(v11, MON_DATA_SPECIES, NULL), v7);
 
-            Pokemon_SetValue(v11, MON_DATA_EXP, &v6);
+            Pokemon_SetValue(v11, MON_DATA_EXPERIENCE, &v6);
             Pokemon_CalcLevelAndStats(v11);
         }
     }
@@ -192,7 +192,7 @@ BOOL ov104_02237460(UnkStruct_ov104_0222E930 *param0)
 
         v5 = v9->unk_94[v1];
         Pokemon_SetValue(v11, MON_DATA_MAX_HP, &v5);
-        Pokemon_SetValue(v11, MON_DATA_CURRENT_HP, &v5);
+        Pokemon_SetValue(v11, MON_DATA_HP, &v5);
 
         v5 = v9->unk_A4[v1];
         Pokemon_SetValue(v11, MON_DATA_ATK, &v5);
@@ -492,8 +492,8 @@ BOOL ov104_02237748(UnkStruct_ov104_0222E930 *param0)
         ov104_02237C0C(param0, v3, v18);
         break;
     case 40:
-        ov104_0222E278(&(v3->unk_F4[0]), v3->unk_78[v3->unk_11], HEAP_ID_FIELDMAP, 178);
-        ov104_0222E278(&(v3->unk_F4[1]), v3->unk_78[v3->unk_11 + 7], HEAP_ID_FIELDMAP, 178);
+        ov104_0222E278(&(v3->unk_F4[0]), v3->unk_78[v3->unk_11], HEAP_ID_FIELD2, 178);
+        ov104_0222E278(&(v3->unk_F4[1]), v3->unk_78[v3->unk_11 + 7], HEAP_ID_FIELD2, 178);
         break;
     case 41:
         ov104_0223886C(v3, v15, v18, v19);

@@ -14,11 +14,11 @@ _0006:
     CloseMessage
     CallIfEq VAR_0x8005, 12, _01AD
     CallIfEq VAR_0x8005, 13, _01C1
-    ScrCmd_066 VAR_0x8004, VAR_0x8005
-    FadeScreen 6, 3, 0, 0
-    ApplyMovement 241, _01F8
+    AddFreeCamera VAR_0x8004, VAR_0x8005
+    FadeScreenOut FADE_SCREEN_SPEED_MEDIUM
+    ApplyFreeCameraMovement _01F8
     WaitMovement
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     WaitTime 15, VAR_RESULT
     ClearFlag FLAG_UNK_0x0253
@@ -45,11 +45,11 @@ _0006:
     ApplyMovement 2, _01E8
     WaitMovement
     RemoveObject 2
-    FadeScreen 6, 3, 0, 0
+    FadeScreenOut FADE_SCREEN_SPEED_MEDIUM
     WaitFadeScreen
-    ApplyMovement 241, _0204
+    ApplyFreeCameraMovement _0204
     WaitMovement
-    ScrCmd_067
+    RestoreCamera
     RemoveObject 0
     RemoveObject 1
     RemoveObject 4
@@ -87,7 +87,7 @@ _0006:
     ApplyMovement 3, _0248
     ApplyMovement LOCALID_PLAYER, _0224
     WaitMovement
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     WaitTime 15, VAR_RESULT
     Message 6

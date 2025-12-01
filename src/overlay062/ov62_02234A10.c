@@ -278,7 +278,7 @@ BOOL ov62_02235008(UnkStruct_0208C06C *param0)
     switch (param0->unk_08) {
     case 0:
 
-        v0 = Heap_AllocFromHeap(HEAP_ID_102, sizeof(UnkStruct_ov62_02235008));
+        v0 = Heap_Alloc(HEAP_ID_102, sizeof(UnkStruct_ov62_02235008));
         MI_CpuFill8(v0, 0, sizeof(UnkStruct_ov62_02235008));
         param0->unk_860 = v0;
         v0->unk_50 = 16;
@@ -297,7 +297,7 @@ BOOL ov62_02235008(UnkStruct_0208C06C *param0)
                 ov62_02230E68(param0->unk_534.unk_C8[v1].unk_00, 42, (25 + (36 * (5 - 1)) + (16 * (5 - (param0->unk_534.unk_1AC)))));
                 ManagedSprite_GetPositionFxXY(param0->unk_534.unk_C8[v1].unk_00, &v0->unk_00[v1].unk_0C, &v2);
                 ManagedSprite_SetPositionFxXY(param0->unk_534.unk_C8[v1].unk_00, v0->unk_00[v1].unk_0C, (25 + (36 * (5 - 1)) + (16 * (5 - (param0->unk_534.unk_1AC)))) * FX32_ONE);
-                sub_020128C4(param0->unk_534.unk_C8[v1].unk_14, 36, -8);
+                FontOAM_SetXY(param0->unk_534.unk_C8[v1].unk_14, 36, -8);
                 sub_020129D0(param0->unk_534.unk_C8[v1].unk_14, 1);
             }
 
@@ -340,7 +340,7 @@ BOOL ov62_02235008(UnkStruct_0208C06C *param0)
                 v0->unk_00[v3].unk_04 += (-4 * 1);
 
                 ManagedSprite_SetPositionFxXY(param0->unk_534.unk_C8[v3].unk_00, v7, v8);
-                sub_020128C4(param0->unk_534.unk_C8[v3].unk_14, 36, -8);
+                FontOAM_SetXY(param0->unk_534.unk_C8[v3].unk_14, 36, -8);
             }
             if (v4 == param0->unk_534.unk_1AC) {
                 param0->unk_08++;

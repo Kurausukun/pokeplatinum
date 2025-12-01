@@ -236,14 +236,14 @@ _0276:
     CloseMessage
     Call _035C
     Call _0376
-    ScrCmd_23D 2, 3, 188, 0x26F, 0x1B2
+    TakeShipFromSnowpoint DIR_EAST, MAP_HEADER_FIGHT_AREA, 623, 434
     ReleaseAll
     End
 
 _02A0:
     ClearFlag FLAG_UNK_0x0256
     AddObject 10
-    ScrCmd_062 10
+    LockObject 10
     CloseMessage
     ApplyMovement 10, _0320
     WaitMovement

@@ -22,7 +22,7 @@ static void sub_020739D8(UnkStruct_02073974 *param0, void *param1, u32 param2);
 static const VecFx32 Unk_020F0544 = {
     FX32_ONE,
     FX32_ONE,
-    FX32_ONE
+    FX32_ONE,
 };
 
 static const MtxFx33 Unk_020F0550 = {
@@ -34,7 +34,7 @@ static const MtxFx33 Unk_020F0550 = {
     0x0,
     0x0,
     0x0,
-    FX32_ONE
+    FX32_ONE,
 };
 
 void sub_02073838(UnkStruct_02073838 *param0)
@@ -53,9 +53,9 @@ void sub_02073848(UnkStruct_02073838 *param0, NNSG3dResFileHeader *param1, u32 p
     param0->unk_10 = NNS_G3dGetTex(param1);
 }
 
-void sub_0207389C(UnkStruct_02073838 *param0, u32 param1, NARC *param2, u32 param3, u32 heapID, int param5)
+void sub_0207389C(UnkStruct_02073838 *param0, u32 param1, NARC *narc, u32 narcMemberIdx, u32 heapID, BOOL allocAtEnd)
 {
-    NNSG3dResFileHeader *v0 = LoadMemberFromOpenNARC(param2, param3, 0, heapID, param5);
+    NNSG3dResFileHeader *v0 = LoadMemberFromOpenNARC(narc, narcMemberIdx, FALSE, heapID, allocAtEnd);
     sub_02073848(param0, v0, param1);
 }
 
@@ -164,7 +164,7 @@ void sub_020739F0(UnkStruct_02073974 *param0)
 
 void sub_02073A14(UnkStruct_02073974 *param0, const NNSG3dResMdl *param1, u32 heapID)
 {
-    Heap_FndInitAllocatorForExpHeap(&param0->unk_14, heapID, 4);
+    HeapExp_FndInitAllocator(&param0->unk_14, heapID, 4);
     param0->unk_10 = NNS_G3dAllocAnmObj(&param0->unk_14, param0->unk_0C, param1);
 
     GF_ASSERT(param0->unk_10 != NULL);

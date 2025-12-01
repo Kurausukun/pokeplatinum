@@ -3,7 +3,6 @@
 #include <nitro.h>
 #include <string.h>
 
-#include "struct_decls/struct_0200C440_decl.h"
 #include "struct_decls/struct_020302DC_decl.h"
 #include "struct_decls/struct_0203041C_decl.h"
 #include "struct_defs/battle_frontier.h"
@@ -24,6 +23,7 @@
 #include "communication_information.h"
 #include "communication_system.h"
 #include "font.h"
+#include "font_special_chars.h"
 #include "game_options.h"
 #include "game_overlay.h"
 #include "graphics.h"
@@ -52,7 +52,6 @@
 #include "system.h"
 #include "text.h"
 #include "trainer_info.h"
-#include "unk_0200C440.h"
 #include "unk_020302D0.h"
 #include "unk_0203061C.h"
 #include "unk_020363E8.h"
@@ -247,7 +246,7 @@ struct UnkStruct_ov107_02241D6C_t {
     StringList *unk_19C;
     ListMenuTemplate unk_1A0;
     PaletteData *unk_1C0;
-    UnkStruct_0200C440 *unk_1C4;
+    FontSpecialCharsContext *unk_1C4;
     Options *options;
     SaveData *saveData;
     UnkStruct_020302DC *unk_1D0;
@@ -428,7 +427,7 @@ static const ListMenuTemplate Unk_ov107_02249EE4 = {
     ov107_0224440C,
     ov107_02244560,
     NULL,
-    (((NELEMS(Unk_ov107_0224A02C)) + (NELEMS(Unk_ov107_02249F84))) + 1),
+    ((NELEMS(Unk_ov107_0224A02C)) + (NELEMS(Unk_ov107_02249F84))) + 1,
     0x7,
     0x0,
     0x8,
@@ -595,7 +594,7 @@ static BOOL ov107_02241D6C(UnkStruct_ov107_02241D6C *param0)
     switch (param0->unk_08) {
     case 0:
         if (ov104_0223BA14(param0->unk_09) == 1) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTiming_StartSync(215);
         }
 
@@ -604,7 +603,7 @@ static BOOL ov107_02241D6C(UnkStruct_ov107_02241D6C *param0)
     case 1:
         if (ov104_0223BA14(param0->unk_09) == 1) {
             if (CommTiming_IsSyncState(215) == 1) {
-                sub_020365F4();
+                CommTool_ClearReceivedTempDataAllPlayers();
                 param0->unk_08++;
             }
         } else {
@@ -755,7 +754,7 @@ static BOOL ov107_02241EC8(UnkStruct_ov107_02241D6C *param0)
 
         if (gSystem.pressedKeys & PAD_KEY_UP) {
             if (param0->unk_16 == 0) {
-                ListMenu_TestInput(param0->unk_198, (ListMenuTemplate *)&param0->unk_1A0, 0, ((NELEMS(Unk_ov107_02249FF0))-1), 1, PAD_KEY_DOWN, NULL, NULL);
+                ListMenu_TestInput(param0->unk_198, (ListMenuTemplate *)&param0->unk_1A0, 0, (NELEMS(Unk_ov107_02249FF0))-1, 1, PAD_KEY_DOWN, NULL, NULL);
                 ListMenu_Draw(param0->unk_198);
                 Sound_PlayEffect(SEQ_SE_CONFIRM);
                 ov107_0224379C(param0, &param0->unk_50[6], 28, 1, 1, TEXT_SPEED_NO_TRANSFER, 1, 2, 15, FONT_MESSAGE);
@@ -850,7 +849,7 @@ static BOOL ov107_02241EC8(UnkStruct_ov107_02241D6C *param0)
             }
 
             if (param0->unk_16 == 0) {
-                if (Pokemon_GetValue(v7, MON_DATA_CURRENT_HP, NULL) == Pokemon_GetValue(v7, MON_DATA_MAX_HP, NULL)) {
+                if (Pokemon_GetValue(v7, MON_DATA_HP, NULL) == Pokemon_GetValue(v7, MON_DATA_MAX_HP, NULL)) {
                     param0->unk_0A = ov107_02243918(param0, 37, FONT_MESSAGE);
                     param0->unk_08 = 7;
                     break;
@@ -862,7 +861,7 @@ static BOOL ov107_02241EC8(UnkStruct_ov107_02241D6C *param0)
                     break;
                 }
             } else {
-                if ((Pokemon_GetValue(v7, MON_DATA_CURRENT_HP, NULL) == Pokemon_GetValue(v7, MON_DATA_MAX_HP, NULL)) && (ov107_02245210(v7) == 0)) {
+                if ((Pokemon_GetValue(v7, MON_DATA_HP, NULL) == Pokemon_GetValue(v7, MON_DATA_MAX_HP, NULL)) && (ov107_02245210(v7) == 0)) {
                     param0->unk_0A = ov107_02243918(param0, 37, FONT_MESSAGE);
                     param0->unk_08 = 7;
                     break;
@@ -1278,7 +1277,7 @@ static BOOL ov107_02242C64(UnkStruct_ov107_02241D6C *param0)
         param0->unk_0B--;
 
         if (param0->unk_0B == 0) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTiming_StartSync(130);
             param0->unk_08++;
             break;
@@ -1286,7 +1285,7 @@ static BOOL ov107_02242C64(UnkStruct_ov107_02241D6C *param0)
         break;
     case 4:
         if (CommTiming_IsSyncState(130) == 1) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTool_Init(100);
 
             param0->unk_12 = 0xff;
@@ -1323,14 +1322,14 @@ static BOOL ov107_02242D60(UnkStruct_ov107_02241D6C *param0)
         }
 
         if (param0->unk_0B == 0) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTiming_StartSync(131);
             param0->unk_08++;
         }
         break;
     case 2:
         if (CommTiming_IsSyncState(131) == 1) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             ov107_02245288(&param0->unk_50[6]);
             return 1;
         }
@@ -1381,7 +1380,7 @@ static void ov107_02242E14(UnkStruct_ov107_02241D6C *param0)
         ov107_02249B8C(param0->unk_420[v1]);
     }
 
-    sub_02039794();
+    NetworkIcon_Destroy();
 
     PaletteData_FreeBuffer(param0->unk_1C0, 2);
     PaletteData_FreeBuffer(param0->unk_1C0, 0);
@@ -1396,7 +1395,7 @@ static void ov107_02242E14(UnkStruct_ov107_02241D6C *param0)
     StringTemplate_Free(param0->unk_24);
     Strbuf_Free(param0->unk_28);
     Strbuf_Free(param0->unk_2C);
-    sub_0200C560(param0->unk_1C4);
+    FontSpecialChars_Free(param0->unk_1C4);
 
     for (v1 = 0; v1 < 3; v1++) {
         Strbuf_Free(param0->unk_30[v1]);
@@ -1437,8 +1436,8 @@ static void ov107_02242F5C(UnkStruct_ov107_02241D6C *param0)
     ov107_02243324(param0);
     ov107_02243384(param0);
 
-    param0->unk_20 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0199, HEAP_ID_100);
-    param0->unk_1C = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_ITEM_DESCRIPTIONS, HEAP_ID_100);
+    param0->unk_20 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0199, HEAP_ID_100);
+    param0->unk_1C = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_ITEM_DESCRIPTIONS, HEAP_ID_100);
     param0->unk_24 = StringTemplate_Default(HEAP_ID_100);
     param0->unk_28 = Strbuf_Init(600, HEAP_ID_100);
     param0->unk_2C = Strbuf_Init(600, HEAP_ID_100);
@@ -1450,7 +1449,7 @@ static void ov107_02242F5C(UnkStruct_ov107_02241D6C *param0)
     Font_LoadTextPalette(0, 13 * 32, HEAP_ID_100);
     Font_LoadScreenIndicatorsPalette(0, 12 * 32, HEAP_ID_100);
 
-    param0->unk_1C4 = sub_0200C440(1, 2, 0, HEAP_ID_100);
+    param0->unk_1C4 = FontSpecialChars_Init(1, 2, 0, HEAP_ID_100);
 
     ov107_02249D14(param0->unk_4C, param0->unk_50, 0);
     ov107_02244E14(param0, &v9, &v10, &v11, &v12);
@@ -1480,7 +1479,7 @@ static void ov107_02242F5C(UnkStruct_ov107_02241D6C *param0)
             ov107_02249BAC(param0->unk_404[v15], 0);
         }
 
-        v2 = Pokemon_GetValue(v19, MON_DATA_CURRENT_HP, NULL);
+        v2 = Pokemon_GetValue(v19, MON_DATA_HP, NULL);
         v3 = Pokemon_GetValue(v19, MON_DATA_MAX_HP, NULL);
         v4 = ov107_022450E8(param0, HealthBar_Color(v2, v3, 48));
         v5 = ov107_02245114(param0, HealthBar_Color(v2, v3, 48));
@@ -1528,8 +1527,8 @@ static void ov107_02243324(UnkStruct_ov107_02241D6C *param0)
 
     param0->unk_1C0 = PaletteData_New(HEAP_ID_100);
 
-    PaletteData_AllocBuffer(param0->unk_1C0, 2, (32 * 16), HEAP_ID_100);
-    PaletteData_AllocBuffer(param0->unk_1C0, 0, (32 * 16), HEAP_ID_100);
+    PaletteData_AllocBuffer(param0->unk_1C0, 2, 32 * 16, HEAP_ID_100);
+    PaletteData_AllocBuffer(param0->unk_1C0, 0, 32 * 16, HEAP_ID_100);
 
     ov107_02243588(param0, 3);
     ov107_022435FC();
@@ -1612,19 +1611,18 @@ static void ov107_02243444(BgConfig *param0)
 
     {
         BgTemplate v1 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0000,
-            GX_BG_CHARBASE_0x04000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0000,
+            .charBase = GX_BG_CHARBASE_0x04000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_1, &v1, 0);
@@ -1634,19 +1632,18 @@ static void ov107_02243444(BgConfig *param0)
 
     {
         BgTemplate v2 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0800,
-            GX_BG_CHARBASE_0x0c000,
-            GX_BG_EXTPLTT_01,
-            0,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0800,
+            .charBase = GX_BG_CHARBASE_0x0c000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_0, &v2, 0);
@@ -1656,19 +1653,18 @@ static void ov107_02243444(BgConfig *param0)
 
     {
         BgTemplate v3 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x1000,
-            GX_BG_CHARBASE_0x14000,
-            GX_BG_EXTPLTT_01,
-            1,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x1000,
+            .charBase = GX_BG_CHARBASE_0x14000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 1,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_2, &v3, 0);
@@ -1678,19 +1674,18 @@ static void ov107_02243444(BgConfig *param0)
 
     {
         BgTemplate v4 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x2000,
-            GX_BG_CHARBASE_0x08000,
-            GX_BG_EXTPLTT_01,
-            3,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x2000,
+            .charBase = GX_BG_CHARBASE_0x08000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 3,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_3, &v4, 0);
@@ -1700,19 +1695,18 @@ static void ov107_02243444(BgConfig *param0)
 
     {
         BgTemplate v5 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x3000,
-            GX_BG_CHARBASE_0x10000,
-            GX_BG_EXTPLTT_01,
-            0,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x3000,
+            .charBase = GX_BG_CHARBASE_0x10000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_SUB_0, &v5, 0);
@@ -1745,8 +1739,8 @@ static void ov107_022435FC(void)
 
     v0 = Graphics_GetPlttData(NARC_INDEX_RESOURCE__ENG__FRONTIER_GRAPHIC__FRONTIER_BG, 137, &v1, HEAP_ID_100);
 
-    DC_FlushRange(v1->pRawData, (sizeof(u16) * 16 * 4));
-    GX_LoadBGPltt(v1->pRawData, 0, (sizeof(u16) * 16 * 4));
+    DC_FlushRange(v1->pRawData, sizeof(u16) * 16 * 4);
+    GX_LoadBGPltt(v1->pRawData, 0, sizeof(u16) * 16 * 4);
     Heap_Free(v0);
 
     return;
@@ -1767,8 +1761,8 @@ static void ov107_02243678(void)
 
     v0 = Graphics_GetPlttData(NARC_INDEX_RESOURCE__ENG__FRONTIER_GRAPHIC__FRONTIER_BG, 137, &v1, HEAP_ID_100);
 
-    DC_FlushRange(v1->pRawData, (sizeof(u16) * 16 * 4));
-    GX_LoadBGPltt(v1->pRawData, 0, (sizeof(u16) * 16 * 4));
+    DC_FlushRange(v1->pRawData, sizeof(u16) * 16 * 4);
+    GX_LoadBGPltt(v1->pRawData, 0, sizeof(u16) * 16 * 4);
 
     Heap_Free(v0);
     return;
@@ -1929,8 +1923,8 @@ static void ov107_02243C18(UnkStruct_ov107_02241D6C *param0, Window *param1, u8 
     StringTemplate_SetMoveName(param0->unk_24, param2, Pokemon_GetValue(param5, param6, NULL));
     param0->unk_0A = ov107_02243860(param0, param1, param3, v0, v1, TEXT_SPEED_NO_TRANSFER, 1, 2, 0, FONT_SYSTEM);
 
-    ov107_02244A74(param0, 4, Pokemon_GetValue(param5, param7, NULL), MON_DATA_IS_DATA_INVALID, 0);
-    ov107_02244A74(param0, 5, Pokemon_GetValue(param5, param8, NULL), MON_DATA_IS_DATA_INVALID, 0);
+    ov107_02244A74(param0, 4, Pokemon_GetValue(param5, param7, NULL), MON_DATA_CHECKSUM_FAILED, 0);
+    ov107_02244A74(param0, 5, Pokemon_GetValue(param5, param8, NULL), MON_DATA_CHECKSUM_FAILED, 0);
     param0->unk_0A = ov107_02243890(param0, param1, param4, v2, v3, TEXT_SPEED_NO_TRANSFER, 1, 2, 0, FONT_SYSTEM, 1);
 
     return;
@@ -1982,9 +1976,9 @@ static void ov107_02243CFC(UnkStruct_ov107_02241D6C *param0, Window *param1, u8 
         v4 = 0;
     }
 
-    sub_0200C5BC(param0->unk_1C4, Pokemon_GetValue(v7, MON_DATA_CURRENT_HP, NULL), 3, 1, param1, v1, v2);
-    sub_0200C578(param0->unk_1C4, 0, param1, v5, v6);
-    sub_0200C5BC(param0->unk_1C4, Pokemon_GetValue(v7, MON_DATA_MAX_HP, NULL), 3, 0, param1, v3, v4);
+    FontSpecialChars_DrawPartyScreenHPText(param0->unk_1C4, Pokemon_GetValue(v7, MON_DATA_HP, NULL), 3, 1, param1, v1, v2);
+    FontSpecialChars_DrawPartyScreenLevelText(param0->unk_1C4, 0, param1, v5, v6);
+    FontSpecialChars_DrawPartyScreenHPText(param0->unk_1C4, Pokemon_GetValue(v7, MON_DATA_MAX_HP, NULL), 3, 0, param1, v3, v4);
 
     return;
 }
@@ -2030,7 +2024,7 @@ static void ov107_02243DE4(UnkStruct_ov107_02241D6C *param0, Window *param1, u8 
         v4 = 0;
     }
 
-    sub_0200C648(param0->unk_1C4, 1, Pokemon_GetValue(v7, MON_DATA_LEVEL, NULL), 3, 0, param1, v1, v2);
+    FontSpecialChars_DrawPartyScreenText(param0->unk_1C4, 1, Pokemon_GetValue(v7, MON_DATA_LEVEL, NULL), 3, 0, param1, v1, v2);
     v0 = Pokemon_GetValue(v7, MON_DATA_GENDER, NULL);
     ov107_02244B8C(param0, param1, v3, v4, FONT_SYSTEM, v0);
 
@@ -2078,7 +2072,7 @@ static void ov107_02243F4C(UnkStruct_ov107_02241D6C *param0, Window *param1, u8 
     }
 
     Window_FillRectWithColor(param1, 0, v0 + (64 * param2), 0, 8 * 3, 9);
-    sub_0200C5BC(param0->unk_1C4, param3, 3, 1, param1, v0 + (64 * param2), 1);
+    FontSpecialChars_DrawPartyScreenHPText(param0->unk_1C4, param3, 3, 1, param1, v0 + (64 * param2), 1);
     Window_ScheduleCopyToVRAM(param1);
 
     return;
@@ -2250,7 +2244,7 @@ static void ov107_02244240(UnkStruct_ov107_02241D6C *param0, u8 param1)
     ov107_02249BAC(param0->unk_3EC, 1);
     ov107_02249BAC(param0->unk_434, 1);
 
-    v5 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_ITEM_NAMES, HEAP_ID_100);
+    v5 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_ITEM_NAMES, HEAP_ID_100);
     v0 = ov107_02249CAC(param0->saveData, param0->unk_09, 1);
 
     if (param1 == 6) {
@@ -2259,7 +2253,7 @@ static void ov107_02244240(UnkStruct_ov107_02241D6C *param0, u8 param1)
         v1 = Unk_ov107_02249E06[v0 - 1];
     }
 
-    param0->unk_19C = StringList_New((v1 + 1), HEAP_ID_100);
+    param0->unk_19C = StringList_New(v1 + 1, HEAP_ID_100);
 
     for (v4 = 0; v4 < v1; v4++) {
         if (param1 == 6) {
@@ -2321,7 +2315,7 @@ static void ov107_0224440C(ListMenu *param0, u32 param1, u8 param2)
         ov107_02249BAC(v6->unk_3EC, 1);
     }
 
-    ov107_02249BB8(v6->unk_434, 158, (24 + v4 * 16));
+    ov107_02249BB8(v6->unk_434, 158, 24 + v4 * 16);
 
     if (param1 != 0xfffffffe) {
         ov107_02243EF8(v6, &v6->unk_50[12], ov107_02244DE0(v6, v5, v6->unk_13));
@@ -2361,7 +2355,7 @@ static void ov107_022445C4(UnkStruct_ov107_02241D6C *param0)
     ov107_02249D84(param0->unk_4C, &param0->unk_50[10]);
     Window_FillTilemap(&param0->unk_50[10], 15);
 
-    param0->unk_19C = StringList_New((NELEMS(Unk_ov107_02249FF0)), HEAP_ID_100);
+    param0->unk_19C = StringList_New(NELEMS(Unk_ov107_02249FF0), HEAP_ID_100);
 
     for (v3 = 0; v3 < (NELEMS(Unk_ov107_02249FF0)); v3++) {
         StringList_AddFromMessageBank(param0->unk_19C, param0->unk_20, Unk_ov107_02249FF0[v3][1], Unk_ov107_02249FF0[v3][2]);
@@ -2469,7 +2463,7 @@ static void ov107_02244780(UnkStruct_ov107_02241D6C *param0)
     ov107_02249D84(param0->unk_4C, &param0->unk_50[11]);
     Window_FillTilemap(&param0->unk_50[11], 15);
 
-    param0->unk_19C = StringList_New((NELEMS(Unk_ov107_02249F54)), HEAP_ID_100);
+    param0->unk_19C = StringList_New(NELEMS(Unk_ov107_02249F54), HEAP_ID_100);
 
     for (v3 = 0; v3 < (NELEMS(Unk_ov107_02249F54)); v3++) {
         StringList_AddFromMessageBank(param0->unk_19C, param0->unk_20, Unk_ov107_02249F54[v3][1], Unk_ov107_02249F54[v3][2]);
@@ -2651,7 +2645,7 @@ static void ov107_02244AB4(UnkStruct_ov107_02241D6C *param0, Window *param1, u32
     Strbuf *v2;
 
     v1 = SaveData_GetTrainerInfo(param0->saveData);
-    v2 = Strbuf_Init((7 + 1), HEAP_ID_100);
+    v2 = Strbuf_Init(7 + 1, HEAP_ID_100);
 
     Strbuf_CopyChars(v2, TrainerInfo_Name(v1));
 
@@ -2920,7 +2914,7 @@ static BOOL ov107_02244E44(UnkStruct_ov107_02241D6C *param0, u8 param1, u8 param
 
     v5 = ov107_02249C98(param0->unk_14, param1);
     v6 = Party_GetPokemonBySlotIndex(param0->unk_43C, v5);
-    v0 = Pokemon_GetValue(v6, MON_DATA_CURRENT_HP, NULL);
+    v0 = Pokemon_GetValue(v6, MON_DATA_HP, NULL);
     v1 = Pokemon_GetValue(v6, MON_DATA_MAX_HP, NULL);
     v2 = ov107_022450E8(param0, HealthBar_Color(v0, v1, 48));
     v3 = ov107_02245114(param0, HealthBar_Color(v0, v1, 48));
@@ -2954,7 +2948,7 @@ static BOOL ov107_02244E44(UnkStruct_ov107_02241D6C *param0, u8 param1, u8 param
         }
 
         if (param0->unk_414 == NULL) {
-            ov107_02243F4C(param0, &param0->unk_50[3], v5, Pokemon_GetValue(v6, MON_DATA_CURRENT_HP, NULL));
+            ov107_02243F4C(param0, &param0->unk_50[3], v5, Pokemon_GetValue(v6, MON_DATA_HP, NULL));
             ov107_02249BEC(param0->unk_420[v5], v3);
             ov107_02249C1C(param0->unk_3F4[v5], v2);
             param0->unk_0E_2 = 0;
@@ -3136,19 +3130,19 @@ static BOOL ov107_02245210(Pokemon *param0)
 {
     u8 v0 = 0;
 
-    if (Pokemon_GetValue(param0, MON_DATA_MOVE1_CUR_PP, NULL) != Pokemon_GetValue(param0, MON_DATA_MOVE1_MAX_PP, NULL)) {
+    if (Pokemon_GetValue(param0, MON_DATA_MOVE1_PP, NULL) != Pokemon_GetValue(param0, MON_DATA_MOVE1_MAX_PP, NULL)) {
         v0 = 1;
     }
 
-    if (Pokemon_GetValue(param0, MON_DATA_MOVE2_CUR_PP, NULL) != Pokemon_GetValue(param0, MON_DATA_MOVE2_MAX_PP, NULL)) {
+    if (Pokemon_GetValue(param0, MON_DATA_MOVE2_PP, NULL) != Pokemon_GetValue(param0, MON_DATA_MOVE2_MAX_PP, NULL)) {
         v0 = 1;
     }
 
-    if (Pokemon_GetValue(param0, MON_DATA_MOVE3_CUR_PP, NULL) != Pokemon_GetValue(param0, MON_DATA_MOVE3_MAX_PP, NULL)) {
+    if (Pokemon_GetValue(param0, MON_DATA_MOVE3_PP, NULL) != Pokemon_GetValue(param0, MON_DATA_MOVE3_MAX_PP, NULL)) {
         v0 = 1;
     }
 
-    if (Pokemon_GetValue(param0, MON_DATA_MOVE4_CUR_PP, NULL) != Pokemon_GetValue(param0, MON_DATA_MOVE4_MAX_PP, NULL)) {
+    if (Pokemon_GetValue(param0, MON_DATA_MOVE4_PP, NULL) != Pokemon_GetValue(param0, MON_DATA_MOVE4_MAX_PP, NULL)) {
         v0 = 1;
     }
 
@@ -3674,7 +3668,7 @@ static void ov107_02245C00(UnkStruct_ov107_02241D6C *param0)
 
     for (v0 = 0; v0 < v1; v0++) {
         v3 = Party_GetPokemonBySlotIndex(param0->unk_43C, v0);
-        v2 = ov104_0222E240(Pokemon_GetValue(v3, MON_DATA_CURRENT_HP, NULL), Pokemon_GetValue(v3, MON_DATA_MAX_HP, NULL));
+        v2 = ov104_0222E240(Pokemon_GetValue(v3, MON_DATA_HP, NULL), Pokemon_GetValue(v3, MON_DATA_MAX_HP, NULL));
 
         if (param0->unk_3F4[v0] != NULL) {
             ov107_02249C1C(param0->unk_3F4[v0], v2);
@@ -3716,7 +3710,7 @@ static void ov107_02245C94(UnkStruct_ov107_02241D6C *param0, u8 param1, u8 param
 
             v4 = ov107_02249CAC(param0->saveData, param0->unk_09, v2);
             v5[0] = (v4 + 1);
-            sub_020306E4(SaveData_GetBattleFrontier(param0->saveData), sub_0205E5B4(param0->unk_09, v2), sub_0205E6A8(sub_0205E5B4(param0->unk_09, v2)), (v4 + 1));
+            sub_020306E4(SaveData_GetBattleFrontier(param0->saveData), sub_0205E5B4(param0->unk_09, v2), sub_0205E6A8(sub_0205E5B4(param0->unk_09, v2)), v4 + 1);
 
             if (ov104_0223BA14(param0->unk_09) == 1) {
                 if (param2 == 4) {
@@ -3745,7 +3739,7 @@ static void ov107_02245C94(UnkStruct_ov107_02241D6C *param0, u8 param1, u8 param
             v4 = ov107_02249CAC(param0->saveData, param0->unk_09, v2);
 
             v5[0] = (v4 + 1);
-            sub_020306E4(SaveData_GetBattleFrontier(param0->saveData), sub_0205E5B4(param0->unk_09, v2), sub_0205E6A8(sub_0205E5B4(param0->unk_09, v2)), (v4 + 1));
+            sub_020306E4(SaveData_GetBattleFrontier(param0->saveData), sub_0205E5B4(param0->unk_09, v2), sub_0205E6A8(sub_0205E5B4(param0->unk_09, v2)), v4 + 1);
 
             if (ov104_0223BA14(param0->unk_09) == 1) {
                 if (param2 == 4) {

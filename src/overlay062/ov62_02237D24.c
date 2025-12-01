@@ -203,7 +203,7 @@ static const UnkStruct_ov62_02248CDC Unk_ov62_02248CDC = {
 
 static BOOL ov62_02237D24(UnkStruct_0208C06C *param0)
 {
-    UnkStruct_ov62_02237D24 *v0 = Heap_AllocFromHeap(HEAP_ID_102, sizeof(UnkStruct_ov62_02237D24));
+    UnkStruct_ov62_02237D24 *v0 = Heap_Alloc(HEAP_ID_102, sizeof(UnkStruct_ov62_02237D24));
 
     memset(v0, 0, sizeof(UnkStruct_ov62_02237D24));
     param0->unk_860 = v0;
@@ -329,7 +329,7 @@ static BOOL ov62_02237F08(UnkStruct_0208C06C *param0)
         break;
     }
     if (v0->unk_228) {
-        sub_020241B4();
+        G3_ResetG3X();
         ov22_0225AFF8(v0->unk_228);
         G3_RequestSwapBuffers(GX_SORTMODE_AUTO, GX_BUFFERMODE_Z);
     }
@@ -352,7 +352,7 @@ static BOOL ov62_02238048(UnkStruct_0208C06C *param0)
     }
 
     if (v0->unk_228) {
-        sub_020241B4();
+        G3_ResetG3X();
         ov22_0225AFF8(v0->unk_228);
         G3_RequestSwapBuffers(GX_SORTMODE_AUTO, GX_BUFFERMODE_Z);
     }
@@ -946,7 +946,7 @@ static BOOL ov62_02238D04(UnkStruct_0208C06C *param0)
     }
 
     if (v0->unk_228) {
-        sub_020241B4();
+        G3_ResetG3X();
         ov22_0225AFF8(v0->unk_228);
         G3_RequestSwapBuffers(GX_SORTMODE_AUTO, GX_BUFFERMODE_Z);
     }
@@ -987,7 +987,7 @@ static BOOL ov62_02238E54(UnkStruct_0208C06C *param0)
     }
 
     if (v0->unk_228) {
-        sub_020241B4();
+        G3_ResetG3X();
         ov22_0225AFF8(v0->unk_228);
         G3_RequestSwapBuffers(GX_SORTMODE_AUTO, GX_BUFFERMODE_Z);
     }
@@ -1311,8 +1311,8 @@ static void ov62_0223958C(UnkStruct_0208C06C *param0, int param1)
         ManagedSprite_SetPositionXY(v0->unk_198[0].unk_08, 80, 232);
     }
 
-    sub_020128C4(v0->unk_198[0].unk_0C, 36, -8);
-    sub_020128C4(v0->unk_198[1].unk_0C, 36, -8);
+    FontOAM_SetXY(v0->unk_198[0].unk_0C, 36, -8);
+    FontOAM_SetXY(v0->unk_198[1].unk_0C, 36, -8);
 }
 
 static void ov62_02239608(UnkStruct_0208C06C *param0)
@@ -1333,8 +1333,8 @@ static void ov62_02239608(UnkStruct_0208C06C *param0)
     ManagedSprite_SetAnim(v0->unk_198[1].unk_08, 4);
     ManagedSprite_SetPositionXY(v0->unk_198[0].unk_08, 32, 232);
     ManagedSprite_SetPositionXY(v0->unk_198[1].unk_08, 128, 232);
-    sub_020128C4(v0->unk_198[0].unk_0C, 36, -8);
-    sub_020128C4(v0->unk_198[1].unk_0C, 36, -8);
+    FontOAM_SetXY(v0->unk_198[0].unk_0C, 36, -8);
+    FontOAM_SetXY(v0->unk_198[1].unk_0C, 36, -8);
     sub_020129D0(v0->unk_198[0].unk_0C, 1);
     sub_020129D0(v0->unk_198[1].unk_0C, 1);
 
@@ -1546,7 +1546,7 @@ static void ov62_02239A0C(UnkStruct_0208C06C *param0, int param1)
 
         Heap_Free(v0);
 
-        v4->unk_1E8 = Heap_AllocFromHeap(HEAP_ID_102, sizeof(UnkStruct_ov62_02249380) * v4->unk_1D4.unk_00);
+        v4->unk_1E8 = Heap_Alloc(HEAP_ID_102, sizeof(UnkStruct_ov62_02249380) * v4->unk_1D4.unk_00);
         MI_CpuFill8(v4->unk_1E8, 0, sizeof(UnkStruct_ov62_02249380) * v4->unk_1D4.unk_00);
 
         for (v5 = 0; v5 < v4->unk_1D4.unk_00; v5++) {
@@ -1554,7 +1554,7 @@ static void ov62_02239A0C(UnkStruct_0208C06C *param0, int param1)
             v4->unk_1E8[v5].unk_04 = v4->unk_1D4.unk_08[v5];
         }
     }
-    v4->unk_1D4.unk_0C = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SPECIES_NAME, HEAP_ID_102);
+    v4->unk_1D4.unk_0C = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SPECIES_NAME, HEAP_ID_102);
     v4->unk_1D4.unk_10 = 1;
 }
 

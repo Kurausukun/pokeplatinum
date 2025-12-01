@@ -56,7 +56,7 @@ typedef struct PoketchGraphics_AppCounterAnimationData {
 
 struct PoketchGraphics_TaskData {
     const PoketchGraphics_ConstTaskData *constTaskData;
-    u32 activeTasks[BASE_IDX + NUM_TASK_SLOTS];
+    u32 activeTasks[POKETCH_TASK_SLOT_BASE + NUM_TASK_SLOTS];
     u16 tilemapUpBtnPressed[BUTTON_TILEMAP_SIZE];
     u16 tilemapUpBtnHalfPressed[BUTTON_TILEMAP_SIZE];
     u16 tilemapUpBtn[BUTTON_TILEMAP_SIZE];
@@ -109,7 +109,7 @@ static void PoketchGraphics_FreeTilemapBufferTask(SysTask *task, void *taskMan);
 
 BOOL PoketchGraphics_Main(PoketchGraphics_TaskData **taskDataPtr, const PoketchGraphics_ConstTaskData *constTaskData, NNSG2dOamManagerInstance *oamMan, PoketchSystem *poketchSys)
 {
-    *taskDataPtr = Heap_AllocFromHeap(HEAP_ID_POKETCH_MAIN, sizeof(PoketchGraphics_TaskData));
+    *taskDataPtr = Heap_Alloc(HEAP_ID_POKETCH_MAIN, sizeof(PoketchGraphics_TaskData));
 
     if (*taskDataPtr != NULL) {
         PoketchGraphics_TaskData *newTaskData = *taskDataPtr;
@@ -303,14 +303,13 @@ static void PoketchGraphics_SetupBackgroundTask(SysTask *task, void *taskMan)
         .y = 0,
         .bufferSize = 0x824,
         .baseTile = 0,
-        .screenSize = 1,
+        .screenSize = BG_SCREEN_SIZE_256x256,
         .colorMode = GX_BG_COLORMODE_16,
         .screenBase = (GX_BG_SCRBASE_0x6000),
         .charBase = (GX_BG_CHARBASE_0x04000),
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 0,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
 
@@ -319,14 +318,13 @@ static void PoketchGraphics_SetupBackgroundTask(SysTask *task, void *taskMan)
         .y = 0,
         .bufferSize = 0x800,
         .baseTile = 0,
-        .screenSize = 1,
+        .screenSize = BG_SCREEN_SIZE_256x256,
         .colorMode = GX_BG_COLORMODE_16,
         .screenBase = (GX_BG_SCRBASE_0x6800),
         .charBase = (GX_BG_CHARBASE_0x04000),
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 1,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
 
@@ -640,7 +638,7 @@ static void PoketchGraphics_SetAppCounterDigits(PoketchGraphics_AppCounterAnimat
     if (appCounterAnim->animationLoaded) {
         u32 tensDigit, onesDigit;
 
-        CP_SetDiv32_32((constTaskData->lastAppID + 1), 10);
+        CP_SetDiv32_32(constTaskData->lastAppID + 1, 10);
 
         tensDigit = CP_GetDivResult32();
         onesDigit = CP_GetDivRemainder32();

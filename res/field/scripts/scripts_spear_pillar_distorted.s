@@ -16,16 +16,16 @@ _0022:
     LockAll
     ClearFlag FLAG_UNK_0x02BA
     AddObject 1
-    ScrCmd_1B2 1
+    HideObject 1
     SetObjectEventPos 0, 32, 34
     SetObjectEventDir 0, DIR_NORTH
     SetObjectEventMovementType 0, MOVEMENT_TYPE_LOOK_NORTH
     ClearFlag FLAG_UNK_0x01CD
     AddObject 0
-    ScrCmd_066 30, 30
-    ApplyMovement 241, _016C
+    AddFreeCamera 30, 30
+    ApplyFreeCameraMovement _016C
     WaitMovement
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     SetVar VAR_UNK_0x40C3, 2
     ApplyMovement 0, _0144
@@ -38,9 +38,9 @@ _0088:
     ScrCmd_20D 6, VAR_RESULT
     GoToIfEq VAR_RESULT, 0, _0088
     RemoveObject 1
-    ApplyMovement 241, _0178
+    ApplyFreeCameraMovement _0178
     WaitMovement
-    ScrCmd_067
+    RestoreCamera
     ApplyMovement LOCALID_PLAYER, _013C
     ApplyMovement 0, _014C
     WaitMovement
@@ -63,13 +63,13 @@ _00DA:
 _00FD:
     Message 7
     CloseMessage
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     ScrCmd_320
     ReturnToField
     SetPartyGiratinaForm GIRATINA_FORM_ORIGIN
     Warp MAP_HEADER_DISTORTION_WORLD_1F, 0, 55, 40, 1
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     End
 

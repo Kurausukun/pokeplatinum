@@ -13,7 +13,6 @@
 #include "struct_defs/daycare.h"
 
 #include "field/field_system.h"
-#include "overlay005/egg_moves.h"
 
 #include "daycare_save.h"
 #include "game_records.h"
@@ -33,6 +32,8 @@
 #include "unk_0202CC64.h"
 #include "unk_020559DC.h"
 #include "unk_02092494.h"
+
+#include "res/pokemon/species_egg_moves.h"
 
 typedef struct {
     int fatherMoves[LEARNED_MOVES_MAX];
@@ -168,7 +169,7 @@ static void ov5_021E63E0(Pokemon *param0)
 
 static int Daycare_MoveToPartyFromDaycareMon(Party *party, DaycareMon *daycareMon, StringTemplate *template)
 {
-    Pokemon *mon = Pokemon_New(HEAP_ID_FIELD);
+    Pokemon *mon = Pokemon_New(HEAP_ID_FIELD1);
     BoxPokemon *boxMon = DaycareMon_GetBoxMon(daycareMon);
     DaycareMail *daycareMail = DaycareMon_GetDaycareMail(daycareMon);
     u32 experience;
@@ -179,9 +180,9 @@ static int Daycare_MoveToPartyFromDaycareMon(Party *party, DaycareMon *daycareMo
     Pokemon_FromBoxPokemon(boxMon, mon);
 
     if (Pokemon_GetValue(mon, MON_DATA_LEVEL, NULL) != MAX_POKEMON_LEVEL) {
-        experience = Pokemon_GetValue(mon, MON_DATA_EXP, NULL);
+        experience = Pokemon_GetValue(mon, MON_DATA_EXPERIENCE, NULL);
         experience += DaycareMon_GetSteps(daycareMon);
-        Pokemon_SetValue(mon, MON_DATA_EXP, (u8 *)&experience);
+        Pokemon_SetValue(mon, MON_DATA_EXPERIENCE, (u8 *)&experience);
         ov5_021E63E0(mon);
     }
 
@@ -210,17 +211,17 @@ u16 Daycare_MoveToPartyFromDaycareSlot(Party *party, StringTemplate *template, D
 
 int BoxPokemon_GiveExperience(BoxPokemon *boxMon, u32 givenExp)
 {
-    Pokemon *mon = Pokemon_New(HEAP_ID_FIELD);
+    Pokemon *mon = Pokemon_New(HEAP_ID_FIELD1);
     BoxPokemon *boxMonRef = Pokemon_GetBoxPokemon(mon);
     int level;
     u32 exp;
 
     BoxPokemon_Copy(boxMon, boxMonRef);
 
-    exp = BoxPokemon_GetValue(boxMonRef, MON_DATA_EXP, NULL);
+    exp = BoxPokemon_GetValue(boxMonRef, MON_DATA_EXPERIENCE, NULL);
     exp += givenExp;
 
-    BoxPokemon_SetValue(boxMonRef, MON_DATA_EXP, (u8 *)&exp);
+    BoxPokemon_SetValue(boxMonRef, MON_DATA_EXPERIENCE, (u8 *)&exp);
     level = BoxPokemon_GetLevel(boxMonRef);
     Heap_Free(mon);
 
@@ -471,7 +472,7 @@ static u8 LoadSpeciesEggMoves(Pokemon *mon, u16 *eggMoves)
 static void Egg_BuildMoveset(Pokemon *egg, BoxPokemon *father, BoxPokemon *mother)
 {
     u16 i, j, v2, species, levelUpMoveCount, eggMoveCount, form;
-    EggMoveBuilder *builder = Heap_AllocFromHeap(HEAP_ID_FIELD, sizeof(EggMoveBuilder));
+    EggMoveBuilder *builder = Heap_Alloc(HEAP_ID_FIELD1, sizeof(EggMoveBuilder));
 
     v2 = 0;
 
@@ -681,14 +682,14 @@ void Egg_CreateEgg(Pokemon *egg, u16 species, u8 param2, TrainerInfo *trainerInf
     Pokemon_SetValue(egg, MON_DATA_MET_LEVEL, &metLvl);
 
     if (param2) {
-        Pokemon_SetValue(egg, MON_DATA_MET_LOCATION, &param2);
+        Pokemon_SetValue(egg, MON_DATA_EGG_LOCATION, &param2);
     }
 
     isEgg = TRUE;
     Pokemon_SetValue(egg, MON_DATA_IS_EGG, &isEgg);
 
-    eggName = MessageUtil_SpeciesName(SPECIES_EGG, HEAP_ID_FIELD);
-    Pokemon_SetValue(egg, MON_DATA_NICKNAME_STRBUF, eggName);
+    eggName = MessageUtil_SpeciesName(SPECIES_EGG, HEAP_ID_FIELD1);
+    Pokemon_SetValue(egg, MON_DATA_NICKNAME_STRING, eggName);
     Strbuf_Free(eggName);
 
     if (param4 == 4) {
@@ -696,7 +697,7 @@ void Egg_CreateEgg(Pokemon *egg, u16 species, u8 param2, TrainerInfo *trainerInf
         u32 gender = TrainerInfo_Gender(trainerInfo);
         Strbuf *otName = TrainerInfo_NameNewStrbuf(trainerInfo, 32);
 
-        Pokemon_SetValue(egg, MON_DATA_OTNAME_STRBUF, otName);
+        Pokemon_SetValue(egg, MON_DATA_OT_NAME_STRING, otName);
         Pokemon_SetValue(egg, MON_DATA_OT_ID, &trainerId);
         Pokemon_SetValue(egg, MON_DATA_OT_GENDER, &gender);
         Strbuf_Free(otName);
@@ -741,9 +742,9 @@ static void Egg_SetInitialData(Pokemon *mon, u16 species, Daycare *daycare, u32 
     Pokemon_SetValue(mon, MON_DATA_MET_LEVEL, &level);
     Pokemon_SetValue(mon, MON_DATA_FORM, &form);
 
-    strBuf = MessageUtil_SpeciesName(SPECIES_EGG, HEAP_ID_FIELD);
+    strBuf = MessageUtil_SpeciesName(SPECIES_EGG, HEAP_ID_FIELD1);
 
-    Pokemon_SetValue(mon, MON_DATA_NICKNAME_STRBUF, strBuf);
+    Pokemon_SetValue(mon, MON_DATA_NICKNAME_STRING, strBuf);
     Strbuf_Free(strBuf);
 }
 
@@ -751,7 +752,7 @@ void Daycare_GiveEggFromDaycare(Daycare *daycare, Party *party, TrainerInfo *tra
 {
     u16 species;
     u8 parentSlots[NUM_DAYCARE_MONS], isEgg;
-    Pokemon *mon = Pokemon_New(HEAP_ID_FIELD);
+    Pokemon *mon = Pokemon_New(HEAP_ID_FIELD1);
 
     species = Egg_DetermineEggSpeciesAndParentSlots(daycare, parentSlots);
     species = Daycare_AlterEggSpeciesWithIncenseItem(species, daycare);
@@ -765,7 +766,7 @@ void Daycare_GiveEggFromDaycare(Daycare *daycare, Party *party, TrainerInfo *tra
     Egg_InheritIVs(mon, daycare);
     Egg_BuildMoveset(mon, Daycare_GetBoxMon(daycare, parentSlots[1]), Daycare_GetBoxMon(daycare, parentSlots[0]));
 
-    UpdateMonStatusAndTrainerInfo(mon, trainerInfo, 3, SpecialMetLoc_GetId(1, 0), HEAP_ID_FIELD);
+    UpdateMonStatusAndTrainerInfo(mon, trainerInfo, 3, SpecialMetLoc_GetId(1, 0), HEAP_ID_FIELD1);
 
     if (species == SPECIES_PICHU) {
         Egg_TryGiveVoltTackle(mon, daycare);
@@ -786,7 +787,7 @@ static int Party_GetEggCyclesToSubtract(Party *party)
     int partyCount = Party_GetCurrentCount(party);
 
     for (i = 0; i < partyCount; i++) {
-        if (Pokemon_GetValue(Party_GetPokemonBySlotIndex(party, i), MON_DATA_EGG_EXISTS, NULL) == FALSE) {
+        if (Pokemon_GetValue(Party_GetPokemonBySlotIndex(party, i), MON_DATA_SANITY_IS_EGG, NULL) == FALSE) {
             ability = Pokemon_GetValue(Party_GetPokemonBySlotIndex(party, i), MON_DATA_ABILITY, NULL);
 
             if ((ability == ABILITY_MAGMA_ARMOR) || (ability == ABILITY_FLAME_BODY)) {
@@ -955,7 +956,7 @@ BOOL Daycare_Update(Daycare *daycare, Party *party, FieldSystem *fieldSystem)
             Pokemon *mon = Party_GetPokemonBySlotIndex(party, i);
 
             if (Pokemon_GetValue(mon, MON_DATA_IS_EGG, NULL)) {
-                if (Pokemon_GetValue(mon, MON_DATA_IS_DATA_INVALID, NULL)) {
+                if (Pokemon_GetValue(mon, MON_DATA_CHECKSUM_FAILED, NULL)) {
                     continue;
                 }
 
@@ -1103,7 +1104,7 @@ static void Egg_CreateHatchedMonInternal(Pokemon *egg, int heapID)
 
     for (i = 0; i < LEARNED_MOVES_MAX; i++) {
         moves[i] = Pokemon_GetValue(egg, MON_DATA_MOVE1 + i, NULL);
-        movesPP[i] = Pokemon_GetValue(egg, MON_DATA_MOVE1_CUR_PP + i, NULL);
+        movesPP[i] = Pokemon_GetValue(egg, MON_DATA_MOVE1_PP + i, NULL);
     }
 
     personality = Pokemon_GetValue(egg, MON_DATA_PERSONALITY, NULL);
@@ -1114,18 +1115,18 @@ static void Egg_CreateHatchedMonInternal(Pokemon *egg, int heapID)
 
     language = Pokemon_GetValue(egg, MON_DATA_LANGUAGE, NULL);
     metGame = Pokemon_GetValue(egg, MON_DATA_MET_GAME, NULL);
-    marks = Pokemon_GetValue(egg, MON_DATA_MARKS, NULL);
+    marks = Pokemon_GetValue(egg, MON_DATA_MARKINGS, NULL);
     pokerus = Pokemon_GetValue(egg, MON_DATA_POKERUS, NULL);
     fatefulEncounter = Pokemon_GetValue(egg, MON_DATA_FATEFUL_ENCOUNTER, NULL);
 
-    Pokemon_GetValue(egg, MON_DATA_OTNAME_STRBUF, strBuf);
+    Pokemon_GetValue(egg, MON_DATA_OT_NAME_STRING, strBuf);
 
     gender = Pokemon_GetValue(egg, MON_DATA_OT_GENDER, NULL);
     otID = Pokemon_GetValue(egg, MON_DATA_OT_ID, NULL);
     form = Pokemon_GetValue(egg, MON_DATA_FORM, NULL);
 
     if (species == SPECIES_MANAPHY) {
-        if (Pokemon_GetValue(egg, MON_DATA_MET_LOCATION, NULL) == SpecialMetLoc_GetId(2, 1)) {
+        if (Pokemon_GetValue(egg, MON_DATA_EGG_LOCATION, NULL) == SpecialMetLoc_GetId(2, 1)) {
             while (Pokemon_IsPersonalityShiny(otID, personality)) {
                 personality = ARNG_Next(personality);
             }
@@ -1136,7 +1137,7 @@ static void Egg_CreateHatchedMonInternal(Pokemon *egg, int heapID)
 
     for (i = 0; i < LEARNED_MOVES_MAX; i++) {
         Pokemon_SetValue(mon, MON_DATA_MOVE1 + i, &(moves[i]));
-        Pokemon_SetValue(mon, MON_DATA_MOVE1_CUR_PP + i, &(movesPP[i]));
+        Pokemon_SetValue(mon, MON_DATA_MOVE1_PP + i, &(movesPP[i]));
     }
 
     for (i = 0; i < STAT_MAX; i++) {
@@ -1145,37 +1146,37 @@ static void Egg_CreateHatchedMonInternal(Pokemon *egg, int heapID)
 
     Pokemon_SetValue(mon, MON_DATA_LANGUAGE, &language);
     Pokemon_SetValue(mon, MON_DATA_MET_GAME, &metGame);
-    Pokemon_SetValue(mon, MON_DATA_MARKS, &marks);
+    Pokemon_SetValue(mon, MON_DATA_MARKINGS, &marks);
 
     friendship = 120;
 
     Pokemon_SetValue(mon, MON_DATA_FRIENDSHIP, &friendship);
     Pokemon_SetValue(mon, MON_DATA_POKERUS, &pokerus);
     Pokemon_SetValue(mon, MON_DATA_FATEFUL_ENCOUNTER, &fatefulEncounter);
-    Pokemon_SetValue(mon, MON_DATA_OTNAME_STRBUF, strBuf);
+    Pokemon_SetValue(mon, MON_DATA_OT_NAME_STRING, strBuf);
     Pokemon_SetValue(mon, MON_DATA_OT_GENDER, &gender);
     Pokemon_SetValue(mon, MON_DATA_OT_ID, &otID);
     Pokemon_SetValue(mon, MON_DATA_FORM, &form);
 
-    u16 location = Pokemon_GetValue(egg, MON_DATA_MET_LOCATION, NULL);
-    u8 year = Pokemon_GetValue(egg, MON_DATA_MET_YEAR, NULL);
-    u8 month = Pokemon_GetValue(egg, MON_DATA_MET_MONTH, NULL);
-    u8 day = Pokemon_GetValue(egg, MON_DATA_MET_DAY, NULL);
+    u16 location = Pokemon_GetValue(egg, MON_DATA_EGG_LOCATION, NULL);
+    u8 year = Pokemon_GetValue(egg, MON_DATA_EGG_YEAR, NULL);
+    u8 month = Pokemon_GetValue(egg, MON_DATA_EGG_MONTH, NULL);
+    u8 day = Pokemon_GetValue(egg, MON_DATA_EGG_DAY, NULL);
+
+    Pokemon_SetValue(mon, MON_DATA_EGG_LOCATION, &location);
+    Pokemon_SetValue(mon, MON_DATA_EGG_YEAR, &year);
+    Pokemon_SetValue(mon, MON_DATA_EGG_MONTH, &month);
+    Pokemon_SetValue(mon, MON_DATA_EGG_DAY, &day);
+
+    location = Pokemon_GetValue(egg, MON_DATA_MET_LOCATION, NULL);
+    year = Pokemon_GetValue(egg, MON_DATA_MET_YEAR, NULL);
+    month = Pokemon_GetValue(egg, MON_DATA_MET_MONTH, NULL);
+    day = Pokemon_GetValue(egg, MON_DATA_MET_DAY, NULL);
 
     Pokemon_SetValue(mon, MON_DATA_MET_LOCATION, &location);
     Pokemon_SetValue(mon, MON_DATA_MET_YEAR, &year);
     Pokemon_SetValue(mon, MON_DATA_MET_MONTH, &month);
     Pokemon_SetValue(mon, MON_DATA_MET_DAY, &day);
-
-    location = Pokemon_GetValue(egg, MON_DATA_HATCH_LOCATION, NULL);
-    year = Pokemon_GetValue(egg, MON_DATA_HATCH_YEAR, NULL);
-    month = Pokemon_GetValue(egg, MON_DATA_HATCH_MONTH, NULL);
-    day = Pokemon_GetValue(egg, MON_DATA_HATCH_DAY, NULL);
-
-    Pokemon_SetValue(mon, MON_DATA_HATCH_LOCATION, &location);
-    Pokemon_SetValue(mon, MON_DATA_HATCH_YEAR, &year);
-    Pokemon_SetValue(mon, MON_DATA_HATCH_MONTH, &month);
-    Pokemon_SetValue(mon, MON_DATA_HATCH_DAY, &day);
 
     Pokemon_Copy(mon, egg);
     Strbuf_Free(strBuf);

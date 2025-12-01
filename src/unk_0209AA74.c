@@ -41,19 +41,18 @@ static const GraphicsModes Unk_020F8B28 = {
 };
 
 static const BgTemplate Unk_020F8B38 = {
-    0x0,
-    0x0,
-    0x800,
-    0x0,
-    0x1,
-    GX_BG_COLORMODE_16,
-    GX_BG_SCRBASE_0x0000,
-    GX_BG_CHARBASE_0x18000,
-    GX_BG_EXTPLTT_01,
-    0x1,
-    0x0,
-    0x0,
-    0x0
+    .x = 0x0,
+    .y = 0x0,
+    .bufferSize = 0x800,
+    .baseTile = 0x0,
+    .screenSize = BG_SCREEN_SIZE_256x256,
+    .colorMode = GX_BG_COLORMODE_16,
+    .screenBase = GX_BG_SCRBASE_0x0000,
+    .charBase = GX_BG_CHARBASE_0x18000,
+    .bgExtPltt = GX_BG_EXTPLTT_01,
+    .priority = 0x1,
+    .areaOver = 0x0,
+    .mosaic = FALSE,
 };
 
 static const WindowTemplate Unk_020F8B20 = {
@@ -113,20 +112,20 @@ void sub_0209AA74(int heapID, int param1)
     Bg_MaskPalette(BG_LAYER_MAIN_0, 0x6c21);
     Bg_MaskPalette(BG_LAYER_SUB_0, 0x6c21);
 
-    v2 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0006, heapID);
+    v2 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0006, heapID);
     v3 = Strbuf_Init(0x180, heapID);
 
     Text_ResetAllPrinters();
     Window_AddFromTemplate(v0, &v1, &Unk_020F8B20);
     Window_FillRectWithColor(&v1, 15, 0, 0, 26 * 8, 18 * 8);
-    Window_DrawStandardFrame(&v1, 0, (512 - 9), 2);
+    Window_DrawStandardFrame(&v1, 0, 512 - 9, 2);
     MessageLoader_GetStrbuf(v2, v4, v3);
     Text_AddPrinterWithParams(&v1, FONT_SYSTEM, v3, 0, 0, TEXT_SPEED_INSTANT, NULL);
     Strbuf_Free(v3);
     GXLayers_TurnBothDispOn();
     ResetScreenMasterBrightness(DS_SCREEN_MAIN);
     ResetScreenMasterBrightness(DS_SCREEN_SUB);
-    BrightnessController_SetScreenBrightness(0, (GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_BG1 | GX_BLEND_PLANEMASK_BG2 | GX_BLEND_PLANEMASK_BG3 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD), BRIGHTNESS_BOTH_SCREENS);
+    BrightnessController_SetScreenBrightness(0, GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_BG1 | GX_BLEND_PLANEMASK_BG2 | GX_BLEND_PLANEMASK_BG3 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD, BRIGHTNESS_BOTH_SCREENS);
 
     while (TRUE) {
         HandleConsoleFold();

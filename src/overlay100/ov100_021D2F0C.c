@@ -206,7 +206,7 @@ static void ov100_021D3504(Camera *camera, VecFx32 *param1)
 
 static void ov100_021D3558(UnkStruct_ov100_021D3084 *param0)
 {
-    sub_020241B4();
+    G3_ResetG3X();
     Camera_ComputeViewMatrix();
 
     ov100_021D47A0(param0->unk_1D28);
@@ -237,7 +237,7 @@ static void ov100_021D3558(UnkStruct_ov100_021D3084 *param0)
 
 void *ov100_021D3620(UnkStruct_ov100_021D4DD8 *param0)
 {
-    UnkStruct_ov100_021D3084 *v0 = Heap_AllocFromHeap(HEAP_ID_111, sizeof(UnkStruct_ov100_021D3084));
+    UnkStruct_ov100_021D3084 *v0 = Heap_Alloc(HEAP_ID_111, sizeof(UnkStruct_ov100_021D3084));
 
     memset(v0, 0, sizeof(UnkStruct_ov100_021D3084));
 
@@ -479,11 +479,11 @@ BOOL ov100_021D39E4(void *param0)
         v0->unk_04++;
 
         if (v0->unk_04 == 80) {
-            Sound_PlayPannedEffect(1746, -70);
+            Sound_PlayPannedEffect(SEQ_SE_DP_CLIMAX01, -70);
         }
 
         if (v0->unk_04 == 135) {
-            Sound_PlayPannedEffect(1746, +70);
+            Sound_PlayPannedEffect(SEQ_SE_DP_CLIMAX01, +70);
         }
 
         if ((v0->unk_04 == 310) || (v0->unk_04 == 375) || (v0->unk_04 == 432)) {
@@ -495,19 +495,19 @@ BOOL ov100_021D39E4(void *param0)
         }
 
         if (v0->unk_04 == 165) {
-            Sound_PlayPannedEffect(1747, -70);
+            Sound_PlayPannedEffect(SEQ_SE_DP_CLIMAX03, -70);
         }
 
         if (v0->unk_04 == 220) {
-            Sound_PlayPannedEffect(1747, +70);
+            Sound_PlayPannedEffect(SEQ_SE_DP_CLIMAX03, +70);
         }
 
         if (v0->unk_04 == 470) {
-            Sound_PlayPannedEffect(1750, -70);
+            Sound_PlayPannedEffect(SEQ_SE_DP_CLIMAX10, -70);
         }
 
         if (v0->unk_04 == 520) {
-            Sound_PlayPannedEffect(1750, +70);
+            Sound_PlayPannedEffect(SEQ_SE_DP_CLIMAX10, +70);
         }
 
         if (v0->unk_04 == 120) {
@@ -521,7 +521,7 @@ BOOL ov100_021D39E4(void *param0)
         if (v0->unk_0C.unk_10DC[0].unk_160 == 0) {
             v0->unk_1D28->unk_AC.unk_00 = 6;
             ov100_021D398C(v0, 0, 483);
-            Sound_PlayPannedEffect(1751, -70);
+            Sound_PlayPannedEffect(SEQ_SE_DP_CLIMAX12, -70);
             v0->unk_00++;
         }
         break;
@@ -529,7 +529,7 @@ BOOL ov100_021D39E4(void *param0)
         if (v0->unk_0C.unk_10DC[1].unk_160 == 0) {
             v0->unk_1D28->unk_AC.unk_00 = 7;
             ov100_021D398C(v0, 1, 484);
-            Sound_PlayPannedEffect(1751, +70);
+            Sound_PlayPannedEffect(SEQ_SE_DP_CLIMAX12, +70);
             v0->unk_00++;
             v0->unk_04 = 0;
         }
@@ -546,14 +546,14 @@ BOOL ov100_021D39E4(void *param0)
         if (v0->unk_08 == 0) {
             if (v0->unk_1D28->unk_50.unk_03 < 8) {
                 v0->unk_1D28->unk_50.unk_03 += 1;
-                G2_SetBlendBrightness((GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD), v0->unk_1D28->unk_50.unk_03);
+                G2_SetBlendBrightness(GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD, v0->unk_1D28->unk_50.unk_03);
             } else {
                 v0->unk_08 = 1;
             }
         } else {
             if (v0->unk_1D28->unk_50.unk_03 > 0) {
                 v0->unk_1D28->unk_50.unk_03 -= 2;
-                G2_SetBlendBrightness((GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD), v0->unk_1D28->unk_50.unk_03);
+                G2_SetBlendBrightness(GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD, v0->unk_1D28->unk_50.unk_03);
             } else {
                 v0->unk_00++;
                 v0->unk_08 = 0;
@@ -564,14 +564,14 @@ BOOL ov100_021D39E4(void *param0)
         if (v0->unk_08 == 0) {
             if (v0->unk_1D28->unk_50.unk_03 < 12) {
                 v0->unk_1D28->unk_50.unk_03 += 1;
-                G2_SetBlendBrightness((GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD), v0->unk_1D28->unk_50.unk_03);
+                G2_SetBlendBrightness(GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD, v0->unk_1D28->unk_50.unk_03);
             } else {
                 v0->unk_08 = 1;
             }
         } else {
             if (v0->unk_1D28->unk_50.unk_03 > 0) {
                 v0->unk_1D28->unk_50.unk_03 -= 2;
-                G2_SetBlendBrightness((GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD), v0->unk_1D28->unk_50.unk_03);
+                G2_SetBlendBrightness(GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD, v0->unk_1D28->unk_50.unk_03);
             } else {
                 v0->unk_00++;
                 v0->unk_08 = 0;
@@ -581,7 +581,7 @@ BOOL ov100_021D39E4(void *param0)
     case 11:
         if (v0->unk_1D28->unk_50.unk_03 < (+16)) {
             v0->unk_1D28->unk_50.unk_03 += 2;
-            G2_SetBlendBrightness((GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD), v0->unk_1D28->unk_50.unk_03);
+            G2_SetBlendBrightness(GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD, v0->unk_1D28->unk_50.unk_03);
         } else {
             ov100_021D34C0(v0);
             ov100_021D2F64(v0);
@@ -591,7 +591,7 @@ BOOL ov100_021D39E4(void *param0)
     case 12:
         if (v0->unk_1D28->unk_50.unk_03 != 0) {
             v0->unk_1D28->unk_50.unk_03--;
-            G2_SetBlendBrightness((GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD), v0->unk_1D28->unk_50.unk_03);
+            G2_SetBlendBrightness(GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD, v0->unk_1D28->unk_50.unk_03);
         } else {
             {
                 UnkStruct_ov100_021D4EBC v2 = {

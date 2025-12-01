@@ -170,7 +170,7 @@ _0214:
     GoToIfSet FLAG_UNK_0x0002, _02AF
     GoToIfGe VAR_UNK_0x40A4, 7, _0792
     GoToIfEq VAR_UNK_0x40A4, 6, _035E
-    GoToIfSet FLAG_UNK_0x0090, _036C
+    GoToIfSet FLAG_HAS_POKEDEX, _036C
     GoToIfGe VAR_UNK_0x40A4, 5, _0788
     GoToIfGe VAR_UNK_0x40A4, 4, _0711
     GoToIfSet FLAG_UNK_0x00F8, _075A
@@ -185,23 +185,14 @@ _0214:
     ReleaseAll
     End
 
-    .byte 205
-    .byte 0
-    .byte 0
-    .byte 206
-    .byte 0
-    .byte 1
-    .byte 44
-    .byte 0
-    .byte 35
-    .byte 49
-    .byte 0
-    .byte 52
-    .byte 0
-    .byte 97
-    .byte 0
-    .byte 2
-    .byte 0
+TwinleafTownPlayerHouse1F_Unused:
+    BufferPlayerName 0
+    BufferRivalName 1
+    Message 35
+    WaitABXPadPress
+    CloseMessage
+    ReleaseAll
+    End
 
 _02AF:
     GoToIfGe VAR_UNK_0x40B2, 2, _0300
@@ -266,9 +257,9 @@ _036C:
     Call _0688
     BufferPlayerName 0
     Message 15
-    SetVar VAR_0x8004, 0x1B1
+    SetVar VAR_0x8004, ITEM_JOURNAL
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     GiveJournal
     Message 16
     GetPlayerDir VAR_0x8007
@@ -408,9 +399,9 @@ _05A6:
     End
 
 _05B1:
-    SetVar VAR_0x8004, 0x1CB
+    SetVar VAR_0x8004, ITEM_PARCEL
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     SetFlag FLAG_UNK_0x008F
     Message 27
     BufferRivalName 1
@@ -467,12 +458,12 @@ _0688:
     CallIfEq VAR_RESULT, 3, _0707
     CallIfEq VAR_RESULT, 4, _070C
     CloseMessage
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     PlaySound SEQ_ASA
     WaitSound
     HealParty
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     SetFlag FLAG_UNK_0x0002
     Return
@@ -504,68 +495,26 @@ _0711:
     ReleaseAll
     End
 
-    .byte 206
-    .byte 0
-    .byte 0
-    .byte 205
-    .byte 0
-    .byte 1
-    .byte 44
-    .byte 0
-    .byte 6
-    .byte 52
-    .byte 0
-    .byte 3
-    .byte 0
-    .byte 30
-    .byte 0
-    .byte 12
-    .byte 128
-    .byte 205
-    .byte 0
-    .byte 0
-    .byte 44
-    .byte 0
-    .byte 7
-    .byte 95
-    .byte 1
-    .byte 123
-    .byte 0
-    .byte 17
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 12
-    .byte 128
-    .byte 205
-    .byte 0
-    .byte 0
-    .byte 44
-    .byte 0
-    .byte 8
-    .byte 78
-    .byte 0
-    .byte 134
-    .byte 4
-    .byte 79
-    .byte 0
-    .byte 44
-    .byte 0
-    .byte 9
-    .byte 49
-    .byte 0
-    .byte 52
-    .byte 0
-    .byte 40
-    .byte 0
-    .byte 164
-    .byte 64
-    .byte 4
-    .byte 0
-    .byte 97
-    .byte 0
-    .byte 2
-    .byte 0
+TwinleafTownPlayerHouse1F_Unused2:
+    BufferRivalName 0
+    BufferPlayerName 1
+    Message 6
+    CloseMessage
+    WaitTime 30, VAR_RESULT
+    BufferPlayerName 0
+    Message 7
+    GiveBag
+    AddItem ITEM_POTION, 1, VAR_RESULT
+    BufferPlayerName 0
+    Message 8
+    PlaySound SEQ_FANFA4
+    WaitSound
+    Message 9
+    WaitABXPadPress
+    CloseMessage
+    SetVar VAR_UNK_0x40A4, 4
+    ReleaseAll
+    End
 
 _075A:
     BufferRivalName 0
@@ -612,14 +561,9 @@ _07A4:
     WalkOnSpotNormalNorth
     EndMovement
 
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+TwinleafTownPlayerHouse1F_UnusedMovement:
+    WalkOnSpotNormalWest
+    EndMovement
 
     .balign 4, 0
 _07B4:
@@ -778,18 +722,10 @@ _08C4:
     WalkOnSpotNormalSouth
     EndMovement
 
-    .byte 63
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 33
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+TwinleafTownPlayerHouse1F_UnusedMovement2:
+    Delay8 2
+    WalkOnSpotNormalSouth
+    EndMovement
 
     .balign 4, 0
 _08D8:
@@ -823,40 +759,21 @@ _0918:
     WalkOnSpotNormalNorth
     EndMovement
 
-    .byte 62
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 32
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+TwinleafTownPlayerHouse1F_UnusedMovement3:
+    Delay4 2
+    WalkOnSpotNormalNorth
+    EndMovement
 
     .balign 4, 0
 _0930:
     WalkOnSpotNormalSouth
     EndMovement
 
-    .byte 33
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 14
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 13
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+TwinleafTownPlayerHouse1F_UnusedMovement4:
+    WalkOnSpotNormalSouth
+    WalkNormalWest 2
+    WalkNormalSouth
+    EndMovement
 
 _0948:
     BufferRivalName 1
@@ -932,4 +849,4 @@ _09FA:
     ReleaseAll
     End
 
-    .byte 0
+    .balign 4, 0

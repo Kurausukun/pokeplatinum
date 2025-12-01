@@ -5,9 +5,10 @@
 
 #include "struct_defs/struct_0203D9B8.h"
 #include "struct_defs/struct_020989DC.h"
-#include "struct_defs/struct_02098C44.h"
 #include "struct_defs/struct_02098DE8.h"
 
+#include "applications/party_menu/defs.h"
+#include "applications/party_menu/main.h"
 #include "applications/pokemon_summary_screen/main.h"
 #include "overlay079/ov79_021D0D80.h"
 #include "overlay079/ov79_021D2268.h"
@@ -24,7 +25,6 @@
 #include "savedata.h"
 #include "string_template.h"
 
-#include "constdata/const_020F1E88.h"
 #include "constdata/const_020F410C.h"
 #include "constdata/const_020F6890.h"
 
@@ -99,7 +99,7 @@ UnkStruct_0203D9B8 *sub_020989DC(SaveData *saveData, int heapID)
     u8 v5 = 0, v6 = 0, v7 = 0;
     u8 v8 = 0;
 
-    v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_0203D9B8));
+    v0 = Heap_Alloc(heapID, sizeof(UnkStruct_0203D9B8));
     MI_CpuClear8(v0, sizeof(UnkStruct_0203D9B8));
 
     v0->poffinCase = SaveData_GetPoffinCase(saveData);
@@ -271,8 +271,6 @@ static int sub_02098C2C(UnkStruct_02098BE4 *param0)
 
 static int sub_02098C44(UnkStruct_02098BE4 *param0)
 {
-    PartyManagementData *partyMan;
-
     if (!sub_02098AF8(&param0->appMan)) {
         return 1;
     }
@@ -283,16 +281,16 @@ static int sub_02098C44(UnkStruct_02098BE4 *param0)
 
     param0->unk_0C->unk_02 = 0;
 
-    partyMan = Heap_AllocFromHeap(param0->heapID, sizeof(PartyManagementData));
-    MI_CpuClear8(partyMan, sizeof(PartyManagementData));
-    partyMan->party = param0->unk_0C->unk_10;
-    partyMan->bag = param0->unk_0C->unk_14;
-    partyMan->unk_21 = 0;
-    partyMan->unk_20 = 20;
-    partyMan->options = param0->unk_0C->options;
+    PartyMenu *partyMenu = Heap_Alloc(param0->heapID, sizeof(PartyMenu));
+    MI_CpuClear8(partyMenu, sizeof(PartyMenu));
+    partyMenu->party = param0->unk_0C->unk_10;
+    partyMenu->bag = param0->unk_0C->unk_14;
+    partyMenu->type = PARTY_MENU_TYPE_BASIC;
+    partyMenu->mode = PARTY_MENU_MODE_FEED_POFFIN;
+    partyMenu->options = param0->unk_0C->options;
 
-    param0->appMan = ApplicationManager_New(&Unk_020F1E88, partyMan, param0->heapID);
-    param0->unk_10 = (void *)partyMan;
+    param0->appMan = ApplicationManager_New(&gPokemonPartyAppTemplate, partyMenu, param0->heapID);
+    param0->unk_10 = (void *)partyMenu;
 
     return 2;
 }
@@ -300,7 +298,7 @@ static int sub_02098C44(UnkStruct_02098BE4 *param0)
 static int sub_02098CB0(UnkStruct_02098BE4 *param0)
 {
     u8 v0;
-    PartyManagementData *partyMan;
+    PartyMenu *partyMenu;
     PokemonSummary *v2;
     static const u8 v3[] = {
         4, 7, 8
@@ -310,8 +308,8 @@ static int sub_02098CB0(UnkStruct_02098BE4 *param0)
         return 2;
     }
 
-    partyMan = (PartyManagementData *)param0->unk_10;
-    v0 = partyMan->selectedMonSlot;
+    partyMenu = (PartyMenu *)param0->unk_10;
+    v0 = partyMenu->selectedMonSlot;
     param0->unk_08 = v0;
     Heap_Free(param0->unk_10);
 
@@ -319,7 +317,7 @@ static int sub_02098CB0(UnkStruct_02098BE4 *param0)
         return 0;
     }
 
-    v2 = Heap_AllocFromHeap(param0->heapID, sizeof(PokemonSummary));
+    v2 = Heap_Alloc(param0->heapID, sizeof(PokemonSummary));
 
     v2->monData = param0->unk_0C->unk_10;
     v2->options = param0->unk_0C->options;
@@ -334,7 +332,7 @@ static int sub_02098CB0(UnkStruct_02098BE4 *param0)
     PokemonSummaryScreen_FlagVisiblePages(v2, v3);
     PokemonSummaryScreen_SetPlayerProfile(v2, param0->unk_0C->unk_0C);
 
-    param0->appMan = ApplicationManager_New(&gPokemonSummaryScreenApp, partyMan, param0->heapID);
+    param0->appMan = ApplicationManager_New(&gPokemonSummaryScreenApp, partyMenu, param0->heapID);
     param0->unk_10 = (void *)v2;
 
     return 3;
@@ -375,7 +373,7 @@ static int sub_02098D7C(UnkStruct_02098BE4 *param0)
         ov79_021D2460,
         FS_OVERLAY_ID(overlay79),
     };
-    UnkStruct_02098DE8 *v1 = Heap_AllocFromHeap(param0->heapID, sizeof(UnkStruct_02098DE8));
+    UnkStruct_02098DE8 *v1 = Heap_Alloc(param0->heapID, sizeof(UnkStruct_02098DE8));
     MI_CpuClear8(v1, sizeof(UnkStruct_02098DE8));
 
     v1->unk_08 = param0->unk_0C->unk_1C[param0->unk_0C->unk_01].unk_02;
@@ -415,7 +413,7 @@ static int sub_02098E0C(UnkStruct_02098BE4 *param0)
         4, 8
     };
 
-    v1 = Heap_AllocFromHeap(param0->heapID, sizeof(PokemonSummary));
+    v1 = Heap_Alloc(param0->heapID, sizeof(PokemonSummary));
     v2 = PoffinCase_AllocateForSlot(param0->unk_0C->poffinCase, param0->unk_0C->unk_1C[param0->unk_0C->unk_01].unk_00, param0->heapID);
 
     v1->monData = param0->unk_0C->unk_10;

@@ -37,12 +37,9 @@ _009C:
     ScrCmd_18C 3, 0
     Return
 
-    .byte 30
-    .byte 0
-    .byte 202
-    .byte 2
-    .byte 27
-    .byte 0
+Route224_Unused:
+    SetFlag FLAG_UNK_0x02CA
+    Return
 
 _00AA:
     SetVar VAR_SHAYMIN_EVENT_STATE, 2
@@ -61,7 +58,7 @@ _00B8:
     End
 
 _00D6:
-    ScrCmd_272 1
+    BufferTabletName 1
     Message 8
     WaitABXPadPress
     CloseMessage
@@ -85,14 +82,14 @@ _0114:
     Message 2
     CloseMessage
 _0124:
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     ScrCmd_271 VAR_RESULT
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     GoToIfEq VAR_RESULT, 1, _0222
     BufferPlayerName 0
-    ScrCmd_272 1
+    BufferTabletName 1
     Message 3
     ShowYesNoMenu VAR_RESULT
     CloseMessage
@@ -100,13 +97,13 @@ _0124:
     Call _029A
     WaitTime 15, VAR_RESULT
     FadeOutBGM 0, 10
-    FadeScreen 6, 6, 0, 0x7FFF
+    FadeScreenOut FADE_SCREEN_SPEED_SLOW, COLOR_WHITE
     WaitFadeScreen
     EnableHiddenLocation HIDDEN_LOCATION_SEABREAK_PATH
     ScrCmd_333 0
     Warp MAP_HEADER_ROUTE_224, 0, 0x38C, 0x1EC, 0
     WaitTime 15, VAR_RESULT
-    FadeScreen 6, 6, 1, 0x7FFF
+    FadeScreenIn FADE_SCREEN_SPEED_SLOW, COLOR_WHITE
     WaitFadeScreen
     Call _02B8
     CallIfNe VAR_SHAYMIN_EVENT_STATE, 2, _01F0
@@ -311,14 +308,9 @@ _0404:
     Delay16
     EndMovement
 
-    .byte 33
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+Route224_UnusedMovement:
+    WalkOnSpotNormalSouth
+    EndMovement
 
     .balign 4, 0
 _0438:
@@ -349,7 +341,7 @@ _0458:
 _048D:
     SetObjectEventPos 21, 0x386, 0x1F8
     AddObject 21
-    ScrCmd_062 21
+    LockObject 21
     ApplyMovement 21, _0598
     WaitMovement
     GoTo _04F3
@@ -358,7 +350,7 @@ _048D:
 _04AF:
     SetObjectEventPos 21, 0x386, 0x1F9
     AddObject 21
-    ScrCmd_062 21
+    LockObject 21
     ApplyMovement 21, _05A4
     WaitMovement
     GoTo _04F3
@@ -367,7 +359,7 @@ _04AF:
 _04D1:
     SetObjectEventPos 21, 0x386, 0x1FA
     AddObject 21
-    ScrCmd_062 21
+    LockObject 21
     ApplyMovement 21, _05B0
     WaitMovement
     GoTo _04F3

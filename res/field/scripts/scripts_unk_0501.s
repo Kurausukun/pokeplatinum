@@ -117,18 +117,18 @@ _0124:
     End
 
 _017E:
-    GetPartyCountHatched VAR_RESULT
+    CountPartyNonEggs VAR_RESULT
     GoToIfEq VAR_RESULT, 1, _02BB
-    ScrCmd_19C VAR_RESULT
+    CountAliveMonsAndBoxMons VAR_RESULT
     GoToIfEq VAR_RESULT, 2, _02D5
     Message 16
     CloseMessage
     HideMoney
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     SetVar VAR_RESULT, 0
 _01B9:
-    ScrCmd_290 VAR_RESULT
+    OpenPartyMenuForDaycare VAR_RESULT
     ScrCmd_291 VAR_0x8000, VAR_RESULT
     GoToIfEq VAR_RESULT, 0, _01DE
     ScrCmd_196 VAR_0x8000
@@ -138,10 +138,10 @@ _01B9:
 _01DE:
     ReturnToField
     ShowMoney 20, 2
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     GoToIfEq VAR_0x8000, 0xFF, _0292
-    ScrCmd_31E VAR_0x8000, VAR_RESULT
+    TryRevertPokemonForm VAR_0x8000, VAR_RESULT
     GoToIfEq VAR_RESULT, 0xFF, _04EF
     GetPartyMonSpecies VAR_0x8000, VAR_RESULT
     GoToIfEq VAR_RESULT, SPECIES_NONE, _0285
@@ -344,29 +344,19 @@ _04A0:
     ReleaseAll
     End
 
-    .byte 73
-    .byte 0
-    .byte 220
-    .byte 5
-    .byte 96
-    .byte 0
-    .byte 44
-    .byte 0
-    .byte 37
-    .byte 172
-    .byte 1
-    .byte 52
-    .byte 0
-    .byte 115
-    .byte 0
-    .byte 97
-    .byte 0
-    .byte 2
-    .byte 0
+Unk501_Unused:
+    PlayFanfare SEQ_SE_CONFIRM
+    LockAll
+    Message 37
+    ScrCmd_1AC
+    CloseMessage
+    HideMoney
+    ReleaseAll
+    End
 
 _04EF:
     HideMoney
     CallCommonScript 0x809
     End
 
-    .byte 0
+    .balign 4, 0

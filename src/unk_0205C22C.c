@@ -23,6 +23,7 @@
 #include "field_task.h"
 #include "heap.h"
 #include "map_object.h"
+#include "overworld_anim_manager.h"
 #include "pal_pad.h"
 #include "player_avatar.h"
 #include "savedata.h"
@@ -35,7 +36,6 @@
 #include "unk_020366A0.h"
 #include "unk_0205B33C.h"
 #include "unk_020655F4.h"
-#include "unk_020711EC.h"
 
 #include "constdata/const_020ED570.h"
 
@@ -59,7 +59,7 @@ static void sub_0205C8DC(UnkStruct_0205C924 *param0);
 
 UnkStruct_0205C22C *sub_0205C22C(UnkStruct_0205B43C *param0)
 {
-    UnkStruct_0205C22C *v0 = (UnkStruct_0205C22C *)Heap_AllocFromHeap(HEAP_ID_31, sizeof(UnkStruct_0205C22C));
+    UnkStruct_0205C22C *v0 = (UnkStruct_0205C22C *)Heap_Alloc(HEAP_ID_31, sizeof(UnkStruct_0205C22C));
 
     MI_CpuClearFast(v0, sizeof(UnkStruct_0205C22C));
 
@@ -70,7 +70,7 @@ UnkStruct_0205C22C *sub_0205C22C(UnkStruct_0205B43C *param0)
     v0->unk_474 = SaveData_SaveTable(v0->fieldSystem->saveData, SAVE_TABLE_ENTRY_PAL_PAD);
     v0->playerAvatar = v0->fieldSystem->playerAvatar;
 
-    Heap_CreateAtEnd(HEAP_ID_FIELDMAP, HEAP_ID_89, 10000);
+    Heap_CreateAtEnd(HEAP_ID_FIELD2, HEAP_ID_89, 10000);
     v0->unk_478 = sub_0205C95C(HEAP_ID_89);
     sub_0205C2C8(v0);
 
@@ -328,8 +328,8 @@ static void sub_0205C51C(UnkStruct_0205C22C *param0, MapObjectManager *param1)
 static void sub_0205C680(UnkStruct_0205C680 *param0, int param1)
 {
     if (param0->unk_10 != NULL) {
-        if (sub_020714F0(param0->unk_10)) {
-            sub_0207136C(param0->unk_10);
+        if (OverworldAnimManager_IsActive(param0->unk_10)) {
+            OverworldAnimManager_Finish(param0->unk_10);
         }
 
         param0->unk_10 = NULL;
@@ -337,8 +337,8 @@ static void sub_0205C680(UnkStruct_0205C680 *param0, int param1)
 
     if (param1) {
         if (param0->unk_14 != NULL) {
-            if (sub_020714F0(param0->unk_14)) {
-                sub_0207136C(param0->unk_14);
+            if (OverworldAnimManager_IsActive(param0->unk_14)) {
+                OverworldAnimManager_Finish(param0->unk_14);
             }
 
             param0->unk_14 = NULL;
@@ -534,7 +534,7 @@ static void sub_0205C944(UnkStruct_0205C95C *param0)
 
 UnkStruct_0205C95C *sub_0205C95C(int heapID)
 {
-    UnkStruct_0205C95C *v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_0205C95C));
+    UnkStruct_0205C95C *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_0205C95C));
 
     sub_0205C900(v0);
     return v0;

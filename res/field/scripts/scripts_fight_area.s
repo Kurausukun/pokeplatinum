@@ -44,64 +44,18 @@ _0098:
     SetFlag FLAG_UNK_0x01D3
     End
 
-    .byte 52
-    .byte 2
-    .byte 0
-    .byte 64
-    .byte 17
-    .byte 0
-    .byte 0
-    .byte 64
-    .byte 0
-    .byte 0
-    .byte 28
-    .byte 0
-    .byte 1
-    .byte 15
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 17
-    .byte 0
-    .byte 0
-    .byte 64
-    .byte 6
-    .byte 0
-    .byte 28
-    .byte 0
-    .byte 1
-    .byte 2
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 134
-    .byte 1
-    .byte 7
-    .byte 0
-    .byte 146
-    .byte 2
-    .byte 174
-    .byte 1
-    .byte 136
-    .byte 1
-    .byte 7
-    .byte 0
-    .byte 15
-    .byte 0
-    .byte 137
-    .byte 1
-    .byte 7
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 31
-    .byte 0
-    .byte 211
-    .byte 1
-    .byte 2
-    .byte 0
+FightArea_CheckForWeekend_Unused:
+    GetDayOfWeek VAR_MAP_LOCAL_0
+    GoToIfEq VAR_MAP_LOCAL_0 DAY_OF_WEEK_SUNDAY FightArea_ActivateRivalFight_Unused
+    GoToIfEq VAR_MAP_LOCAL_0 DAY_OF_WEEK_SATURDAY FightArea_ActivateRivalFight_Unused
+    End
+
+FightArea_ActivateRivalFight_Unused:
+    SetObjectEventPos 7, 658, 430
+    SetObjectEventMovementType 7, MOVEMENT_TYPE_LOOK_SOUTH
+    SetObjectEventDir 7, DIR_SOUTH
+    ClearFlag FLAG_UNK_0x01D3
+    End
 
 _00D8:
     LockAll
@@ -158,7 +112,7 @@ _0198:
     WaitMovement
     Message 11
     CloseMessage
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     RemoveObject 25
     RemoveObject 24
@@ -167,7 +121,7 @@ _0198:
     RemoveObject 27
     RemoveObject 30
     RemoveObject 31
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     ApplyMovement 7, _0378
     ApplyMovement LOCALID_PLAYER, _0400
@@ -264,14 +218,9 @@ _0340:
     EmoteExclamationMark
     EndMovement
 
-    .byte 14
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+FightArea_UnusedMovement:
+    WalkNormalWest
+    EndMovement
 
     .balign 4, 0
 _0354:
@@ -301,14 +250,9 @@ _0380:
     UnlockDir
     EndMovement
 
-    .byte 75
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+FightArea_UnusedMovement2:
+    EmoteExclamationMark
+    EndMovement
 
     .balign 4, 0
 _039C:
@@ -386,18 +330,10 @@ _0428:
     WalkOnSpotNormalSouth
     EndMovement
 
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 32
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+FightArea_UnusedMovement3:
+    Delay8
+    WalkOnSpotNormalNorth
+    EndMovement
 
     .balign 4, 0
 _043C:
@@ -446,22 +382,13 @@ _0484:
     WalkNormalSouth 8
     EndMovement
 
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 15
-    .byte 0
-    .byte 10
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+FightArea_UnusedMovement4:
+    WalkOnSpotNormalWest
+    EndMovement
+
+FightArea_UnusedMovement5:
+    WalkNormalEast 10
+    EndMovement
 
 _049C:
     PlayFanfare SEQ_SE_CONFIRM
@@ -537,16 +464,16 @@ _0521:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    BufferItemName 0, 0x1BF
-    GoToIfSet FLAG_UNK_0x006B, _057A
+    BufferItemName 0, ITEM_SUPER_ROD
+    GoToIfSet FLAG_SUPER_ROD_OBTAINED, _057A
     Message 42
     ShowYesNoMenu VAR_RESULT
     GoToIfEq VAR_RESULT, MENU_NO, _056F
     Message 43
-    SetVar VAR_0x8004, 0x1BF
+    SetVar VAR_0x8004, ITEM_SUPER_ROD
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
-    SetFlag FLAG_UNK_0x006B
+    GiveItemQuantity
+    SetFlag FLAG_SUPER_ROD_OBTAINED
     Message 44
     WaitABXPadPress
     CloseMessage
@@ -605,7 +532,7 @@ _0606:
     CallIfEq VAR_0x8004, 1, _0660
     CallIfEq VAR_0x8004, 3, _067A
     CallIfEq VAR_0x8004, 2, _0694
-    ScrCmd_23D 1, 0, 165, 0x164, 246
+    TakeShipToSnowpoint
     ReleaseAll
     End
 
@@ -854,4 +781,4 @@ _08B0:
     ReleaseAll
     End
 
-    .byte 0
+    .balign 0

@@ -158,35 +158,33 @@ static u32 ov92_021D28C0(const UnkStruct_ov92_021D28C0 *param0, const UnkStruct_
 void sub_02000EC4(FSOverlayID param0, const ApplicationManagerTemplate *param1);
 
 static const BgTemplate Unk_ov92_021D2970 = {
-    0x0,
-    0x0,
-    0x800,
-    0x0,
-    0x1,
-    GX_BG_COLORMODE_16,
-    GX_BG_SCRBASE_0x7000,
-    GX_BG_CHARBASE_0x00000,
-    GX_BG_EXTPLTT_01,
-    0x0,
-    0x0,
-    0x0,
-    0x0
+    .x = 0x0,
+    .y = 0x0,
+    .bufferSize = 0x800,
+    .baseTile = 0x0,
+    .screenSize = BG_SCREEN_SIZE_256x256,
+    .colorMode = GX_BG_COLORMODE_16,
+    .screenBase = GX_BG_SCRBASE_0x7000,
+    .charBase = GX_BG_CHARBASE_0x00000,
+    .bgExtPltt = GX_BG_EXTPLTT_01,
+    .priority = 0x0,
+    .areaOver = 0x0,
+    .mosaic = FALSE,
 };
 
 static const BgTemplate Unk_ov92_021D298C = {
-    0x0,
-    0x0,
-    0x800,
-    0x0,
-    0x1,
-    GX_BG_COLORMODE_16,
-    GX_BG_SCRBASE_0x7800,
-    GX_BG_CHARBASE_0x04000,
-    GX_BG_EXTPLTT_01,
-    0x3,
-    0x0,
-    0x0,
-    0x0
+    .x = 0x0,
+    .y = 0x0,
+    .bufferSize = 0x800,
+    .baseTile = 0x0,
+    .screenSize = BG_SCREEN_SIZE_256x256,
+    .colorMode = GX_BG_COLORMODE_16,
+    .screenBase = GX_BG_SCRBASE_0x7800,
+    .charBase = GX_BG_CHARBASE_0x04000,
+    .bgExtPltt = GX_BG_EXTPLTT_01,
+    .priority = 0x3,
+    .areaOver = 0x0,
+    .mosaic = FALSE,
 };
 
 static const WindowTemplate Unk_ov92_021D2934 = {
@@ -326,8 +324,8 @@ int ov92_021D0D80(ApplicationManager *appMan, int *param1)
 
     v0->wiFiHistory = SaveData_WiFiHistory(saveData);
     v0->unk_BB14 = WiFiHistory_GetCountry(v0->wiFiHistory);
-    v0->unk_BB18 = sub_0202C8C4(v0->wiFiHistory);
-    v0->unk_BB24 = sub_0202C990(v0->wiFiHistory);
+    v0->unk_BB18 = WiFiHistory_GetRegion(v0->wiFiHistory);
+    v0->unk_BB24 = WiFiHistory_HasInteractedOutsideJapan(v0->wiFiHistory);
     v0->options = SaveData_GetOptions(saveData);
 
     ov92_021D14F0();
@@ -347,9 +345,9 @@ int ov92_021D0D80(ApplicationManager *appMan, int *param1)
 
     GXLayers_SwapDisplay();
     SetAutorepeat(4, 8);
-    RenderControlFlags_SetCanABSpeedUpPrint(1);
-    RenderControlFlags_SetAutoScrollFlags(0);
-    RenderControlFlags_SetSpeedUpOnTouch(0);
+    RenderControlFlags_SetCanABSpeedUpPrint(TRUE);
+    RenderControlFlags_SetAutoScrollFlags(AUTO_SCROLL_DISABLED);
+    RenderControlFlags_SetSpeedUpOnTouch(FALSE);
 
     ov92_021D1530(v0);
 
@@ -364,7 +362,7 @@ int ov92_021D0EB8(ApplicationManager *appMan, int *param1)
 
     switch (*param1) {
     case 0:
-        v0->unk_B860 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0356, v0->heapID);
+        v0->unk_B860 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0356, v0->heapID);
         v2 = NARC_ctor(NARC_INDEX_APPLICATION__WIFI_EARTH__WIFI_EARTH, v0->heapID);
 
         ov92_021D2150(v0, v2);
@@ -426,7 +424,7 @@ int ov92_021D0EB8(ApplicationManager *appMan, int *param1)
     } break;
     case 5:
         if (ov92_021D1B70(v0, 2, 1) == 1) {
-            v0->unk_B85C = Menu_MakeYesNoChoice(v0->unk_B810, &Unk_ov92_021D292C, ((512 - (18 + 12)) - 9), 7, v0->heapID);
+            v0->unk_B85C = Menu_MakeYesNoChoice(v0->unk_B810, &Unk_ov92_021D292C, (512 - (18 + 12)) - 9, 7, v0->heapID);
             *param1 = 6;
         }
         break;
@@ -531,7 +529,7 @@ int ov92_021D0EB8(ApplicationManager *appMan, int *param1)
         break;
     case 12:
         if (ov92_021D1B70(v0, 5, 1) == 1) {
-            v0->unk_B85C = Menu_MakeYesNoChoice(v0->unk_B810, &Unk_ov92_021D292C, ((512 - (18 + 12)) - 9), 7, v0->heapID);
+            v0->unk_B85C = Menu_MakeYesNoChoice(v0->unk_B810, &Unk_ov92_021D292C, (512 - (18 + 12)) - 9, 7, v0->heapID);
             *param1 = 13;
         }
         break;
@@ -541,7 +539,7 @@ int ov92_021D0EB8(ApplicationManager *appMan, int *param1)
         switch (v9) {
         case 0:
             ov92_021D1F74(v0);
-            sub_0202C88C(v0->wiFiHistory, v0->unk_BB1C, v0->unk_BB20);
+            WiFiHistory_SetCountryAndRegion(v0->wiFiHistory, v0->unk_BB1C, v0->unk_BB20);
 
             v0->unk_BB14 = v0->unk_BB1C;
             v0->unk_BB18 = v0->unk_BB20;
@@ -566,7 +564,7 @@ int ov92_021D0EB8(ApplicationManager *appMan, int *param1)
         ov92_021D2334(v0);
 
         Window_FillRectWithColor(&v0->unk_B814, 15, 0, 0, 27 * 8, 4 * 8);
-        Window_DrawStandardFrame(&v0->unk_B834, 0, ((512 - (18 + 12)) - 9), 7);
+        Window_DrawStandardFrame(&v0->unk_B834, 0, (512 - (18 + 12)) - 9, 7);
 
         if (v0->unk_BB14 != 0) {
             ov92_021D1DEC(v0);
@@ -790,7 +788,7 @@ static void ov92_021D1634(UnkStruct_ov92_021D1B24 *param0, u32 param1, s16 param
     ov92_021D23E8(&v0, &v1);
 
     param0->unk_0C.unk_04[param1].unk_04 = v0;
-    param0->unk_0C.unk_04[param1].unk_28 = sub_0202C8C8(param0->wiFiHistory, param4, param5);
+    param0->unk_0C.unk_04[param1].unk_28 = WiFiHistory_GetGeonetCommunicatedWith(param0->wiFiHistory, param4, param5);
     param0->unk_0C.unk_04[param1].unk_2A = param4;
     param0->unk_0C.unk_04[param1].unk_2C = param5;
 }
@@ -914,14 +912,14 @@ static void ov92_021D1888(UnkStruct_ov92_021D1B24 *param0, NARC *param1)
     Graphics_LoadTilesToBgLayerFromOpenNARC(param1, 5, param0->unk_B810, 7, 0, 0, 0, param0->heapID);
     Graphics_LoadPaletteFromOpenNARC(param1, 6, 4, 0 * (2 * 16), (2 * 16) * 4, param0->heapID);
     Graphics_LoadTilemapToBgLayerFromOpenNARC(param1, 7, param0->unk_B810, 7, 0, 0, 0, param0->heapID);
-    LoadMessageBoxGraphics(param0->unk_B810, BG_LAYER_SUB_2, (512 - (18 + 12)), 6, Options_Frame(param0->options), param0->heapID);
-    LoadStandardWindowGraphics(param0->unk_B810, BG_LAYER_SUB_2, ((512 - (18 + 12)) - 9), 7, 0, param0->heapID);
+    LoadMessageBoxGraphics(param0->unk_B810, BG_LAYER_SUB_2, 512 - (18 + 12), 6, Options_Frame(param0->options), param0->heapID);
+    LoadStandardWindowGraphics(param0->unk_B810, BG_LAYER_SUB_2, (512 - (18 + 12)) - 9, 7, 0, param0->heapID);
     Font_LoadTextPalette(4, 4 * (2 * 16), param0->heapID);
     Bg_ClearTilesRange(6, 32, 0, param0->heapID);
     Bg_MaskPalette(BG_LAYER_SUB_2, 0x4753);
     Window_AddFromTemplate(param0->unk_B810, &param0->unk_B814, &Unk_ov92_021D2934);
     Window_FillRectWithColor(&param0->unk_B814, 15, 0, 0, 27 * 8, 4 * 8);
-    Window_DrawMessageBoxWithScrollCursor(&param0->unk_B814, 0, (512 - (18 + 12)), 6);
+    Window_DrawMessageBoxWithScrollCursor(&param0->unk_B814, 0, 512 - (18 + 12), 6);
 
     param0->unk_B864 = 0;
 
@@ -931,7 +929,7 @@ static void ov92_021D1888(UnkStruct_ov92_021D1B24 *param0, NARC *param1)
     Graphics_LoadTilesToBgLayerFromOpenNARC(param1, 5, param0->unk_B810, 3, 0, 0, 0, param0->heapID);
     Graphics_LoadPaletteFromOpenNARC(param1, 6, 0, 0 * (2 * 16), (2 * 16) * 4, param0->heapID);
     Graphics_LoadTilemapToBgLayerFromOpenNARC(param1, 7, param0->unk_B810, 3, 0, 0, 0, param0->heapID);
-    LoadStandardWindowGraphics(param0->unk_B810, BG_LAYER_MAIN_2, ((512 - (18 + 12)) - 9), 7, 0, param0->heapID);
+    LoadStandardWindowGraphics(param0->unk_B810, BG_LAYER_MAIN_2, (512 - (18 + 12)) - 9, 7, 0, param0->heapID);
     Font_LoadTextPalette(0, 4 * (2 * 16), param0->heapID);
     Bg_ClearTilesRange(BG_LAYER_MAIN_2, 32, 0, param0->heapID);
     Bg_MaskPalette(BG_LAYER_MAIN_2, 0x0);
@@ -1031,7 +1029,7 @@ static void ov92_021D1C4C(UnkStruct_ov92_021D1B24 *param0, Window *param1, const
     v0.cursorCallback = ov92_021D1C38;
     param0->unk_B854 = ListMenu_New(&v0, 0, 0, param0->heapID);
 
-    Window_DrawStandardFrame(v0.window, 1, ((512 - (18 + 12)) - 9), 7);
+    Window_DrawStandardFrame(v0.window, 1, (512 - (18 + 12)) - 9, 7);
     Window_CopyToVRAM(param1);
 }
 
@@ -1042,7 +1040,7 @@ static void ov92_021D1CF4(UnkStruct_ov92_021D1B24 *param0, Window *param1, const
     int v2;
 
     Window_AddFromTemplate(param0->unk_B810, param1, param2);
-    v1 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, param4, param0->heapID);
+    v1 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, param4, param0->heapID);
     param0->unk_B858 = StringList_New(param6, param0->heapID);
 
     for (v2 = 0; v2 < param6; v2++) {
@@ -1059,7 +1057,7 @@ static void ov92_021D1CF4(UnkStruct_ov92_021D1B24 *param0, Window *param1, const
 
     param0->unk_B854 = ListMenu_New(&v0, 0, 0, param0->heapID);
 
-    Window_DrawStandardFrame(v0.window, 1, ((512 - (18 + 12)) - 9), 7);
+    Window_DrawStandardFrame(v0.window, 1, (512 - (18 + 12)) - 9, 7);
     Window_CopyToVRAM(param1);
 }
 
@@ -1078,7 +1076,7 @@ static void ov92_021D1DEC(UnkStruct_ov92_021D1B24 *param0)
 
     Window_AddFromTemplate(param0->unk_B810, &param0->unk_B844, &Unk_ov92_021D291C);
     Window_FillRectWithColor(&param0->unk_B844, 15, 0, 0, 27 * 8, 6 * 8);
-    Window_DrawStandardFrame(&param0->unk_B844, 0, ((512 - (18 + 12)) - 9), 7);
+    Window_DrawStandardFrame(&param0->unk_B844, 0, (512 - (18 + 12)) - 9, 7);
 
     StringTemplate_SetCountryName(param0->unk_B870, 0, param0->unk_BB14);
     StringTemplate_SetCityName(param0->unk_B870, 1, param0->unk_BB14, param0->unk_BB18);
@@ -1101,7 +1099,7 @@ static void ov92_021D1EBC(UnkStruct_ov92_021D1B24 *param0, int param1, int param
 
     Window_AddFromTemplate(param0->unk_B810, &param0->unk_B844, &Unk_ov92_021D291C);
     Window_FillRectWithColor(&param0->unk_B844, 15, 0, 0, 27 * 8, 6 * 8);
-    Window_DrawStandardFrame(&param0->unk_B844, 0, ((512 - (18 + 12)) - 9), 7);
+    Window_DrawStandardFrame(&param0->unk_B844, 0, (512 - (18 + 12)) - 9, 7);
 
     ov92_021D27E8(param1, param2, v0, v1, param0->heapID);
 
@@ -1251,7 +1249,7 @@ static void ov92_021D22B0(UnkStruct_ov92_021D1B24 *param0)
     VecFx32 v1 = { 0, 0, 0x128000 };
 
     Camera_InitWithTargetAndPosition(&v0, &v1, 0x5c1, 0, 0, param0->camera);
-    Camera_SetClipping(0, (FX32_ONE * 100), param0->camera);
+    Camera_SetClipping(0, FX32_ONE * 100, param0->camera);
     Camera_ComputeProjectionMatrix(0, param0->camera);
     Camera_SetAsActive(param0->camera);
 
@@ -1441,12 +1439,12 @@ static void ov92_021D26D0(UnkStruct_ov92_021D1B24 *param0)
     case 0:
         break;
     case 2:
-        sub_020241B4();
+        G3_ResetG3X();
         G3_RequestSwapBuffers(GX_SORTMODE_AUTO, GX_BUFFERMODE_W);
         param0->unk_BAE8 = 0;
         break;
     case 1:
-        sub_020241B4();
+        G3_ResetG3X();
         Camera_ComputeViewMatrix();
 
         {
@@ -1483,7 +1481,7 @@ BOOL ov92_021D27E8(int param0, int param1, Strbuf *param2, Strbuf *param3, int h
     int v1 = ov92_021D16F8(param0);
     BOOL v2;
 
-    v0 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_COUNTRY_NAMES, heapID);
+    v0 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_COUNTRY_NAMES, heapID);
 
     MessageLoader_GetStrbuf(v0, param0, param2);
     MessageLoader_Free(v0);
@@ -1496,7 +1494,7 @@ BOOL ov92_021D27E8(int param0, int param1, Strbuf *param2, Strbuf *param3, int h
         v2 = 1;
     }
 
-    v0 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, sub_0209972C(v1), heapID);
+    v0 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, sub_0209972C(v1), heapID);
 
     MessageLoader_GetStrbuf(v0, param1, param3);
     MessageLoader_Free(v0);

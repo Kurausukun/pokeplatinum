@@ -17,7 +17,7 @@
 #include "strbuf.h"
 #include "string_template.h"
 #include "system_vars.h"
-#include "unk_0206CCB0.h"
+#include "tv_episode_segment.h"
 #include "vars_flags.h"
 
 #define MM_TO_TENTH_OF_INCH(length) (((length * 1000) / 254 + 5) / 10)
@@ -98,8 +98,8 @@ static u8 GetApproxIntervalIdx(u16 sizeFactor)
 
 static u32 CalcMillimeterSize(u16 species, u16 sizeFactor)
 {
-    HeightWeightData *heightWeightData = Pokedex_HeightWeightData(HEAP_ID_FIELD);
-    Pokedex_HeightWeightData_Load(heightWeightData, FALSE, HEAP_ID_FIELD);
+    HeightWeightData *heightWeightData = Pokedex_HeightWeightData(HEAP_ID_FIELD1);
+    Pokedex_HeightWeightData_Load(heightWeightData, FALSE, HEAP_ID_FIELD1);
 
     u32 height = Pokedex_HeightWeightData_Height(heightWeightData, species);
     Pokedex_HeightWeightData_Release(heightWeightData);

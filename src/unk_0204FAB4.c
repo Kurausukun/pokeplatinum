@@ -8,8 +8,9 @@
 #include "struct_decls/struct_0203041C_decl.h"
 #include "struct_defs/struct_0204AFC4.h"
 #include "struct_defs/struct_0204FCF8.h"
-#include "struct_defs/struct_02098C44.h"
 
+#include "applications/party_menu/defs.h"
+#include "applications/party_menu/main.h"
 #include "applications/pokemon_summary_screen/main.h"
 #include "field/field_system.h"
 
@@ -33,7 +34,6 @@
 #include "unk_0205DFC4.h"
 #include "unk_02099500.h"
 
-#include "constdata/const_020F1E88.h"
 #include "constdata/const_020F410C.h"
 
 typedef struct {
@@ -65,7 +65,6 @@ BOOL ScrCmd_2D2(ScriptContext *param0)
     u16 v3, v4, v5;
     u16 *v6, *v7;
     void **v8;
-    UnkStruct_0204AFC4 *v9;
     UnkStruct_020302DC *v10;
     UnkStruct_0203041C *v11;
 
@@ -161,7 +160,7 @@ BOOL ScrCmd_2D3(ScriptContext *param0)
 
 static void sub_0204FCF8(FieldTask *param0, u16 param1, u16 param2, u16 *param3)
 {
-    UnkStruct_0204FCF8 *v0 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_0204FCF8));
+    UnkStruct_0204FCF8 *v0 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(UnkStruct_0204FCF8));
     memset(v0, 0, sizeof(UnkStruct_0204FCF8));
 
     v0->unk_04[0] = param1;
@@ -210,7 +209,7 @@ static BOOL sub_0204FD38(FieldTask *param0)
 static void sub_0204FDB4(FieldTask *param0, void **param1, u8 param2)
 {
     FieldSystem *fieldSystem = FieldTask_GetFieldSystem(param0);
-    UnkStruct_0204FE50 *v1 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_0204FE50));
+    UnkStruct_0204FE50 *v1 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(UnkStruct_0204FE50));
 
     MI_CpuClear8(v1, sizeof(UnkStruct_0204FE50));
 
@@ -234,7 +233,7 @@ static BOOL sub_0204FDE8(FieldTask *param0)
         v1->unk_00 = sub_0204FF1C(v1, fieldSystem);
         break;
     case 2:
-        v1->unk_00 = sub_0204FF6C(v1, fieldSystem, HEAP_ID_FIELDMAP);
+        v1->unk_00 = sub_0204FF6C(v1, fieldSystem, HEAP_ID_FIELD2);
         break;
     case 3:
         v1->unk_00 = sub_0204FFF4(v1, fieldSystem);
@@ -250,36 +249,36 @@ static BOOL sub_0204FDE8(FieldTask *param0)
 static int sub_0204FE50(UnkStruct_0204FE50 *param0, FieldSystem *fieldSystem, int param2)
 {
     u8 v0;
-    PartyManagementData *partyMan = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(PartyManagementData));
+    PartyMenu *partyMenu = Heap_Alloc(HEAP_ID_FIELD2, sizeof(PartyMenu));
 
-    MI_CpuClearFast(partyMan, sizeof(PartyManagementData));
+    MI_CpuClearFast(partyMenu, sizeof(PartyMenu));
 
-    partyMan->party = SaveData_GetParty(fieldSystem->saveData);
-    partyMan->bag = SaveData_GetBag(fieldSystem->saveData);
-    partyMan->mailbox = SaveData_GetMailbox(fieldSystem->saveData);
-    partyMan->options = SaveData_GetOptions(fieldSystem->saveData);
+    partyMenu->party = SaveData_GetParty(fieldSystem->saveData);
+    partyMenu->bag = SaveData_GetBag(fieldSystem->saveData);
+    partyMenu->mailbox = SaveData_GetMailbox(fieldSystem->saveData);
+    partyMenu->options = SaveData_GetOptions(fieldSystem->saveData);
 
-    partyMan->unk_21 = 0;
-    partyMan->unk_20 = 23;
-    partyMan->fieldSystem = fieldSystem;
-    partyMan->selectedMonSlot = param0->unk_05;
+    partyMenu->type = PARTY_MENU_TYPE_BASIC;
+    partyMenu->mode = PARTY_MENU_MODE_BATTLE_CASTLE;
+    partyMenu->fieldSystem = fieldSystem;
+    partyMenu->selectedMonSlot = param0->unk_05;
 
     for (v0 = 0; v0 < 3; v0++) {
-        partyMan->unk_2C[v0] = param0->unk_06[v0];
+        partyMenu->selectionOrder[v0] = param0->unk_06[v0];
     }
 
-    partyMan->unk_33 = 100;
-    partyMan->unk_32_0 = 3;
-    partyMan->unk_32_4 = 3;
+    partyMenu->reqLevel = 100;
+    partyMenu->minSelectionSlots = 3;
+    partyMenu->maxSelectionSlots = 3;
 
     if (param0->unk_04 == 2) {
-        partyMan->unk_32_0 = 2;
-        partyMan->unk_32_4 = 2;
+        partyMenu->minSelectionSlots = 2;
+        partyMenu->maxSelectionSlots = 2;
     }
 
-    FieldSystem_StartChildProcess(fieldSystem, &Unk_020F1E88, partyMan);
+    FieldSystem_StartChildProcess(fieldSystem, &gPokemonPartyAppTemplate, partyMenu);
 
-    *(param0->unk_0C) = partyMan;
+    *(param0->unk_0C) = partyMenu;
 
     return 1;
 }
@@ -287,15 +286,15 @@ static int sub_0204FE50(UnkStruct_0204FE50 *param0, FieldSystem *fieldSystem, in
 static int sub_0204FF1C(UnkStruct_0204FE50 *param0, FieldSystem *fieldSystem)
 {
     int v0;
-    PartyManagementData *partyMan;
+    PartyMenu *partyMenu;
 
     if (FieldSystem_IsRunningApplication(fieldSystem)) {
         return 1;
     }
 
-    partyMan = *(param0->unk_0C);
+    partyMenu = *(param0->unk_0C);
 
-    switch (partyMan->selectedMonSlot) {
+    switch (partyMenu->selectedMonSlot) {
     case 7:
         return 4;
     case 6:
@@ -304,9 +303,9 @@ static int sub_0204FF1C(UnkStruct_0204FE50 *param0, FieldSystem *fieldSystem)
         break;
     }
 
-    MI_CpuCopy8(partyMan->unk_2C, param0->unk_06, 3);
-    param0->unk_05 = partyMan->selectedMonSlot;
-    Heap_Free(partyMan);
+    MI_CpuCopy8(partyMenu->selectionOrder, param0->unk_06, 3);
+    param0->unk_05 = partyMenu->selectedMonSlot;
+    Heap_Free(partyMenu);
 
     *(param0->unk_0C) = NULL;
     return 2;
@@ -321,7 +320,7 @@ static int sub_0204FF6C(UnkStruct_0204FE50 *param0, FieldSystem *fieldSystem, in
     };
 
     saveData = fieldSystem->saveData;
-    v0 = Heap_AllocFromHeapAtEnd(heapID, sizeof(PokemonSummary));
+    v0 = Heap_AllocAtEnd(heapID, sizeof(PokemonSummary));
 
     MI_CpuClear8(v0, sizeof(PokemonSummary));
 

@@ -379,7 +379,7 @@ _05F7:
     GoTo _051C
 
 _0600:
-    CheckPoketchAppRegistered POKETCH_APPID_RADARCHAINCOUNTER, VAR_RESULT
+    CheckPoketchAppRegistered POKETCH_APPID_TRAINERCOUNTER, VAR_RESULT
     GoToIfEq VAR_RESULT, 0, _0690
     AddMenuEntry 0x100, 3
     Return
@@ -421,5 +421,4 @@ _0687:
 _0690:
     Return
 
-    .byte 0
-    .byte 0
+    .balign 4, 0

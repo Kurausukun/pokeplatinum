@@ -29,7 +29,7 @@ _003E:
     Call _007C
     CallIfEq VAR_0x8004, 1, _0096
     CallIfEq VAR_0x8004, 2, _00B0
-    ScrCmd_23D 0, 2, 33, 44, 0x2EE
+    TakeShipToCanalave
     ReleaseAll
     End
 
@@ -94,9 +94,9 @@ _00FC:
     FacePlayer
     BufferPlayerName 0
     Message 0
-    SetVar VAR_0x8004, 0x1A7
+    SetVar VAR_0x8004, ITEM_HM04
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     CheckBadgeAcquired BADGE_ID_MINE, VAR_RESULT
     GoToIfEq VAR_RESULT, 0, _0140
     GoTo _0135

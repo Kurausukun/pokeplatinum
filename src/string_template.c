@@ -50,7 +50,7 @@ StringTemplate *StringTemplate_New(u32 maxArgs, u32 maxLen, u32 heapID)
     GF_ASSERT(maxArgs);
     GF_ASSERT(maxLen);
 
-    StringTemplate *tmp = Heap_AllocFromHeapAtEnd(heapID, sizeof(StringTemplate));
+    StringTemplate *tmp = Heap_AllocAtEnd(heapID, sizeof(StringTemplate));
     if (tmp == NULL) {
         goto cleanup;
     }
@@ -62,7 +62,7 @@ StringTemplate *StringTemplate_New(u32 maxArgs, u32 maxLen, u32 heapID)
         goto cleanup;
     }
 
-    tmp->args = Heap_AllocFromHeapAtEnd(heapID, sizeof(StringTemplateArg) * maxArgs);
+    tmp->args = Heap_AllocAtEnd(heapID, sizeof(StringTemplateArg) * maxArgs);
     if (tmp->args == NULL) {
         goto cleanup;
     }
@@ -133,7 +133,7 @@ static void SetStringTemplateArg(StringTemplate *template, u32 idx, const Strbuf
 
 static inline MessageLoader *InitMessageLoader(u32 bankID, u32 heapID)
 {
-    return MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, bankID, heapID);
+    return MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, bankID, heapID);
 }
 
 void StringTemplate_SetStrbuf(StringTemplate *template, u32 idx, const Strbuf *argVal, u32 unused3, BOOL unused4, u32 unused5)
@@ -194,13 +194,13 @@ void StringTemplate_SetSpeciesNameWithArticleByID(StringTemplate *template, u32 
 
 void StringTemplate_SetNickname(StringTemplate *template, u32 idx, BoxPokemon *boxMon)
 {
-    BoxPokemon_GetValue(boxMon, MON_DATA_NICKNAME_STRBUF, template->templateBuf);
+    BoxPokemon_GetValue(boxMon, MON_DATA_NICKNAME_STRING, template->templateBuf);
     SetStringTemplateArg(template, idx, template->templateBuf, NULL);
 }
 
 void StringTemplate_SetOTName(StringTemplate *template, u32 idx, BoxPokemon *boxMon)
 {
-    BoxPokemon_GetValue(boxMon, MON_DATA_OTNAME_STRBUF, template->templateBuf);
+    BoxPokemon_GetValue(boxMon, MON_DATA_OT_NAME_STRING, template->templateBuf);
     SetStringTemplateArg(template, idx, template->templateBuf, NULL);
 }
 
@@ -346,7 +346,7 @@ void StringTemplate_SetTrainerNameBattle(StringTemplate *template, u32 idx, Trai
 
 void StringTemplate_SetUndergroundItemName(StringTemplate *template, u32 idx, u32 item)
 {
-    SetArgFromArchive(template, idx, item, TEXT_BANK_UNDERGROUND_ITEM_NAMES);
+    SetArgFromArchive(template, idx, item, TEXT_BANK_UNDERGROUND_ITEMS);
 }
 
 void StringTemplate_SetUndergroundItemNameWithArticle(StringTemplate *template, u32 idx, u32 item)
@@ -356,7 +356,7 @@ void StringTemplate_SetUndergroundItemNameWithArticle(StringTemplate *template, 
 
 void StringTemplate_SetUndergroundTrapName(StringTemplate *template, u32 idx, u32 trap)
 {
-    SetArgFromArchive(template, idx, trap, TEXT_BANK_UNDERGROUND_TRAP_NAMES);
+    SetArgFromArchive(template, idx, trap, TEXT_BANK_UNDERGROUND_TRAPS);
 }
 
 void StringTemplate_SetUndergroundTrapNameWithArticle(StringTemplate *template, u32 idx, u32 trap)
@@ -528,7 +528,7 @@ void StringTemplate_SetUnionGroupName(StringTemplate *template, SaveData *saveDa
 
     gender = RecordMixedRNG_GetEntryGender(group, groupID);
     countryCode = RecordMixedRNG_GetEntryCountryCode(group, groupID);
-    groupName = Strbuf_Init(64, HEAP_ID_FIELD);
+    groupName = Strbuf_Init(64, HEAP_ID_FIELD1);
 
     Strbuf_CopyChars(groupName, RecordMixedRNG_GetEntryName(group, groupID, nameType));
     StringTemplate_SetStrbuf(template, idx, groupName, gender, 1, countryCode);
@@ -609,17 +609,17 @@ void StringTemplate_CapitalizeArgAtIndex(StringTemplate *template, u32 idx)
     Strbuf_UpperChar(template->args[idx].strbuf, 0);
 }
 
-void StringTemplate_SetDepartmentStoreFloor(StringTemplate *template, u32 idx, u32 floor)
+void StringTemplate_SetFloorNumber(StringTemplate *template, u32 idx, u32 floor)
 {
     MessageLoader *loader = InitMessageLoader(TEXT_BANK_MENU_ENTRIES, template->heapID);
 
     GF_ASSERT(floor <= 5);
 
     if (loader) {
-        if (floor == pl_msg_00000361_00000) {
-            floor = pl_msg_00000361_00121;
+        if (floor == 0) {
+            floor = MenuEntries_Text_B1F;
         } else {
-            floor += pl_msg_00000361_00115;
+            floor += MenuEntries_Text_1F - 1;
         }
 
         MessageLoader_GetStrbuf(loader, floor, template->templateBuf);

@@ -64,13 +64,13 @@ _00F2:
 
 _0102:
     SetVar VAR_UNK_0x40DA, 1
-    ScrCmd_202 0
-    ScrCmd_11B 125, 2, 5, 2, 1
+    StartSafariGame
+    SetSpecialLocation MAP_HEADER_PASTORIA_CITY_OBSERVATORY_GATE_1F, 2, 5, 2, DIR_SOUTH
     PlayFanfare SEQ_SE_DP_KAIDAN2
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     Warp MAP_HEADER_GREAT_MARSH_6, 0, 68, 116, 0
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     End
 
@@ -150,8 +150,8 @@ _01F1:
     ApplyMovement LOCALID_PLAYER, _0280
     WaitMovement
     SetVar VAR_UNK_0x40DA, 0
-    ScrCmd_202 1
-    ScrCmd_31B VAR_MAP_LOCAL_2
+    EndSafariGame
+    GetCurrentSafariGameCaughtNum VAR_MAP_LOCAL_2
     GoToIfGe VAR_MAP_LOCAL_2, 5, _021E
     ReleaseAll
     End
@@ -161,8 +161,8 @@ _021E:
     ApplyMovement 2, _0334
     WaitMovement
     Message 18
-    SetVar VAR_0x8004, 22
-    CallCommonScript 0x7D9
+    SetVar VAR_0x8004, POKETCH_APPID_MATCHUPCHECKER
+    GivePoketchApp
     SetFlag FLAG_UNK_0x00A3
     CloseMessage
     ReleaseAll
@@ -176,10 +176,10 @@ _024E:
     CloseMessage
     ApplyMovement LOCALID_PLAYER, _0288
     WaitMovement
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     Warp MAP_HEADER_GREAT_MARSH_6, 0, 68, 116, 0
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     End
 
@@ -200,7 +200,7 @@ _0298:
     ApplyMovement LOCALID_PLAYER, _0280
     WaitMovement
     SetVar VAR_UNK_0x40DA, 0
-    ScrCmd_31B VAR_MAP_LOCAL_2
+    GetCurrentSafariGameCaughtNum VAR_MAP_LOCAL_2
     GoToIfGe VAR_MAP_LOCAL_2, 5, _021E
     ReleaseAll
     End
@@ -255,27 +255,12 @@ _0334:
     WalkOnSpotNormalNorth
     EndMovement
 
-    .byte 14
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 35
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 15
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+PastoriaCityObservatoryGate1F_UnusedMovement:
+    WalkNormalWest
+    WalkOnSpotNormalEast
+    EndMovement
+
+PastoriaCityObservatoryGate1F_UnusedMovement2:
+    WalkNormalEast
+    WalkOnSpotNormalWest
+    EndMovement

@@ -56,7 +56,7 @@ _0074:
     End
 
 _00DB:
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     Return
 
 _00E1:
@@ -200,4 +200,4 @@ _0261:
     ReleaseAll
     End
 
-    .byte 0
+    .balign 4, 0

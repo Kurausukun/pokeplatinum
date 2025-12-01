@@ -33,7 +33,7 @@ static const void *ov63_0222D6BC(const u8 *param0, u8 param1, u8 param2, u8 para
 
 UnkStruct_ov63_0222D1C0 *ov63_0222D1C0(G2dRenderer *param0, BgConfig *param1, const UnkStruct_ov65_0223582C *param2, u32 heapID)
 {
-    UnkStruct_ov63_0222D1C0 *v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_ov63_0222D1C0));
+    UnkStruct_ov63_0222D1C0 *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_ov63_0222D1C0));
     memset(v0, 0, sizeof(UnkStruct_ov63_0222D1C0));
 
     v0->unk_00 = param0;
@@ -72,11 +72,11 @@ void ov63_0222D228(UnkStruct_ov63_0222D1C0 *param0, const UnkStruct_ov63_0222D16
 static void ov63_0222D31C(BgConfig *param0, int param1, const UnkStruct_ov65_0223582C *param2)
 {
     BgTemplate v0 = {
-        0,
-        0,
-        0x1000,
-        0,
-        3,
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0x1000,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_512x256,
     };
 
     v0.colorMode = param2->unk_02;

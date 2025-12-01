@@ -21,7 +21,7 @@ typedef struct ObjectEvent {
     u16 graphicsID;
     u16 movementType;
     u16 trainerType;
-    u16 flag;
+    u16 hiddenFlag;
     u16 script;
     s16 dir;
     u16 data[3];
@@ -65,7 +65,7 @@ typedef struct MapHeaderData {
     WildEncounters wildEncounters;
 } MapHeaderData;
 
-void MapHeaderData_Init(FieldSystem *fieldSystem, enum HeapId heapID);
+void MapHeaderData_Init(FieldSystem *fieldSystem, enum HeapID heapID);
 void MapHeaderData_Free(FieldSystem *fieldSystem);
 void MapHeaderData_Load(FieldSystem *fieldSystem, int headerID);
 void sub_0203A418(FieldSystem *fieldSystem);
@@ -86,7 +86,7 @@ BOOL MapHeaderData_SetWarpEventDestWarpID(FieldSystem *fieldSystem, u16 index, u
 BOOL MapHeaderData_SetBgEventPos(FieldSystem *fieldSystem, u16 index, u16 x, u16 z);
 void MapHeaderData_LoadWildEncounters(WildEncounters *encounterData, int headerID);
 const WildEncounters *MapHeaderData_GetWildEncounters(const FieldSystem *fieldSystem);
-const u8 *MapHeaderData_GetInitScripts(const FieldSystem *fieldSystem);
+const u8 *MapHeaderData_GetInitScriptBytes(const FieldSystem *fieldSystem);
 BOOL MapHeaderData_IsAnyObjectEventAtPos(const FieldSystem *fieldSystem, u16 x, u16 z);
 
 #endif // POKEPLATINUM_MAP_HEADER_DATA_H

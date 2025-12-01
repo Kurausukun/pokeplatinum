@@ -143,7 +143,7 @@ static void SaveInfoWindow_PrintText(const SaveInfoWindow *saveInfoWin)
 
 void SaveInfoWindow_Draw(SaveInfoWindow *saveInfoWin)
 {
-    saveInfoWin->window = Heap_AllocFromHeap(saveInfoWin->heapID, sizeof(Window));
+    saveInfoWin->window = Heap_Alloc(saveInfoWin->heapID, sizeof(Window));
 
     Window_Add(saveInfoWin->bgConfig, saveInfoWin->window, saveInfoWin->bgLayer, 1, 1, saveInfoWin->width, saveInfoWin->height, FIELD_MESSAGE_PALETTE_INDEX, SAVE_INFO_MESSAGE_BASE_TILE);
     LoadStandardWindowGraphics(saveInfoWin->bgConfig, saveInfoWin->bgLayer, SAVE_INFO_WINDOW_BASE_TILE, FIELD_WINDOW_PALETTE_INDEX, STANDARD_WINDOW_SYSTEM, saveInfoWin->heapID);
@@ -160,16 +160,16 @@ void SaveInfoWindow_Erase(SaveInfoWindow *saveInfoWin)
     Heap_Free(saveInfoWin->window);
 }
 
-SaveInfoWindow *SaveInfoWindow_New(FieldSystem *fieldSystem, enum HeapId heapID, u8 bgLayer)
+SaveInfoWindow *SaveInfoWindow_New(FieldSystem *fieldSystem, enum HeapID heapID, u8 bgLayer)
 {
-    SaveInfoWindow *saveInfoWin = Heap_AllocFromHeap(heapID, sizeof(SaveInfoWindow));
+    SaveInfoWindow *saveInfoWin = Heap_Alloc(heapID, sizeof(SaveInfoWindow));
 
     saveInfoWin->fieldSystem = fieldSystem;
     saveInfoWin->heapID = heapID;
     saveInfoWin->bgLayer = bgLayer;
     saveInfoWin->bgConfig = fieldSystem->bgConfig;
     saveInfoWin->strTemplate = StringTemplate_Default(heapID);
-    saveInfoWin->msgLoader = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SAVE_INFO_WINDOW, heapID);
+    saveInfoWin->msgLoader = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SAVE_INFO_WINDOW, heapID);
 
     SaveInfo_SetValues(&saveInfoWin->saveInfo, saveInfoWin->fieldSystem);
     SaveInfoWindow_SetStrings(saveInfoWin->strTemplate, &saveInfoWin->saveInfo);
@@ -196,7 +196,7 @@ BOOL FieldSystem_Save(FieldSystem *fieldSystem)
 static void FieldSystem_SaveObjectsAndLocation(FieldSystem *fieldSystem)
 {
     FieldSystem_SaveObjects(fieldSystem);
-    ov5_021EA714(fieldSystem, POKETCH_EVENT_SAVE, 0);
+    FieldSystem_SendPoketchEvent(fieldSystem, POKETCH_EVENT_SAVE, 0);
 
     fieldSystem->location->x = Player_GetXPos(fieldSystem->playerAvatar);
     fieldSystem->location->z = Player_GetZPos(fieldSystem->playerAvatar);

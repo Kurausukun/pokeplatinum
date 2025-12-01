@@ -90,9 +90,9 @@ BOOL DWWarp_Init(ApplicationManager *appMan, int *state)
 
     GXLayers_SwapDisplay();
     GXLayers_TurnBothDispOn();
-    RenderControlFlags_SetCanABSpeedUpPrint(1);
-    RenderControlFlags_SetAutoScrollFlags(0);
-    RenderControlFlags_SetSpeedUpOnTouch(0);
+    RenderControlFlags_SetCanABSpeedUpPrint(TRUE);
+    RenderControlFlags_SetAutoScrollFlags(AUTO_SCROLL_DISABLED);
+    RenderControlFlags_SetSpeedUpOnTouch(FALSE);
 
     dww->task = SysTask_Start(DWWarp_Update, dww, 60000);
     SetVBlankCallback(DWWarp_VBlankIntr, dww);
@@ -158,9 +158,9 @@ BOOL DWWarp_Exit(ApplicationManager *appMan, int *state)
     SetVBlankCallback(NULL, NULL);
     DisableHBlank();
     DisableTouchPad();
-    RenderControlFlags_SetCanABSpeedUpPrint(0);
-    RenderControlFlags_SetAutoScrollFlags(0);
-    RenderControlFlags_SetSpeedUpOnTouch(0);
+    RenderControlFlags_SetCanABSpeedUpPrint(FALSE);
+    RenderControlFlags_SetAutoScrollFlags(AUTO_SCROLL_DISABLED);
+    RenderControlFlags_SetSpeedUpOnTouch(FALSE);
     ApplicationManager_FreeData(appMan);
     Heap_Destroy(HEAP_ID_DISTORTION_WORLD_WARP);
 
@@ -218,8 +218,8 @@ static void DWWarp_InitCamera(DistortionWorldWarp *warp)
 
     warp->camera = Camera_Alloc(HEAP_ID_DISTORTION_WORLD_WARP);
 
-    Camera_InitWithTarget(&target, (160 << FX32_SHIFT), &DWW_CameraAngle, ((22 * 0xffff) / 360), 0, 0, warp->camera);
-    Camera_SetClipping(0, (FX32_ONE * 300), warp->camera);
+    Camera_InitWithTarget(&target, 160 << FX32_SHIFT, &DWW_CameraAngle, (22 * 0xffff) / 360, 0, 0, warp->camera);
+    Camera_SetClipping(0, FX32_ONE * 300, warp->camera);
 
     CameraAngle angle = { 0, 0, 0, 0 };
 
@@ -238,7 +238,7 @@ static void DWWarp_DeleteCamera(DistortionWorldWarp *warp)
 
 static void DWWarp_InitModel(DistortionWorldWarp *warp)
 {
-    Heap_FndInitAllocatorForExpHeap(&warp->allocator, HEAP_ID_DISTORTION_WORLD_WARP, 4);
+    HeapExp_FndInitAllocator(&warp->allocator, HEAP_ID_DISTORTION_WORLD_WARP, 4);
 
     NARC *narc = NARC_ctor(NARC_INDEX_DEMO__TITLE__TITLEDEMO, HEAP_ID_DISTORTION_WORLD_WARP);
 
@@ -291,7 +291,7 @@ static void Model3D_Update(DistortionWorldWarp *warp)
 
     MTX_Identity33(&rot33);
 
-    sub_020241B4();
+    G3_ResetG3X();
     Camera_SetAsActive(warp->camera);
     Camera_ComputeProjectionMatrix(0, warp->camera);
     Camera_ComputeViewMatrix();

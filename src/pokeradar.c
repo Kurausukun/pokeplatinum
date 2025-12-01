@@ -10,7 +10,6 @@
 #include "field/field_system.h"
 #include "overlay005/ov5_021F2D20.h"
 #include "overlay006/radar_chain_records.h"
-#include "overlay101/struct_ov101_021D5D90_decl.h"
 
 #include "bag.h"
 #include "field_task.h"
@@ -20,6 +19,7 @@
 #include "map_matrix.h"
 #include "map_object.h"
 #include "map_tile_behavior.h"
+#include "overworld_anim_manager.h"
 #include "player_avatar.h"
 #include "scrcmd.h"
 #include "script_manager.h"
@@ -27,7 +27,6 @@
 #include "special_encounter.h"
 #include "terrain_collision_manager.h"
 #include "unk_020553DC.h"
-#include "unk_020711EC.h"
 
 typedef struct {
     int x;
@@ -36,7 +35,7 @@ typedef struct {
     BOOL active;
     BOOL continueChain;
     BOOL shiny;
-    UnkStruct_ov101_021D5D90 *unk_18;
+    OverworldAnimManager *unk_18;
     VecFx32 position;
 } GrassPatch;
 
@@ -63,7 +62,7 @@ static void IncWithCap(int *param0);
 
 RadarChain *RadarChain_Init(const int heapID)
 {
-    RadarChain *chain = Heap_AllocFromHeap(heapID, sizeof(RadarChain));
+    RadarChain *chain = Heap_Alloc(heapID, sizeof(RadarChain));
     GFXBoxTest_MakeBox(FX32_ONE * 16, FX32_ONE * 8, FX32_ONE * 16, &chain->grassPatchVolume);
     return chain;
 }
@@ -193,7 +192,7 @@ BOOL sub_02069690(RadarChain *chain)
     for (u8 patchRing = 0; patchRing < NUM_GRASS_PATCHES; patchRing++) {
         if (chain->patch[patchRing].unk_18 != NULL) {
             if (ov5_021F31A8(chain->patch[patchRing].unk_18)) {
-                sub_0207136C(chain->patch[patchRing].unk_18);
+                OverworldAnimManager_Finish(chain->patch[patchRing].unk_18);
                 chain->patch[patchRing].unk_18 = NULL;
                 v0++;
             }
@@ -499,7 +498,7 @@ void RadarChargeStep(FieldSystem *fieldSystem)
 {
     u8 *v0;
 
-    if (Bag_CanRemoveItem(SaveData_GetBag(fieldSystem->saveData), ITEM_POKE_RADAR, 1, HEAP_ID_FIELD) == TRUE) {
+    if (Bag_CanRemoveItem(SaveData_GetBag(fieldSystem->saveData), ITEM_POKE_RADAR, 1, HEAP_ID_FIELD1) == TRUE) {
         v0 = SpecialEncounter_GetRadarCharge(SaveData_GetSpecialEncounters(fieldSystem->saveData));
         if ((*v0) < RADAR_BATTERY_STEPS) {
             (*v0)++;

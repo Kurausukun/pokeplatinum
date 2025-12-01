@@ -421,7 +421,7 @@ static BOOL ov108_02241DB0(UnkStruct_ov108_02241DB0 *param0)
     switch (param0->unk_08) {
     case 0:
         if (ov104_0223C000(param0->unk_09) == 1) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTiming_StartSync(199);
             param0->unk_08++;
         } else {
@@ -431,7 +431,7 @@ static BOOL ov108_02241DB0(UnkStruct_ov108_02241DB0 *param0)
     case 1:
         if (ov104_0223C000(param0->unk_09) == 1) {
             if (CommTiming_IsSyncState(199) == 1) {
-                sub_020365F4();
+                CommTool_ClearReceivedTempDataAllPlayers();
                 param0->unk_08++;
             }
         } else {
@@ -452,7 +452,7 @@ static BOOL ov108_02241DB0(UnkStruct_ov108_02241DB0 *param0)
         break;
     case 5:
         if (ov104_0223C000(param0->unk_09) == 1) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTiming_StartSync(201);
             param0->unk_08++;
         } else {
@@ -462,7 +462,7 @@ static BOOL ov108_02241DB0(UnkStruct_ov108_02241DB0 *param0)
     case 6:
         if (ov104_0223C000(param0->unk_09) == 1) {
             if (CommTiming_IsSyncState(201) == 1) {
-                sub_020365F4();
+                CommTool_ClearReceivedTempDataAllPlayers();
                 param0->unk_08++;
             }
         } else {
@@ -654,13 +654,13 @@ static BOOL ov108_02242104(UnkStruct_ov108_02241DB0 *param0)
         param0->unk_08++;
         break;
     case 3:
-        sub_020365F4();
+        CommTool_ClearReceivedTempDataAllPlayers();
         CommTiming_StartSync(151);
         param0->unk_08++;
         break;
     case 4:
         if (CommTiming_IsSyncState(151) == 1) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTool_Init(103);
             param0->unk_0E = 0xff;
             return 1;
@@ -684,14 +684,14 @@ static BOOL ov108_02242198(UnkStruct_ov108_02241DB0 *param0)
         }
 
         if (param0->unk_0B == 0) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             CommTiming_StartSync(152);
             param0->unk_08++;
         }
         break;
     case 2:
         if (CommTiming_IsSyncState(152) == 1) {
-            sub_020365F4();
+            CommTool_ClearReceivedTempDataAllPlayers();
             return 1;
         }
         break;
@@ -758,7 +758,7 @@ static void ov108_02242238(UnkStruct_ov108_02241DB0 *param0)
         }
     }
 
-    sub_02039794();
+    NetworkIcon_Destroy();
     PaletteData_FreeBuffer(param0->unk_D4, 2);
     PaletteData_FreeBuffer(param0->unk_D4, 0);
     PaletteData_Free(param0->unk_D4);
@@ -809,7 +809,7 @@ static void ov108_0224237C(UnkStruct_ov108_02241DB0 *param0)
     ov108_02242658(param0);
     ov108_022426B0(param0);
 
-    param0->unk_68 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0536, HEAP_ID_103);
+    param0->unk_68 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_DUMMY_0536, HEAP_ID_103);
     param0->unk_6C = StringTemplate_Default(HEAP_ID_103);
     param0->unk_70 = Strbuf_Init(600, HEAP_ID_103);
     param0->unk_74 = Strbuf_Init(600, HEAP_ID_103);
@@ -873,8 +873,8 @@ static void ov108_02242658(UnkStruct_ov108_02241DB0 *param0)
 
     param0->unk_D4 = PaletteData_New(HEAP_ID_103);
 
-    PaletteData_AllocBuffer(param0->unk_D4, 2, (32 * 16), HEAP_ID_103);
-    PaletteData_AllocBuffer(param0->unk_D4, 0, (32 * 16), HEAP_ID_103);
+    PaletteData_AllocBuffer(param0->unk_D4, 2, 32 * 16, HEAP_ID_103);
+    PaletteData_AllocBuffer(param0->unk_D4, 0, 32 * 16, HEAP_ID_103);
 
     ov108_02242828(param0, 3);
     ov108_022428C0();
@@ -951,19 +951,18 @@ static void ov108_02242760(BgConfig *param0)
 
     {
         BgTemplate v1 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0000,
-            GX_BG_CHARBASE_0x04000,
-            GX_BG_EXTPLTT_01,
-            0,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0000,
+            .charBase = GX_BG_CHARBASE_0x04000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_1, &v1, 0);
@@ -973,19 +972,18 @@ static void ov108_02242760(BgConfig *param0)
 
     {
         BgTemplate v2 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x2000,
-            GX_BG_CHARBASE_0x0c000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x2000,
+            .charBase = GX_BG_CHARBASE_0x0c000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_3, &v2, 0);
@@ -994,19 +992,18 @@ static void ov108_02242760(BgConfig *param0)
 
     {
         BgTemplate v3 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x3000,
-            GX_BG_CHARBASE_0x10000,
-            GX_BG_EXTPLTT_01,
-            0,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x3000,
+            .charBase = GX_BG_CHARBASE_0x10000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_SUB_0, &v3, 0);
@@ -1056,8 +1053,8 @@ static void ov108_022428C0(void)
 
     v0 = Graphics_GetPlttData(NARC_INDEX_RESOURCE__ENG__FRONTIER_GRAPHIC__FRONTIER_BG, 167, &v1, HEAP_ID_103);
 
-    DC_FlushRange(v1->pRawData, (sizeof(u16) * 16 * 7));
-    GX_LoadBGPltt(v1->pRawData, 0, (sizeof(u16) * 16 * 7));
+    DC_FlushRange(v1->pRawData, sizeof(u16) * 16 * 7);
+    GX_LoadBGPltt(v1->pRawData, 0, sizeof(u16) * 16 * 7);
     Heap_Free(v0);
 
     return;
@@ -1066,7 +1063,7 @@ static void ov108_022428C0(void)
 static void ov108_022428F4(UnkStruct_ov108_02241DB0 *param0, u32 param1)
 {
     Graphics_LoadTilesToBgLayerFromOpenNARC(param0->unk_3D0, 122, param0->unk_90, param1, 0, 0, 1, HEAP_ID_103);
-    Graphics_LoadPaletteFromOpenNARC(param0->unk_3D0, 168, 4, 0, (sizeof(u16) * 16 * 2), HEAP_ID_103);
+    Graphics_LoadPaletteFromOpenNARC(param0->unk_3D0, 168, 4, 0, sizeof(u16) * 16 * 2, HEAP_ID_103);
     Graphics_LoadTilemapToBgLayerFromOpenNARC(param0->unk_3D0, 121, param0->unk_90, param1, 0, 0, 1, HEAP_ID_103);
 
     return;

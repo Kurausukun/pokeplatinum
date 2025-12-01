@@ -1,6 +1,8 @@
 #ifndef POKEPLATINUM_CONSTANTS_PLAYER_AVATAR_H
 #define POKEPLATINUM_CONSTANTS_PLAYER_AVATAR_H
 
+#include "generated/player_transitions.h";
+
 // Player State
 #define PLAYER_STATE_WALKING 0
 #define PLAYER_STATE_CYCLING 1

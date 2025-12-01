@@ -39,7 +39,7 @@
 
 FS_EXTERN_OVERLAY(game_opening);
 FS_EXTERN_OVERLAY(overlay89);
-FS_EXTERN_OVERLAY(overlay97);
+FS_EXTERN_OVERLAY(main_menu);
 FS_EXTERN_OVERLAY(d_startmenu);
 
 #define LIGHT_COLOR(r, g, b) ((((r) << 0) & GX_RGB_R_MASK) | (((g) << 5) & GX_RGB_G_MASK) | (((b) << 10) & GX_RGB_B_MASK))
@@ -225,22 +225,22 @@ static void TitleScreen_InitBgs(TitleScreenAppData *appData);
 static void TitleScreen_ReleaseBgs(TitleScreenAppData *appData);
 static void TitleScreen_Init3DPipeline(TitleScreenAppData *appData);
 static void TitleScreen_Free3DPipelineBuffers(TitleScreenAppData *appData);
-static void TitleScreen_Load3DGfx(TitleScreenGraphics *gfx, int giratinaModel, int giratinaTexAnim, enum HeapId heapID);
+static void TitleScreen_Load3DGfx(TitleScreenGraphics *gfx, int giratinaModel, int giratinaTexAnim, enum HeapID heapID);
 static void TitleScreen_Release3DGfx(TitleScreenGraphics *gfx);
 static void TitleScreen_Render(TitleScreen *titleScreen, TitleScreenGraphics *gfx);
 static BOOL TitleScreen_ShouldSkipIntro(void);
-static BOOL TitleScreen_LoadGfx(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapId heapID);
-static BOOL TitleScreen_ShowIntro(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapId heapID);
-static BOOL TitleScreen_RenderMain(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapId heapID);
-static BOOL TitleScreen_ReleaseGfx(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapId heapID);
-static void TitleScreen_LoadCutscene3DGfx(TitleScreenGraphics *gfx, enum HeapId heapID);
+static BOOL TitleScreen_LoadGfx(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapID heapID);
+static BOOL TitleScreen_ShowIntro(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapID heapID);
+static BOOL TitleScreen_RenderMain(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapID heapID);
+static BOOL TitleScreen_ReleaseGfx(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapID heapID);
+static void TitleScreen_LoadCutscene3DGfx(TitleScreenGraphics *gfx, enum HeapID heapID);
 static void TitleScreen_ReleaseIntro3DGfx(TitleScreenGraphics *gfx);
 static void TitleScreen_RenderIntroGraphics(TitleScreenGraphics *gfx);
 static void TitleScreen_UpdateIntroCamera(TitleScreen *titleScreen, TitleScreenGraphics *gfx);
-static void TitleScreen_ShowBlurEffect(BgConfig *bgConfig, enum HeapId heapID);
+static void TitleScreen_ShowBlurEffect(BgConfig *bgConfig, enum HeapID heapID);
 static void EmptyCameraFunction(Camera *camera);
-static void TitleScreen_Load2DGfx(BgConfig *bgConfig, enum HeapId heapID, TitleScreen *titleScreen);
-static void TitleScreen_Release2DGfx(BgConfig *bgConfig, enum HeapId heapID, TitleScreen *titleScreen);
+static void TitleScreen_Load2DGfx(BgConfig *bgConfig, enum HeapID heapID, TitleScreen *titleScreen);
+static void TitleScreen_Release2DGfx(BgConfig *bgConfig, enum HeapID heapID, TitleScreen *titleScreen);
 static void TitleScreen_InitCoordinates(TitleScreen *titleScreen);
 static void TitleScreen_UpdateLight1(TitleScreen *titleScreen);
 
@@ -451,7 +451,7 @@ static BOOL TitleScreen_Main(ApplicationManager *appMan, int *state)
 static BOOL TitleScreen_Exit(ApplicationManager *appMan, int *state)
 {
     TitleScreenAppData *appData = ApplicationManager_Data(appMan);
-    enum HeapId heapID = appData->heapID;
+    enum HeapID heapID = appData->heapID;
     enum TitleScreenNextApp nextApp = appData->nextApp;
 
     SetVBlankCallback(NULL, NULL);
@@ -523,9 +523,9 @@ static void TitleScreen_Free3DPipelineBuffers(TitleScreenAppData *appData)
     G3DPipelineBuffers_Free(appData->buffers);
 }
 
-static void TitleScreen_Load3DGfx(TitleScreenGraphics *gfx, int giratinaModel, int giratinaTexAnim, enum HeapId heapID)
+static void TitleScreen_Load3DGfx(TitleScreenGraphics *gfx, int giratinaModel, int giratinaTexAnim, enum HeapID heapID)
 {
-    Heap_FndInitAllocatorForExpHeap(&gfx->allocator, heapID, 4);
+    HeapExp_FndInitAllocator(&gfx->allocator, heapID, 4);
 
     gfx->giratinaModelRes = NARC_AllocAndReadWholeMemberByIndexPair(NARC_INDEX_DEMO__TITLE__TITLEDEMO, giratinaModel, heapID);
     gfx->giratinaTexAnimRes = NARC_AllocAndReadWholeMemberByIndexPair(NARC_INDEX_DEMO__TITLE__TITLEDEMO, giratinaTexAnim, heapID);
@@ -559,7 +559,7 @@ static void TitleScreen_Load3DGfx(TitleScreenGraphics *gfx, int giratinaModel, i
     TitleScreen_LoadCutscene3DGfx(gfx, heapID);
 }
 
-static void TitleScreen_LoadCutscene3DGfx(TitleScreenGraphics *gfx, enum HeapId heapID)
+static void TitleScreen_LoadCutscene3DGfx(TitleScreenGraphics *gfx, enum HeapID heapID)
 {
     NARC *narc = NARC_ctor(NARC_INDEX_DEMO__TITLE__TITLEDEMO, heapID);
 
@@ -660,12 +660,12 @@ static void TitleScreen_Render(TitleScreen *titleScreen, TitleScreenGraphics *gf
     case RENDER_STATE_OFF:
         break;
     case RENDER_STATE_DISABLE:
-        sub_020241B4();
+        G3_ResetG3X();
         G3_RequestSwapBuffers(GX_SORTMODE_MANUAL, GX_BUFFERMODE_W);
         gfx->renderState = RENDER_STATE_OFF;
         break;
     case RENDER_STATE_ENABLE:
-        sub_020241B4();
+        G3_ResetG3X();
         Camera_ComputeViewMatrix();
         MTX_Rot33Vec(&rotationMatrix, &gfx->giratinaRot);
 
@@ -762,7 +762,6 @@ static void TitleScreen_InitBgs(TitleScreenAppData *appData)
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 0,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
     Bg_InitFromTemplate(appData->bgConfig, TITLE_SCREEN_LAYER_PRESS_START, &bgSub0, BG_TYPE_STATIC);
@@ -779,7 +778,6 @@ static void TitleScreen_InitBgs(TitleScreenAppData *appData)
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 0,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
     Bg_InitFromTemplate(appData->bgConfig, TITLE_SCREEN_LAYER_LOGO_BG_2, &bgSub1, BG_TYPE_STATIC);
@@ -796,7 +794,6 @@ static void TitleScreen_InitBgs(TitleScreenAppData *appData)
         .bgExtPltt = GX_BG_EXTPLTT_23,
         .priority = 0,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
     Bg_InitFromTemplate(appData->bgConfig, TITLE_SCREEN_LAYER_LOGO, &bgSub2, BG_TYPE_STATIC);
@@ -813,7 +810,6 @@ static void TitleScreen_InitBgs(TitleScreenAppData *appData)
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 0,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
     Bg_InitFromTemplate(appData->bgConfig, TITLE_SCREEN_LAYER_COPYRIGHT, &bgMain1, BG_TYPE_STATIC);
@@ -830,7 +826,6 @@ static void TitleScreen_InitBgs(TitleScreenAppData *appData)
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 3,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
     Bg_InitFromTemplate(appData->bgConfig, TITLE_SCREEN_LAYER_GIRATINA_BG, &bgMain3, BG_TYPE_STATIC);
@@ -847,7 +842,6 @@ static void TitleScreen_InitBgs(TitleScreenAppData *appData)
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 3,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
     Bg_InitFromTemplate(appData->bgConfig, TITLE_SCREEN_LAYER_LOGO_BG, &bgSub3, BG_TYPE_STATIC);
@@ -925,7 +919,7 @@ static const WindowTemplate sPressStartWindowTemplate = {
     .baseTile = 1
 };
 
-static BOOL TitleScreen_LoadGfx(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapId heapID)
+static BOOL TitleScreen_LoadGfx(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapID heapID)
 {
     TitleScreen_InitCoordinates(titleScreen);
     TitleScreen_Load2DGfx(bgConfig, heapID, titleScreen);
@@ -1001,7 +995,7 @@ static void TitleScreen_UpdateTitleCam(TitleScreen *titleScreen)
     titleScreen->titleCamPos.z += (titleScreen->titleCamEndPos.z - titleScreen->titleCamStartPos.z) / steps;
 }
 
-static void TitleScreen_LoadTopScreenBg(BgConfig *bgConfig, enum HeapId heapID)
+static void TitleScreen_LoadTopScreenBg(BgConfig *bgConfig, enum HeapID heapID)
 {
     Bg_FreeTilemapBuffer(bgConfig, TITLE_SCREEN_LAYER_LOGO_BG_2);
 
@@ -1017,7 +1011,6 @@ static void TitleScreen_LoadTopScreenBg(BgConfig *bgConfig, enum HeapId heapID)
         .bgExtPltt = GX_BG_EXTPLTT_01,
         .priority = 1,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
 
@@ -1032,7 +1025,7 @@ static void TitleScreen_LoadTopScreenBg(BgConfig *bgConfig, enum HeapId heapID)
     ToggleLogoBg2Layer(TRUE);
 }
 
-static void TitleScreen_ShowBlurEffect(BgConfig *bgConfig, enum HeapId heapID)
+static void TitleScreen_ShowBlurEffect(BgConfig *bgConfig, enum HeapID heapID)
 {
     // This function loads the logo tilemap a second time into a different layer,
     // offsets that layer slightly, and applies alpha blending to both layers.
@@ -1052,7 +1045,6 @@ static void TitleScreen_ShowBlurEffect(BgConfig *bgConfig, enum HeapId heapID)
         .bgExtPltt = GX_BG_EXTPLTT_23,
         .priority = 2,
         .areaOver = 0,
-        .dummy = 0,
         .mosaic = FALSE
     };
     Bg_InitFromTemplate(bgConfig, TITLE_SCREEN_LAYER_PRESS_START, &template, BG_TYPE_STATIC);
@@ -1072,7 +1064,7 @@ static void TitleScreen_ShowBlurEffect(BgConfig *bgConfig, enum HeapId heapID)
     TogglePressStartLayer(TRUE);
 }
 
-static BOOL TitleScreen_ShowIntro(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapId heapID)
+static BOOL TitleScreen_ShowIntro(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapID heapID)
 {
     BOOL done = FALSE;
 
@@ -1232,7 +1224,7 @@ static BOOL TitleScreen_ShowIntro(TitleScreen *titleScreen, BgConfig *bgConfig, 
     return done;
 }
 
-static BOOL TitleScreen_RenderMain(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapId heapID)
+static BOOL TitleScreen_RenderMain(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapID heapID)
 {
     BOOL result = FALSE;
 
@@ -1278,7 +1270,7 @@ static BOOL TitleScreen_RenderMain(TitleScreen *titleScreen, BgConfig *bgConfig,
     return result;
 }
 
-static BOOL TitleScreen_ReleaseGfx(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapId heapID)
+static BOOL TitleScreen_ReleaseGfx(TitleScreen *titleScreen, BgConfig *bgConfig, enum HeapID heapID)
 {
     Camera_Delete(titleScreen->graphics.titleCamera);
     Camera_Delete(titleScreen->graphics.introCamera);
@@ -1295,7 +1287,7 @@ static BOOL TitleScreen_ReleaseGfx(TitleScreen *titleScreen, BgConfig *bgConfig,
     return TRUE;
 }
 
-static void TitleScreen_Load2DGfx(BgConfig *bgConfig, enum HeapId heapID, TitleScreen *titleScreen)
+static void TitleScreen_Load2DGfx(BgConfig *bgConfig, enum HeapID heapID, TitleScreen *titleScreen)
 {
     // Borders
     Graphics_LoadTilesToBgLayer(NARC_INDEX_DEMO__TITLE__TITLEDEMO, top_screen_border_NCGR, bgConfig, TITLE_SCREEN_LAYER_LOGO_BG, 0, 0, FALSE, heapID);
@@ -1326,7 +1318,7 @@ static void TitleScreen_Load2DGfx(BgConfig *bgConfig, enum HeapId heapID, TitleS
     Bg_ClearTilesRange(TITLE_SCREEN_LAYER_PRESS_START, 32, 0, heapID);
 
     MessageLoader *msgLoader = MessageLoader_Init(
-        MESSAGE_LOADER_NARC_HANDLE,
+        MSG_LOADER_LOAD_ON_DEMAND,
         NARC_INDEX_MSGDATA__PL_MSG,
         TEXT_BANK_TITLE_SCREEN,
         heapID);
@@ -1360,7 +1352,7 @@ static void TitleScreen_Load2DGfx(BgConfig *bgConfig, enum HeapId heapID, TitleS
     Bg_LoadPalette(TITLE_SCREEN_LAYER_PRESS_START, &shadowColor, sizeof(u16), PLTT_OFFSET(2) + 2 * sizeof(u16));
 }
 
-static void TitleScreen_Release2DGfx(BgConfig *bgConfig, enum HeapId heapID, TitleScreen *titleScreen)
+static void TitleScreen_Release2DGfx(BgConfig *bgConfig, enum HeapID heapID, TitleScreen *titleScreen)
 {
     Window_Remove(&titleScreen->pressStartWindow);
 }

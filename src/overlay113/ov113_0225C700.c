@@ -379,7 +379,7 @@ int ov113_0225C700(ApplicationManager *appMan, int *param1)
     Font_InitManager(FONT_SUBSCREEN, HEAP_ID_118);
 
     v0->unk_2C = StringTemplate_Default(HEAP_ID_118);
-    v0->unk_30 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0650, HEAP_ID_118);
+    v0->unk_30 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0650, HEAP_ID_118);
     v0->unk_10 = sub_02012744(4, HEAP_ID_118);
     v0->unk_160 = NARC_ctor(NARC_INDEX_GRAPHIC__FOOTPRINT_BOARD, HEAP_ID_118);
     v0->unk_164 = NARC_ctor(NARC_INDEX_POKETOOL__POKEFOOT__POKEFOOT, HEAP_ID_118);
@@ -392,15 +392,15 @@ int ov113_0225C700(ApplicationManager *appMan, int *param1)
     v0->unk_C4 = Strbuf_Init(256, HEAP_ID_118);
     v0->unk_1C = SpriteSystem_Alloc(118);
 
-    SpriteSystem_Init(v0->unk_1C, &Unk_ov113_02260954, &Unk_ov113_022608E8, (16 + 16));
+    SpriteSystem_Init(v0->unk_1C, &Unk_ov113_02260954, &Unk_ov113_022608E8, 16 + 16);
     ReserveVramForWirelessIconChars(NNS_G2D_VRAM_TYPE_2DMAIN, GX_OBJVRAMMODE_CHAR_1D_128K);
     ReserveSlotsForWirelessIconPalette(NNS_G2D_VRAM_TYPE_2DMAIN);
 
     v0->unk_20 = SpriteManager_New(v0->unk_1C);
 
-    SpriteSystem_InitSprites(v0->unk_1C, v0->unk_20, (64 + 64));
+    SpriteSystem_InitSprites(v0->unk_1C, v0->unk_20, 64 + 64);
     SpriteSystem_InitManagerWithCapacities(v0->unk_1C, v0->unk_20, &Unk_ov113_022608FC);
-    SetSubScreenViewRect(SpriteSystem_GetRenderer(v0->unk_1C), 0, ((192 + 80) << FX32_SHIFT));
+    SetSubScreenViewRect(SpriteSystem_GetRenderer(v0->unk_1C), 0, (192 + 80) << FX32_SHIFT);
     sub_02039734();
 
     ov113_0225E368(&v0->unk_194, v0->unk_19E0);
@@ -431,9 +431,9 @@ int ov113_0225C700(ApplicationManager *appMan, int *param1)
     GXLayers_TurnBothDispOn();
     GXLayers_EngineAToggleLayers(GX_PLANEMASK_OBJ, 1);
     GXLayers_EngineBToggleLayers(GX_PLANEMASK_OBJ, 1);
-    RenderControlFlags_SetCanABSpeedUpPrint(1);
-    RenderControlFlags_SetAutoScrollFlags(0);
-    RenderControlFlags_SetSpeedUpOnTouch(0);
+    RenderControlFlags_SetCanABSpeedUpPrint(TRUE);
+    RenderControlFlags_SetAutoScrollFlags(AUTO_SCROLL_DISABLED);
+    RenderControlFlags_SetSpeedUpOnTouch(FALSE);
 
     v0->unk_18 = SysTask_Start(ov113_0225CEF0, v0, 60000);
 
@@ -467,7 +467,7 @@ int ov113_0225CA04(ApplicationManager *appMan, int *param1)
         break;
     case 2:
         if (gSystem.touchPressed && (gSystem.touchY < 160)) {
-            if (ov113_0225E318(v0, ((32 << 8) / 6)) == 1) {
+            if (ov113_0225E318(v0, (32 << 8) / 6) == 1) {
                 v0->unk_8D8[v0->unk_920].unk_09 = gSystem.touchX;
                 v0->unk_8D8[v0->unk_920].unk_0A = gSystem.touchY;
 
@@ -487,7 +487,7 @@ int ov113_0225CA04(ApplicationManager *appMan, int *param1)
                 ov113_0225E068(v0, v2);
             } else if (((*param1) == 2) && (v2 == 0xfe)) {
                 Sound_PlayEffect(SEQ_SE_DP_BUTTON3);
-                PaletteData_Blend(v0->unk_0C, 0, (0 * 16 + 9), 1, 8, 0x0);
+                PaletteData_Blend(v0->unk_0C, 0, 0 * 16 + 9, 1, 8, 0x0);
                 PaletteData_Blend(v0->unk_0C, 2, v0->unk_921 * 16, 16, 8, 0x0);
                 *param1 = 3;
             }
@@ -536,7 +536,7 @@ int ov113_0225CA04(ApplicationManager *appMan, int *param1)
                 sub_02015A54(v0->unk_24);
                 v0->unk_28 = 0;
                 Window_EraseMessageBox(&v0->unk_B4, 0);
-                PaletteData_Blend(v0->unk_0C, 0, (0 * 16 + 9), 1, 0, 0x0);
+                PaletteData_Blend(v0->unk_0C, 0, 0 * 16 + 9, 1, 0, 0x0);
                 PaletteData_Blend(v0->unk_0C, 2, v0->unk_921 * 16, 16, 0, 0x0);
                 *param1 = 2;
                 break;
@@ -652,10 +652,10 @@ int ov113_0225CDFC(ApplicationManager *appMan, int *param1)
     DisableHBlank();
     VramTransfer_Free();
     DisableTouchPad();
-    RenderControlFlags_SetCanABSpeedUpPrint(0);
-    RenderControlFlags_SetAutoScrollFlags(0);
-    RenderControlFlags_SetSpeedUpOnTouch(0);
-    sub_02039794();
+    RenderControlFlags_SetCanABSpeedUpPrint(FALSE);
+    RenderControlFlags_SetAutoScrollFlags(AUTO_SCROLL_DISABLED);
+    RenderControlFlags_SetSpeedUpOnTouch(FALSE);
+    NetworkIcon_Destroy();
     ApplicationManager_FreeData(appMan);
     Heap_Destroy(HEAP_ID_118);
 
@@ -729,49 +729,46 @@ static void ov113_0225CF58(BgConfig *param0)
     {
         BgTemplate v2[] = {
             {
-                0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x0000,
-                GX_BG_CHARBASE_0x08000,
-                GX_BG_EXTPLTT_01,
-                0,
-                0,
-                0,
-                0,
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x0000,
+                .charBase = GX_BG_CHARBASE_0x08000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 0,
+                .areaOver = 0,
+                .mosaic = FALSE,
             },
             {
-                0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x0800,
-                GX_BG_CHARBASE_0x10000,
-                GX_BG_EXTPLTT_01,
-                0,
-                0,
-                0,
-                0,
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x0800,
+                .charBase = GX_BG_CHARBASE_0x10000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 0,
+                .areaOver = 0,
+                .mosaic = FALSE,
             },
             {
-                0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x1000,
-                GX_BG_CHARBASE_0x10000,
-                GX_BG_EXTPLTT_01,
-                3,
-                0,
-                0,
-                0,
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x1000,
+                .charBase = GX_BG_CHARBASE_0x10000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 3,
+                .areaOver = 0,
+                .mosaic = FALSE,
             },
         };
 
@@ -797,49 +794,46 @@ static void ov113_0225CF58(BgConfig *param0)
     {
         BgTemplate v3[] = {
             {
-                0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x7000,
-                GX_BG_CHARBASE_0x00000,
-                GX_BG_EXTPLTT_01,
-                2,
-                0,
-                0,
-                0,
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x7000,
+                .charBase = GX_BG_CHARBASE_0x00000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 2,
+                .areaOver = 0,
+                .mosaic = FALSE,
             },
             {
-                0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x7800,
-                GX_BG_CHARBASE_0x00000,
-                GX_BG_EXTPLTT_01,
-                3,
-                0,
-                0,
-                0,
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x7800,
+                .charBase = GX_BG_CHARBASE_0x00000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 3,
+                .areaOver = 0,
+                .mosaic = FALSE,
             },
             {
-                0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x6800,
-                GX_BG_CHARBASE_0x00000,
-                GX_BG_EXTPLTT_01,
-                3,
-                0,
-                0,
-                0,
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x6800,
+                .charBase = GX_BG_CHARBASE_0x00000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 3,
+                .areaOver = 0,
+                .mosaic = FALSE,
             },
         };
 
@@ -1049,7 +1043,7 @@ static void ov113_0225D6F8(UnkStruct_ov113_0225DBCC *param0)
         v1.resources[0] = 10010 + v0;
         param0->unk_970[v0] = SpriteSystem_NewSprite(param0->unk_1C, param0->unk_20, &v1);
 
-        ManagedSprite_SetPositionXYWithSubscreenOffset(param0->unk_970[v0], Unk_ov113_02260934[v0][0], Unk_ov113_02260934[v0][1], ((192 + 80) << FX32_SHIFT));
+        ManagedSprite_SetPositionXYWithSubscreenOffset(param0->unk_970[v0], Unk_ov113_02260934[v0][0], Unk_ov113_02260934[v0][1], (192 + 80) << FX32_SHIFT);
         Sprite_TickFrame(param0->unk_970[v0]->sprite);
         ManagedSprite_SetDrawFlag(param0->unk_970[v0], 0);
     }
@@ -1147,12 +1141,12 @@ static BOOL ov113_0225D938(int param0, int param1, ManagedSprite *param2, NARC *
 
 static void ov113_0225D9FC(UnkStruct_ov113_0225DBCC *param0)
 {
-    VecFx32 v0 = { 0, (-FX32_ONE * 8), 0 };
+    VecFx32 v0 = { 0, -FX32_ONE * 8, 0 };
 
     param0->camera = Camera_Alloc(118);
 
-    Camera_InitWithTarget(&v0, 0x7c000, &Unk_ov113_022608B4, ((22 * 0xffff) / 360), 0, 0, param0->camera);
-    Camera_SetClipping((FX32_ONE), (FX32_ONE * 900), param0->camera);
+    Camera_InitWithTarget(&v0, 0x7c000, &Unk_ov113_022608B4, (22 * 0xffff) / 360, 0, 0, param0->camera);
+    Camera_SetClipping(FX32_ONE, FX32_ONE * 900, param0->camera);
     Camera_SetAsActive(param0->camera);
 
     {
@@ -1188,8 +1182,8 @@ static void ov113_0225DAA8(UnkStruct_ov113_0225DBCC *param0, NARC *param1)
 
     Easy3DModel_LoadFrom(&param0->unk_D8.unk_00, param1, v0, HEAP_ID_118);
     Easy3DObject_Init(&param0->unk_D8.unk_10, &param0->unk_D8.unk_00);
-    Easy3DObject_SetPosition(&param0->unk_D8.unk_10, (FX32_CONST(0)), (FX32_CONST(0)), (FX32_CONST(0)));
-    Easy3DObject_SetScale(&param0->unk_D8.unk_10, (FX32_CONST(1.00f)), (FX32_CONST(1.00f)), (FX32_CONST(1.00f)));
+    Easy3DObject_SetPosition(&param0->unk_D8.unk_10, FX32_CONST(0), FX32_CONST(0), FX32_CONST(0));
+    Easy3DObject_SetScale(&param0->unk_D8.unk_10, FX32_CONST(1.00f), FX32_CONST(1.00f), FX32_CONST(1.00f));
     Easy3DObject_SetVisible(&param0->unk_D8.unk_10, 1);
 }
 
@@ -1213,7 +1207,7 @@ static void ov113_0225DB08(UnkStruct_ov113_0225DBCC *param0)
 
     MTX_Identity33(&v2);
 
-    sub_020241B4();
+    G3_ResetG3X();
     Camera_SetAsActive(param0->camera);
     Camera_ComputeProjectionMatrix(0, param0->camera);
     Camera_ComputeViewMatrix();
@@ -1239,7 +1233,7 @@ static void ov113_0225DBCC(UnkStruct_ov113_0225DBCC *param0)
 {
     int v0;
 
-    Window_Add(param0->unk_08, &param0->unk_B4, 1, 2, 1, 27, 4, 13, ((1 + (18 + 12)) + (29 * 4)));
+    Window_Add(param0->unk_08, &param0->unk_B4, 1, 2, 1, 27, 4, 13, (1 + (18 + 12)) + (29 * 4));
     Window_FillTilemap(&param0->unk_B4, 0xf);
 
     for (v0 = 0; v0 < 8; v0++) {
@@ -1323,7 +1317,7 @@ static void ov113_0225DD4C(int param0, SaveData *saveData, UnkStruct_ov113_02260
 
     for (v3 = 0; v3 < v1; v3++) {
         v2 = Party_GetPokemonBySlotIndex(v0, v3);
-        param2[v3].unk_02 = Pokemon_GetValue(v2, MON_DATA_SPECIES_EGG, NULL);
+        param2[v3].unk_02 = Pokemon_GetValue(v2, MON_DATA_SPECIES_OR_EGG, NULL);
         param2[v3].unk_04 = Pokemon_GetValue(v2, MON_DATA_PERSONALITY, NULL);
         param2[v3].unk_08 = Pokemon_GetValue(v2, MON_DATA_FORM, NULL);
         param2[v3].unk_00 = ov113_0226072C(param0, Pokemon_GetValue(v2, MON_DATA_OT_ID, NULL));
@@ -1398,7 +1392,7 @@ static int ov113_0225DE98(UnkStruct_ov113_0225DBCC *param0)
             }
 
             if (v0.unk_04[v1] == param0->unk_168.unk_04) {
-                ManagedSprite_SetPositionXYWithSubscreenOffset(param0->unk_96C, Unk_ov113_02260914[v1][0], Unk_ov113_02260914[v1][1], ((192 + 80) << FX32_SHIFT));
+                ManagedSprite_SetPositionXYWithSubscreenOffset(param0->unk_96C, Unk_ov113_02260914[v1][0], Unk_ov113_02260914[v1][1], (192 + 80) << FX32_SHIFT);
                 ManagedSprite_SetDrawFlag(param0->unk_96C, 1);
             }
         }
@@ -1532,7 +1526,7 @@ static void ov113_0225E15C(UnkStruct_ov113_0225DBCC *param0, UnkStruct_ov113_022
     v4 = sub_020127E8(&v0);
 
     sub_02012AC0(v4, param5);
-    sub_020128C4(v4, param7, param8);
+    FontOAM_SetXY(v4, param7, param8);
     Window_Remove(&v1);
 
     param1->unk_00 = v4;
@@ -1582,7 +1576,7 @@ static void ov113_0225E294(UnkStruct_ov113_0225DBCC *param0)
     v0 = 32 - (param0->unk_19D8 >> 8);
 
     for (v1 = 0; v1 < 6; v1++) {
-        ManagedSprite_SetPositionXYWithSubscreenOffset(param0->unk_924[v1], 16 + 32 * v1, 176 + v0, ((192 + 80) << FX32_SHIFT));
+        ManagedSprite_SetPositionXYWithSubscreenOffset(param0->unk_924[v1], 16 + 32 * v1, 176 + v0, (192 + 80) << FX32_SHIFT);
     }
 }
 

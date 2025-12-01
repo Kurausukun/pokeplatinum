@@ -5,13 +5,8 @@
 
 #include "constants/graphics.h"
 
-#include "struct_decls/struct_02015128_decl.h"
-#include "struct_decls/struct_020151A4_decl.h"
 #include "struct_defs/struct_02099F80.h"
 
-#include "overlay022/struct_ov22_022550D4.h"
-#include "overlay022/struct_ov22_022557A0.h"
-#include "overlay022/struct_ov22_02255800.h"
 #include "overlay022/struct_ov22_02255CB8.h"
 #include "overlay022/struct_ov22_0225A0E4.h"
 
@@ -25,12 +20,12 @@
 #include "pokemon_sprite.h"
 #include "render_oam.h"
 #include "resource_collection.h"
+#include "software_sprite.h"
 #include "sprite.h"
 #include "sprite_resource.h"
 #include "sprite_transfer.h"
 #include "sprite_util.h"
 #include "system.h"
-#include "unk_02015064.h"
 #include "unk_0202419C.h"
 
 static void ov22_02255634(void);
@@ -38,7 +33,7 @@ static void ov22_02255654(void);
 static void ov22_022556DC(void);
 static void ov22_0225572C(void);
 static void ov22_02255738(void);
-static void ov22_02255748(UnkStruct_ov22_0225A0E4 *param0, const UnkStruct_ov22_022550D4 *param1);
+static void ov22_02255748(UnkStruct_ov22_0225A0E4 *param0, const SoftwareSpriteManagerTemplate *param1);
 static void ov22_02255784(UnkStruct_ov22_0225A0E4 *param0);
 static void ov22_02255794(UnkStruct_ov22_0225A0E4 *param0);
 static void ov22_02255C24(UnkStruct_ov22_0225A0E4 *param0, int heapID, int param2, int param3);
@@ -50,8 +45,8 @@ static void ov22_02255A98(UnkStruct_ov22_0225A0E4 *param0);
 static void ov22_02255AC0(UnkStruct_ov22_0225A0E4 *param0);
 static void ov22_022559B4(UnkStruct_ov22_0225A0E4 *param0);
 static void ov22_022559E0(UnkStruct_ov22_0225A0E4 *param0);
-static void ov22_022557A0(UnkStruct_ov22_0225A0E4 *param0, UnkStruct_ov22_022557A0 *param1, int param2);
-static void ov22_02255800(UnkStruct_ov22_0225A0E4 *param0, UnkStruct_ov22_02255800 *param1, int param2);
+static void ov22_022557A0(UnkStruct_ov22_0225A0E4 *param0, SoftwareSpriteCharsTemplate *param1, int param2);
+static void ov22_02255800(UnkStruct_ov22_0225A0E4 *param0, SoftwareSpritePaletteTemplate *param1, int param2);
 static void ov22_02255860(UnkStruct_ov22_0225A0E4 *param0);
 static void ov22_02255984(UnkStruct_ov22_0225A0E4 *param0);
 static void ov22_02255CB8(UnkStruct_ov22_02255CB8 *param0, int param1, int param2, int heapID);
@@ -83,10 +78,10 @@ void ov22_022550B4(void)
 
 void ov22_022550D4(UnkStruct_ov22_0225A0E4 *param0)
 {
-    UnkStruct_ov22_022550D4 v0 = {
-        .unk_00 = 718,
-        .unk_04 = 118,
-        .unk_08 = 19,
+    SoftwareSpriteManagerTemplate v0 = {
+        .numSprites = 718,
+        .numChars = 118,
+        .numPalettes = 19,
         .heapID = HEAP_ID_14
     };
 
@@ -124,7 +119,7 @@ void ov22_02255134(UnkStruct_ov22_0225A0E4 *param0)
 
 void ov22_02255180(UnkStruct_ov22_0225A0E4 *param0)
 {
-    sub_020241B4();
+    G3_ResetG3X();
 
     NNS_G2dSetupSoftwareSpriteCamera();
 
@@ -148,8 +143,8 @@ void ov22_022551B4(UnkStruct_ov22_0225A0E4 *param0, UnkStruct_ov22_02255CB8 *par
 
 void ov22_022551D0(UnkStruct_ov22_0225A0E4 *param0)
 {
-    sub_0201517C(param0->unk_00);
-    sub_020151EC(param0->unk_00);
+    SoftwareSpriteManager_FreeAllChars(param0->unk_00);
+    SoftwareSpriteManager_FreeAllPalettes(param0->unk_00);
 }
 
 Sprite *ov22_022551E4(UnkStruct_ov22_0225A0E4 *param0, int param1, int param2, int param3, int param4, int param5)
@@ -219,7 +214,7 @@ void ov22_02255300(UnkStruct_ov22_0225A0E4 *param0, int param1)
 
 void ov22_02255314(UnkStruct_ov22_0225A0E4 *param0, UnkStruct_ov22_02255CB8 *param1)
 {
-    ov22_02255CB8(param1, (100 + 18), (1 + 18), HEAP_ID_14);
+    ov22_02255CB8(param1, 100 + 18, 1 + 18, HEAP_ID_14);
     ov22_02255ACC(param0, param1);
     ov22_02255B50(param0, param1);
 }
@@ -249,7 +244,7 @@ void ov22_02255390(void)
     GX_SetVisibleWnd(GX_WNDMASK_W0);
     G2_SetWnd0InsidePlane(GX_WND_PLANEMASK_BG0 | GX_WND_PLANEMASK_BG1 | GX_WND_PLANEMASK_BG2 | GX_WND_PLANEMASK_BG3 | GX_WND_PLANEMASK_OBJ, 0);
     G2_SetWndOutsidePlane(GX_WND_PLANEMASK_BG1 | GX_WND_PLANEMASK_OBJ, 0);
-    G2_SetWnd0Position((8 + 2), (16 + 2), (136 + 2) + (112 - (2 * 2)), (16 + 2) + (129 - (2 * 2)));
+    G2_SetWnd0Position(8 + 2, 16 + 2, (136 + 2) + (112 - (2 * 2)), (16 + 2) + (129 - (2 * 2)));
     G2_SetBG0Priority(0);
     G2_SetBG1Priority(1);
 }
@@ -263,7 +258,7 @@ void ov22_022553F8(UnkStruct_ov22_0225A0E4 *param0)
 
 void ov22_02255410(UnkStruct_ov22_02255CB8 *param0, int heapID)
 {
-    ov22_02255CB8(param0, (100 + 18), (1 + 18), heapID);
+    ov22_02255CB8(param0, 100 + 18, 1 + 18, heapID);
 }
 
 int ov22_02255420(NNSG2dCharacterData *param0, int param1, int param2, int param3)
@@ -294,7 +289,7 @@ int ov22_02255420(NNSG2dCharacterData *param0, int param1, int param2, int param
     return 0;
 }
 
-void ov22_0225547C(UnkStruct_ov22_0225A0E4 *param0, const UnkStruct_ov22_022550D4 *param1, int heapID)
+void ov22_0225547C(UnkStruct_ov22_0225A0E4 *param0, const SoftwareSpriteManagerTemplate *param1, int heapID)
 {
     ov22_02255748(param0, param1);
     ov22_02255C24(param0, heapID, 0x2800, 0x20);
@@ -308,19 +303,18 @@ void ov22_022554A8(UnkStruct_ov22_0225A0E4 *param0, BgConfig *param1, int param2
 
     {
         BgTemplate v0 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xf000,
-            GX_BG_CHARBASE_0x04000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xf000,
+            .charBase = GX_BG_CHARBASE_0x04000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_FreeTilemapBuffer(param0->unk_40, BG_LAYER_MAIN_2);
@@ -467,8 +461,8 @@ static void ov22_022556DC(void)
 
     GXLayers_DisableEngineALayers();
     GXLayers_DisableEngineBLayers();
-    GXLayers_EngineAToggleLayers((GX_PLANEMASK_BG0 | GX_PLANEMASK_BG1 | GX_PLANEMASK_BG2 | GX_PLANEMASK_BG3 | GX_PLANEMASK_OBJ), 1);
-    GXLayers_EngineBToggleLayers((GX_PLANEMASK_BG0 | GX_PLANEMASK_BG1 | GX_PLANEMASK_OBJ), 1);
+    GXLayers_EngineAToggleLayers(GX_PLANEMASK_BG0 | GX_PLANEMASK_BG1 | GX_PLANEMASK_BG2 | GX_PLANEMASK_BG3 | GX_PLANEMASK_OBJ, 1);
+    GXLayers_EngineBToggleLayers(GX_PLANEMASK_BG0 | GX_PLANEMASK_BG1 | GX_PLANEMASK_OBJ, 1);
 }
 
 static void ov22_0225572C(void)
@@ -485,13 +479,13 @@ static void ov22_02255738(void)
     NNS_G2dInitOamManagerModule();
 }
 
-static void ov22_02255748(UnkStruct_ov22_0225A0E4 *param0, const UnkStruct_ov22_022550D4 *param1)
+static void ov22_02255748(UnkStruct_ov22_0225A0E4 *param0, const SoftwareSpriteManagerTemplate *param1)
 {
-    param0->unk_00 = sub_02015064(param1);
-    param0->unk_04 = Heap_AllocFromHeap(param1->heapID, sizeof(UnkStruct_02015128 *) * (100 + 18));
+    param0->unk_00 = SoftwareSpriteManager_New(param1);
+    param0->unk_04 = Heap_Alloc(param1->heapID, sizeof(SoftwareSpriteChars *) * (100 + 18));
     param0->unk_08 = (100 + 18);
     param0->unk_0C = 0;
-    param0->unk_10 = Heap_AllocFromHeap(param1->heapID, sizeof(UnkStruct_020151A4 *) * (1 + 18));
+    param0->unk_10 = Heap_Alloc(param1->heapID, sizeof(SoftwareSpritePalette *) * (1 + 18));
     param0->unk_14 = (1 + 18);
     param0->unk_18 = 0;
     param0->unk_1C = 1;
@@ -499,24 +493,24 @@ static void ov22_02255748(UnkStruct_ov22_0225A0E4 *param0, const UnkStruct_ov22_
 
 static void ov22_02255784(UnkStruct_ov22_0225A0E4 *param0)
 {
-    sub_020150A8(param0->unk_00);
+    SoftwareSpriteManager_Free(param0->unk_00);
     param0->unk_00 = NULL;
 }
 
 static void ov22_02255794(UnkStruct_ov22_0225A0E4 *param0)
 {
-    sub_020150EC(param0->unk_00);
+    SoftwareSpriteManager_DrawVisible(param0->unk_00);
 }
 
-static void ov22_022557A0(UnkStruct_ov22_0225A0E4 *param0, UnkStruct_ov22_022557A0 *param1, int param2)
+static void ov22_022557A0(UnkStruct_ov22_0225A0E4 *param0, SoftwareSpriteCharsTemplate *param1, int param2)
 {
     int v0;
 
     for (v0 = 0; v0 < param2; v0++) {
         GF_ASSERT(param0->unk_0C < param0->unk_08);
 
-        if (param1[v0].unk_04 != NULL) {
-            param0->unk_04[param0->unk_0C] = sub_02015128(param1 + v0);
+        if (param1[v0].charsData != NULL) {
+            param0->unk_04[param0->unk_0C] = SoftwareSprite_LoadChars(param1 + v0);
         } else {
             param0->unk_04[param0->unk_0C] = NULL;
         }
@@ -525,15 +519,15 @@ static void ov22_022557A0(UnkStruct_ov22_0225A0E4 *param0, UnkStruct_ov22_022557
     }
 }
 
-static void ov22_02255800(UnkStruct_ov22_0225A0E4 *param0, UnkStruct_ov22_02255800 *param1, int param2)
+static void ov22_02255800(UnkStruct_ov22_0225A0E4 *param0, SoftwareSpritePaletteTemplate *param1, int param2)
 {
     int v0;
 
     for (v0 = 0; v0 < param2; v0++) {
         GF_ASSERT(param0->unk_18 < param0->unk_14);
 
-        if (param1[v0].unk_04 != NULL) {
-            param0->unk_10[param0->unk_18] = sub_020151A4(param1 + v0);
+        if (param1[v0].paletteData != NULL) {
+            param0->unk_10[param0->unk_18] = SoftwareSprite_LoadPalette(param1 + v0);
         } else {
             param0->unk_10[param0->unk_18] = NULL;
         }
@@ -546,19 +540,18 @@ static void ov22_02255860(UnkStruct_ov22_0225A0E4 *param0)
 {
     {
         BgTemplate v0 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xf800,
-            GX_BG_CHARBASE_0x00000,
-            GX_BG_EXTPLTT_01,
-            0,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xf800,
+            .charBase = GX_BG_CHARBASE_0x00000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_40, BG_LAYER_MAIN_1, &v0, 0);
@@ -568,19 +561,18 @@ static void ov22_02255860(UnkStruct_ov22_0225A0E4 *param0)
 
     {
         BgTemplate v1 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xf000,
-            GX_BG_CHARBASE_0x04000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xf000,
+            .charBase = GX_BG_CHARBASE_0x04000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_40, BG_LAYER_MAIN_2, &v1, 0);
@@ -590,19 +582,18 @@ static void ov22_02255860(UnkStruct_ov22_0225A0E4 *param0)
 
     {
         BgTemplate v2 = {
-            0,
-            -(16 + 129),
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xe800,
-            GX_BG_CHARBASE_0x08000,
-            GX_BG_EXTPLTT_01,
-            3,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = -(16 + 129),
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xe800,
+            .charBase = GX_BG_CHARBASE_0x08000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 3,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_40, BG_LAYER_MAIN_3, &v2, 0);
@@ -612,19 +603,18 @@ static void ov22_02255860(UnkStruct_ov22_0225A0E4 *param0)
 
     {
         BgTemplate v3 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x7800,
-            GX_BG_CHARBASE_0x00000,
-            GX_BG_EXTPLTT_01,
-            1,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x7800,
+            .charBase = GX_BG_CHARBASE_0x00000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 1,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_40, BG_LAYER_SUB_0, &v3, 0);
@@ -634,19 +624,18 @@ static void ov22_02255860(UnkStruct_ov22_0225A0E4 *param0)
 
     {
         BgTemplate v4 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x7000,
-            GX_BG_CHARBASE_0x04000,
-            GX_BG_EXTPLTT_01,
-            0,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x7000,
+            .charBase = GX_BG_CHARBASE_0x04000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_40, BG_LAYER_SUB_1, &v4, 0);
@@ -666,8 +655,8 @@ static void ov22_02255984(UnkStruct_ov22_0225A0E4 *param0)
 
 static void ov22_022559B4(UnkStruct_ov22_0225A0E4 *param0)
 {
-    param0->unk_34 = ResourceCollection_New(((100 + 18) + 1), HEAP_ID_14);
-    param0->unk_38 = Heap_AllocFromHeap(HEAP_ID_14, sizeof(NNSG2dCharacterData *) * ((100 + 18) + 1));
+    param0->unk_34 = ResourceCollection_New((100 + 18) + 1, HEAP_ID_14);
+    param0->unk_38 = Heap_Alloc(HEAP_ID_14, sizeof(NNSG2dCharacterData *) * ((100 + 18) + 1));
     memset(param0->unk_38, 0, sizeof(NNSG2dCharacterData *) * ((100 + 18) + 1));
     param0->unk_3C = ((100 + 18) + 1);
 }
@@ -700,7 +689,7 @@ static void ov22_022559F8(UnkStruct_ov22_0225A0E4 *param0)
 
     RenderOam_Init(0, 124, 0, 31, 0, 124, 0, 31, 14);
     param0->unk_44 = SpriteList_InitRendering(48, &param0->unk_58, HEAP_ID_14);
-    SetSubScreenViewRect(&param0->unk_58, 0, (512 * FX32_ONE));
+    SetSubScreenViewRect(&param0->unk_58, 0, 512 * FX32_ONE);
 
     param0->unk_48[0] = SpriteResourceCollection_New(8, 0, HEAP_ID_14);
     param0->unk_48[1] = SpriteResourceCollection_New(5, 1, HEAP_ID_14);
@@ -743,17 +732,17 @@ static void ov22_02255ACC(UnkStruct_ov22_0225A0E4 *param0, UnkStruct_ov22_02255C
 
         v1 = v0;
 
-        param1->unk_00[v1].unk_04 = ov22_02255340(param0, v2, v0);
-        param1->unk_00[v1].unk_00 = param0->unk_00;
+        param1->unk_00[v1].charsData = ov22_02255340(param0, v2, v0);
+        param1->unk_00[v1].softSpriteMan = param0->unk_00;
     }
 
     v2 = LoadMemberFromOpenNARC(param0->unk_5C, 0, 0, HEAP_ID_14, 1);
 
     ResourceCollection_Add(param1->unk_14, v2, 0);
-    NNS_G2dGetUnpackedPaletteData(v2, &param1->unk_08[0].unk_04);
+    NNS_G2dGetUnpackedPaletteData(v2, &param1->unk_08[0].paletteData);
 
-    param1->unk_08[0].unk_00 = param0->unk_00;
-    param1->unk_08[0].unk_08 = 3;
+    param1->unk_08[0].softSpriteMan = param0->unk_00;
+    param1->unk_08[0].paletteSlot = 3;
 }
 
 static void ov22_02255B50(UnkStruct_ov22_0225A0E4 *param0, UnkStruct_ov22_02255CB8 *param1)
@@ -766,18 +755,18 @@ static void ov22_02255B50(UnkStruct_ov22_0225A0E4 *param0, UnkStruct_ov22_02255C
         v1 = LoadMemberFromOpenNARC(param0->unk_5C, v0 + 206, 0, HEAP_ID_14, 1);
         v2 = v0 + 100;
 
-        param1->unk_00[v2].unk_04 = ov22_02255340(param0, v1, v2);
-        param1->unk_00[v2].unk_00 = param0->unk_00;
+        param1->unk_00[v2].charsData = ov22_02255340(param0, v1, v2);
+        param1->unk_00[v2].softSpriteMan = param0->unk_00;
 
         v2 = v0 + 1;
         v1 = LoadMemberFromOpenNARC(param0->unk_5C, (v0) * 4 + 134 + 1, 0, HEAP_ID_14, 1);
 
         ResourceCollection_Add(param1->unk_14, v1, v2);
-        NNS_G2dGetUnpackedPaletteData(v1, &param1->unk_08[v2].unk_04);
-        GF_ASSERT(param1->unk_08[v2].unk_04);
+        NNS_G2dGetUnpackedPaletteData(v1, &param1->unk_08[v2].paletteData);
+        GF_ASSERT(param1->unk_08[v2].paletteData);
 
-        param1->unk_08[v2].unk_00 = param0->unk_00;
-        param1->unk_08[v2].unk_08 = 1;
+        param1->unk_08[v2].softSpriteMan = param0->unk_00;
+        param1->unk_08[v2].paletteSlot = 1;
     }
 }
 
@@ -816,13 +805,13 @@ static void ov22_02255C90(UnkStruct_ov22_0225A0E4 *param0)
 
 static void ov22_02255CB8(UnkStruct_ov22_02255CB8 *param0, int param1, int param2, int heapID)
 {
-    param0->unk_00 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_ov22_022557A0) * param1);
-    memset(param0->unk_00, 0, sizeof(UnkStruct_ov22_022557A0) * param1);
+    param0->unk_00 = Heap_Alloc(heapID, sizeof(SoftwareSpriteCharsTemplate) * param1);
+    memset(param0->unk_00, 0, sizeof(SoftwareSpriteCharsTemplate) * param1);
     param0->unk_10 = ResourceCollection_New(param1, heapID);
     param0->unk_04 = param1;
 
-    param0->unk_08 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_ov22_02255800) * param2);
-    memset(param0->unk_08, 0, sizeof(UnkStruct_ov22_02255800) * param2);
+    param0->unk_08 = Heap_Alloc(heapID, sizeof(SoftwareSpritePaletteTemplate) * param2);
+    memset(param0->unk_08, 0, sizeof(SoftwareSpritePaletteTemplate) * param2);
     param0->unk_14 = ResourceCollection_New(param2, heapID);
     param0->unk_0C = param2;
 }

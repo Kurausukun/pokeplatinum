@@ -100,8 +100,8 @@ _0128:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    CallCommonScript 0x7E3
-    ScrCmd_035
+    VendorGreeting
+    CloseMessageWithoutErasing
     PokeMartCommon
     ReleaseAll
     End
@@ -110,8 +110,8 @@ _013E:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    CallCommonScript 0x7E3
-    ScrCmd_035
+    VendorGreeting
+    CloseMessageWithoutErasing
     PokeMartSpecialties MART_SPECIALTIES_ID_POKEMON_LEAGUE
     ReleaseAll
     End
@@ -197,7 +197,7 @@ _0296:
     PlayFanfare SEQ_SE_DP_KAIDAN2
     RemoveObject 5
     WaitFanfare SEQ_SE_DP_KAIDAN2
-    SetVar VAR_UNK_0x40EF, 1
+    SetVar VAR_RIVAL_BEAT_SUNYSHORE_GYM, 1
     ReleaseAll
     End
 
@@ -271,9 +271,7 @@ _0323:
     End
 
 _0336:
-    SetVar VAR_0x8007, 3
-    CallCommonScript 0x7D2
+    CallPokecenterNurse 3
     End
 
-    .byte 0
-    .byte 0
+    .balign 4, 0

@@ -1,18 +1,19 @@
 #ifndef POKEPLATINUM_SCRIPT_MANAGER_H
 #define POKEPLATINUM_SCRIPT_MANAGER_H
 
+#include "constants/init_script_types.h"
+
 #include "struct_decls/struct_02061AB4_decl.h"
-#include "struct_defs/struct_0203F478.h"
 
 #include "field/field_system_decl.h"
 #include "overlay005/field_menu.h"
 #include "overlay005/save_info_window.h"
-#include "overlay101/struct_ov101_021D5D90_decl.h"
 
 #include "bg_window.h"
 #include "field_script_context.h"
 #include "field_task.h"
 #include "menu.h"
+#include "overworld_anim_manager.h"
 #include "string_template.h"
 #include "sys_task_manager.h"
 
@@ -89,10 +90,13 @@ enum ScriptContextType {
 #define SCRIPT_ID_OFFSET_SINGLE_BATTLES         3000
 #define SCRIPT_ID_OFFSET_DOUBLE_BATTLES         5000
 #define SCRIPT_ID_OFFSET_HIDDEN_ITEMS           8000
-#define SCRIPT_ID_OFFSET_SAFARI_ZONE            8800
+#define SCRIPT_ID_OFFSET_SAFARI_GAME            8800
 #define SCRIPT_ID_OFFSET_INIT_NEW_GAME          9600
 #define SCRIPT_ID_OFFSET_FOLLOWER_PARTNERS      9700
+#define SCRIPT_ID_OFFSET_POKEDEX_RATINGS        9950
 #define SCRIPT_ID_OFFSET_FIELD_MOVES            10000
+#define SCRIPT_ID_OFFSET_TV_BROADCAST           10100
+#define SCRIPT_ID_OFFSET_TV_REPORTER_INTERVIEWS 10150
 #define SCRIPT_ID_POKEMON_CENTER_DAILY_TRAINERS 10400
 
 #define FLAG_OFFSET_HIDDEN_ITEMS     730
@@ -102,12 +106,18 @@ enum ScriptContextType {
 
 typedef void (*FieldSysFunc)(FieldSystem *);
 
+typedef struct HiddenItemTilePosition {
+    u16 screenTileX;
+    u16 screenTileZ;
+    u8 range;
+} HiddenItemTilePosition;
+
 typedef struct ApproachingTrainer {
     int sightRange;
     int direction;
     int scriptID;
     int trainerID;
-    int trainerType;
+    int unk_10;
     MapObject *object;
     SysTask *task;
 } ApproachingTrainer;
@@ -139,7 +149,7 @@ typedef struct ScriptManager {
     FieldSysFunc function;
     void *partyManagementDataPtr;
     void *dataPtr; // used as a generic pointer to data in many different script commands
-    UnkStruct_ov101_021D5D90 *unk_B0;
+    OverworldAnimManager *unk_B0;
     SysTask *playerTask; // used to set player sprite animations while saving
     Window specialCurrencyWindow;
     Window moneyWindow;
@@ -153,10 +163,10 @@ void ScriptManager_Change(FieldTask *taskManager, u16 scriptID, MapObject *objec
 ScriptContext *ScriptContext_CreateAndStart(FieldSystem *fieldSystem, u16 scriptID);
 void *ScriptManager_GetMemberPtr(ScriptManager *scriptManager, u32 member);
 void *FieldSystem_GetScriptMemberPtr(FieldSystem *fieldSystem, u32 member);
-void sub_0203F0C0(FieldSystem *fieldSystem);
+void FieldSystem_ShowStartMenu(FieldSystem *fieldSystem);
 u16 *FieldSystem_GetVarPointer(FieldSystem *fieldSystem, u16 varID);
 u16 FieldSystem_TryGetVar(FieldSystem *fieldSystem, u16 varID);
-u16 sub_0203F164(FieldSystem *fieldSystem, u16 param1);
+u16 FieldSystem_GetGraphicsID(FieldSystem *fieldSystem, u16 param1);
 BOOL FieldSystem_CheckFlag(FieldSystem *fieldSystem, u16 flagID);
 void FieldSystem_SetFlag(FieldSystem *fieldSystem, u16 flagID);
 void FieldSystem_ClearFlag(FieldSystem *fieldSystem, u16 flagID);
@@ -173,9 +183,9 @@ u16 Script_GetHiddenItemFlag(u16 scriptID);
 u16 Script_GetHiddenItemScript(u16 scriptID);
 void FieldSystem_ClearDailyHiddenItemFlags(FieldSystem *fieldSystem);
 u8 Script_GetHiddenItemRange(u16 scriptID);
-UnkStruct_0203F478 *sub_0203F478(FieldSystem *fieldSystem, int heapID);
+HiddenItemTilePosition *FieldSystem_GetNearbyHiddenItems(FieldSystem *fieldSystem, int heapID);
 void FieldSystem_InitNewGameState(FieldSystem *fieldSystem);
 void FieldSystem_RunScript(FieldSystem *fieldSystem, u16 scriptID);
-BOOL sub_0203F5C0(FieldSystem *fieldSystem, u8 param1);
+BOOL FieldSystem_RunInitScript(FieldSystem *fieldSystem, u8 param1);
 
 #endif // POKEPLATINUM_SCRIPT_MANAGER_H

@@ -10,7 +10,6 @@
 #include "overlay095/struct_ov95_02247004_decl.h"
 #include "overlay095/struct_ov95_022472C4_decl.h"
 #include "overlay095/struct_ov95_02247568.h"
-#include "overlay095/struct_ov95_02247628_decl.h"
 #include "overlay095/struct_ov95_0224773C_decl.h"
 #include "overlay095/struct_ov95_02247958_decl.h"
 
@@ -121,7 +120,7 @@ typedef struct {
 } UnkStruct_ov95_0224922C;
 
 typedef struct {
-    UnkStruct_ov95_02247628 *unk_00;
+    TradeSequenceData *unk_00;
     int unk_04;
     int unk_08;
     UnkStruct_ov95_02247568 unk_0C;
@@ -205,9 +204,9 @@ static void ov95_02249658(SysTask *param0, void *param1);
 static void ov95_022496B4(SysTask *param0, void *param1);
 static void ov95_02249700(SysTask *param0, void *param1);
 
-void *ov95_02248590(UnkStruct_ov95_02247628 *param0)
+void *ov95_02248590(TradeSequenceData *param0)
 {
-    UnkStruct_ov95_02248688 *v0 = Heap_AllocFromHeap(HEAP_ID_58, sizeof(UnkStruct_ov95_02248688));
+    UnkStruct_ov95_02248688 *v0 = Heap_Alloc(HEAP_ID_58, sizeof(UnkStruct_ov95_02248688));
 
     if (v0) {
         int v1;
@@ -428,34 +427,32 @@ static void ov95_022488A4(UnkStruct_ov95_02248688 *param0)
         GX_BG0_AS_3D
     };
     static const BgTemplate v2 = {
-        0,
-        0,
-        0,
-        0,
-        5,
-        GX_BG_COLORMODE_256,
-        GX_BG_SCRBASE_0xb000,
-        GX_BG_CHARBASE_0x00000,
-        GX_BG_EXTPLTT_01,
-        2,
-        1,
-        0,
-        0
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_1024x1024,
+        .colorMode = GX_BG_COLORMODE_256,
+        .screenBase = GX_BG_SCRBASE_0xb000,
+        .charBase = GX_BG_CHARBASE_0x00000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 2,
+        .areaOver = 1,
+        .mosaic = FALSE,
     };
     static const BgTemplate v3 = {
-        0,
-        0,
-        0x800,
-        0,
-        1,
-        GX_BG_COLORMODE_256,
-        GX_BG_SCRBASE_0xf000,
-        GX_BG_CHARBASE_0x10000,
-        GX_BG_EXTPLTT_01,
-        3,
-        1,
-        0,
-        0
+        .x = 0,
+        .y = 0,
+        .bufferSize = 0x800,
+        .baseTile = 0,
+        .screenSize = BG_SCREEN_SIZE_256x256,
+        .colorMode = GX_BG_COLORMODE_256,
+        .screenBase = GX_BG_SCRBASE_0xf000,
+        .charBase = GX_BG_CHARBASE_0x10000,
+        .bgExtPltt = GX_BG_EXTPLTT_01,
+        .priority = 3,
+        .areaOver = 1,
+        .mosaic = FALSE,
     };
     static const u16 v4[] = {
         0x20,
@@ -486,7 +483,7 @@ static void ov95_022488A4(UnkStruct_ov95_02248688 *param0)
     Graphics_LoadTilemapToBgLayer(NARC_INDEX_GRAPHIC__DEMO_TRADE, 0, param0->unk_C0, 2, 0, 0, 1, HEAP_ID_58);
     Graphics_LoadTilemapToBgLayer(NARC_INDEX_GRAPHIC__DEMO_TRADE, 0, param0->unk_C0, 6, 0, 0, 1, HEAP_ID_58);
 
-    v5 = ov95_02247644(param0->unk_00);
+    v5 = TradeSequence_GetBackground(param0->unk_00);
 
     Graphics_LoadPalette(NARC_INDEX_GRAPHIC__DEMO_TRADE, 3, 0, 0, 0x20, HEAP_ID_58);
     Graphics_LoadPalette(NARC_INDEX_GRAPHIC__DEMO_TRADE, 3, 4, 0, 0x20, HEAP_ID_58);
@@ -499,7 +496,7 @@ static void ov95_022488A4(UnkStruct_ov95_02248688 *param0)
     Graphics_LoadTilemapToBgLayer(NARC_INDEX_GRAPHIC__DEMO_TRADE, 4, param0->unk_C0, 7, 0, 0, 1, HEAP_ID_58);
 
     {
-        u8 *v7 = Heap_AllocFromHeap(HEAP_ID_58, 96);
+        u8 *v7 = Heap_Alloc(HEAP_ID_58, 96);
 
         if (v7) {
             MI_CpuClear32(v7, 96);
@@ -735,7 +732,7 @@ static void ov95_02248F94(SysTask *param0)
 
 static void ov95_02248FAC(UnkStruct_ov95_02248688 *param0, SysTask **param1)
 {
-    UnkStruct_ov95_02248FAC *v0 = Heap_AllocFromHeap(HEAP_ID_58, sizeof(UnkStruct_ov95_02248FAC));
+    UnkStruct_ov95_02248FAC *v0 = Heap_Alloc(HEAP_ID_58, sizeof(UnkStruct_ov95_02248FAC));
 
     if (v0) {
         v0->unk_00 = param0;
@@ -788,7 +785,7 @@ static void ov95_022490A4(SysTask *param0)
 
 static void ov95_022490D0(UnkStruct_ov95_02247958 *param0, int param1, int param2, int param3)
 {
-    UnkStruct_ov95_022490D0 *v0 = Heap_AllocFromHeap(HEAP_ID_58, sizeof(UnkStruct_ov95_022490D0));
+    UnkStruct_ov95_022490D0 *v0 = Heap_Alloc(HEAP_ID_58, sizeof(UnkStruct_ov95_022490D0));
 
     if (v0) {
         v0->unk_00 = param1 << 12;

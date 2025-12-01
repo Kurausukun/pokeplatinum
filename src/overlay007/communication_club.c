@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "constants/communication/comm_type.h"
+#include "generated/comm_club_ret_codes.h"
 
 #include "field/field_system.h"
 
@@ -71,19 +72,11 @@ typedef struct CommClubManager {
     u8 unk_98;
 } CommClubManager;
 
-enum CommClubRetCode {
-    COMM_CLUB_RET_0,
-    COMM_CLUB_RET_CANCEL,
-    COMM_CLUB_RET_2,
-    COMM_CLUB_RET_ERROR,
-    COMM_CLUB_RET_4,
-};
-
 static void CommClubMan_Run(SysTask *task, void *param1);
 static void CommClubMan_SetTask(CommClubManTaskFunc param0);
 static void CommClubMan_PrintMessage(int param0, BOOL param1);
 static void CommClubMan_StartBattleClient(CommClubManager *param0);
-static void ov7_0224A510(CommClubManager *param0);
+static void CommClubMan_StartBattleServer(CommClubManager *param0);
 static void ov7_02249C44(ListMenu *param0, u32 param1, u8 param2);
 static void ov7_02249C64(ListMenu *param0, u32 param1, u8 param2);
 static void ov7_02249C94(ListMenu *param0, u32 param1, u8 param2);
@@ -186,7 +179,7 @@ static inline void CommClubMan_PrintMessageFastSpeed(int msgId, BOOL format)
 
     FieldMessage_DrawWindow(&sCommClubMan->msgWindow, SaveData_GetOptions(sCommClubMan->fieldSystem->saveData));
     RenderControlFlags_SetCanABSpeedUpPrint(TRUE);
-    RenderControlFlags_SetAutoScrollFlags(0);
+    RenderControlFlags_SetAutoScrollFlags(AUTO_SCROLL_DISABLED);
     RenderControlFlags_SetSpeedUpOnTouch(FALSE);
     sCommClubMan->printMsgIndex = Text_AddPrinterWithParams(&sCommClubMan->msgWindow, FONT_MESSAGE, sCommClubMan->strBuff[5], 0, 0, TEXT_SPEED_FAST, NULL);
 }
@@ -203,7 +196,7 @@ static void CommClubMan_CreateList(ListMenuTemplate param0, u8 param1, u8 param2
     v0.choices = sCommClubMan->unk_64;
     v0.window = &sCommClubMan->unk_20;
 
-    sCommClubMan->unk_5C = ListMenu_New(&v0, 0, 0, HEAP_ID_FIELD);
+    sCommClubMan->unk_5C = ListMenu_New(&v0, 0, 0, HEAP_ID_FIELD1);
     Window_CopyToVRAM(&sCommClubMan->unk_20);
 }
 
@@ -213,23 +206,23 @@ static void CommClubMan_Init(FieldSystem *fieldSystem)
 
     GF_ASSERT(sCommClubMan == NULL);
 
-    sCommClubMan = Heap_AllocFromHeap(HEAP_ID_FIELD, sizeof(CommClubManager));
+    sCommClubMan = Heap_Alloc(HEAP_ID_FIELD1, sizeof(CommClubManager));
     MI_CpuFill8(sCommClubMan, 0, sizeof(CommClubManager));
 
-    sCommClubMan->retCode = 0;
+    sCommClubMan->retCode = COMM_CLUB_RET_0;
     sCommClubMan->fieldSystem = fieldSystem;
     sCommClubMan->unk_97 = 0;
-    sCommClubMan->msgLoader = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0353, HEAP_ID_FIELD);
+    sCommClubMan->msgLoader = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0353, HEAP_ID_FIELD1);
     sCommClubMan->trainerInfoPersonal = SaveData_GetTrainerInfo(FieldSystem_GetSaveData(sCommClubMan->fieldSystem));
-    sCommClubMan->unk_7C = TrainerInfo_New(HEAP_ID_FIELD);
+    sCommClubMan->unk_7C = TrainerInfo_New(HEAP_ID_FIELD1);
 
     Window_Init(&sCommClubMan->unk_20);
     Window_Init(&sCommClubMan->unk_30);
     Window_Init(&sCommClubMan->msgWindow);
 
-    sCommClubMan->unk_50 = StringTemplate_Default(HEAP_ID_FIELD);
-    sCommClubMan->unk_54 = StringTemplate_Default(HEAP_ID_FIELD);
-    sCommClubMan->strTempMsg = StringTemplate_Default(HEAP_ID_FIELD);
+    sCommClubMan->unk_50 = StringTemplate_Default(HEAP_ID_FIELD1);
+    sCommClubMan->unk_54 = StringTemplate_Default(HEAP_ID_FIELD1);
+    sCommClubMan->strTempMsg = StringTemplate_Default(HEAP_ID_FIELD1);
     sCommClubMan->unk_98 = 0;
 
     for (v0 = 0; v0 < (7 + 1); v0++) {
@@ -237,7 +230,7 @@ static void CommClubMan_Init(FieldSystem *fieldSystem)
     }
 
     for (v0 = 0; v0 < 8; v0++) {
-        sCommClubMan->strBuff[v0] = Strbuf_Init((70 * 2), HEAP_ID_FIELD);
+        sCommClubMan->strBuff[v0] = Strbuf_Init((70 * 2), HEAP_ID_FIELD1);
     }
 }
 
@@ -430,7 +423,7 @@ static void ov7_02249F54(SysTask *task, void *data)
     if (FieldMessage_FinishedPrinting(sCommClubMan->printMsgIndex)) {
         int v2;
 
-        sCommClubMan->unk_64 = StringList_New(16, HEAP_ID_FIELD);
+        sCommClubMan->unk_64 = StringList_New(16, HEAP_ID_FIELD1);
 
         for (v2 = 0; v2 < 16; v2++) {
             StringTemplate_SetNumber(sCommClubMan->unk_50, 0, v2 + 1, 2, 2, 1);
@@ -666,7 +659,7 @@ static void ov7_0224A438(ListMenu *param0, u32 param1, u8 param2)
     }
 }
 
-static void ov7_0224A510(CommClubManager *commClubMan)
+static void CommClubMan_StartBattleServer(CommClubManager *commClubMan)
 {
     FieldCommMan_StartBattleServer(commClubMan->fieldSystem, commClubMan->commType, CommClubMan_Regulation());
 }
@@ -842,7 +835,7 @@ static void ov7_0224A72C(SysTask *task, void *param1)
     if (FieldMessage_FinishedPrinting(sCommClubMan->printMsgIndex)) {
         int netId;
 
-        sCommClubMan->unk_64 = StringList_New(5, HEAP_ID_FIELD);
+        sCommClubMan->unk_64 = StringList_New(5, HEAP_ID_FIELD1);
 
         for (netId = 0; netId < 5; netId++) {
             StringList_AddFromMessageBank(sCommClubMan->unk_64, sCommClubMan->msgLoader, pl_msg_00000353_00069, 0);
@@ -1052,7 +1045,7 @@ static void CommClubTask_DifferentRegulation(SysTask *task, void *param1)
         if (gSystem.pressedKeys & (PAD_BUTTON_A | PAD_BUTTON_B)) {
             CommClubMan_DestroyList(task, commClubMan);
             CommClubMan_Disconnect();
-            sCommClubMan->retCode = 4;
+            sCommClubMan->retCode = COMM_CLUB_RET_4;
         }
     }
 }
@@ -1573,7 +1566,7 @@ static void ov7_0224B370(SysTask *task, void *param1)
 static void ov7_0224B3A8(CommClubManager *commClubMan)
 {
     sub_02036994(0);
-    sCommClubMan->retCode = 2;
+    sCommClubMan->retCode = COMM_CLUB_RET_2;
     CommMan_SetErrorHandling(1, 1);
     CommInfo_SendBattleRegulation();
     sub_02033EA8(1);
@@ -1594,12 +1587,12 @@ static int CommClubMan_Regulation(void)
     return sCommClubMan->unk_92 + (sCommClubMan->unk_93 << 4);
 }
 
-void ov7_0224B414(FieldSystem *fieldSystem, int commType, int param2, int param3)
+void CommClub_StartBattleClient(FieldSystem *fieldSystem, int commType, int param2, int param3)
 {
     CommClubMan_Init(fieldSystem);
     sCommClubMan->commType = commType;
 
-    if ((commType == COMM_TYPE_MIX_BATTLE) || (commType == COMM_TYPE_MULTI_BATTLE_1)) {
+    if (commType == COMM_TYPE_MIX_BATTLE || commType == COMM_TYPE_MULTI_BATTLE_1) {
         fieldSystem->unk_B0 = NULL;
     }
 
@@ -1609,35 +1602,35 @@ void ov7_0224B414(FieldSystem *fieldSystem, int commType, int param2, int param3
     CommClubMan_StartBattleClient(sCommClubMan);
 }
 
-void ov7_0224B450(void)
+void CommClub_PrintChooseJoinMsg(void)
 {
     CommClubMan_PrintChooseJoinMsg(sCommClubMan);
 }
 
-u32 ov7_0224B460(void)
+u32 CommClub_CheckWindowOpenClient(void)
 {
-    u32 v0 = sCommClubMan->retCode;
+    u32 ret = sCommClubMan->retCode;
 
-    if (0 != v0) {
+    if (COMM_CLUB_RET_0 != ret) {
         CommClubMan_Delete();
     }
 
-    return v0;
+    return ret;
 }
 
-void ov7_0224B47C(FieldSystem *fieldSystem, int commType, int param2, int param3)
+void CommClub_StartBattleServer(FieldSystem *fieldSystem, int commType, int param2, int param3)
 {
     CommClubMan_Init(fieldSystem);
     sCommClubMan->commType = commType;
 
-    if ((commType == COMM_TYPE_MIX_BATTLE) || (commType == COMM_TYPE_MULTI_BATTLE_1)) {
+    if (commType == COMM_TYPE_MIX_BATTLE || commType == COMM_TYPE_MULTI_BATTLE_1) {
         fieldSystem->unk_B0 = NULL;
     }
 
     sCommClubMan->unk_92 = param2;
     sCommClubMan->unk_93 = param3;
 
-    ov7_0224A510(sCommClubMan);
+    CommClubMan_StartBattleServer(sCommClubMan);
 }
 
 void ov7_0224B4B8(void)
@@ -1645,11 +1638,11 @@ void ov7_0224B4B8(void)
     ov7_0224A53C(sCommClubMan);
 }
 
-u32 CommClub_CheckWindowOpenClient(void)
+u32 CommClub_CheckWindowOpenServer(void)
 {
     u32 ret = sCommClubMan->retCode;
 
-    if (0 != ret) {
+    if (COMM_CLUB_RET_0 != ret) {
         CommClubMan_Delete();
     }
 

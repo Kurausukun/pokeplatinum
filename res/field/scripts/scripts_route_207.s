@@ -43,7 +43,7 @@ _004E:
 _008E:
     ClearFlag FLAG_UNK_0x01CC
     AddObject 18
-    ScrCmd_062 18
+    LockObject 18
     Return
 
 _009C:
@@ -83,14 +83,14 @@ _00F1:
 
 _012F:
     SetFlag FLAG_UNLOCKED_VS_SEEKER_LVL_1
-    SetVar VAR_0x8004, 0x1BB
+    SetVar VAR_0x8004, ITEM_VS_SEEKER
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     Return
 
 _0145:
-    SetVar VAR_0x8004, 6
-    CallCommonScript 0x7D9
+    SetVar VAR_0x8004, POKETCH_APPID_DOWSINGMACHINE
+    GivePoketchApp
     BufferPoketchAppName 1, POKETCH_APPID_DOWSINGMACHINE
     Return
 
@@ -109,30 +109,15 @@ _0174:
     WalkOnSpotNormalWest
     EndMovement
 
-    .byte 63
-    .byte 0
-    .byte 8
-    .byte 0
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 32
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+Route207_UnusedMovement:
+    Delay8 8
+    WalkOnSpotNormalWest
+    EndMovement
+
+Route207_UnusedMovement2:
+    Delay8 1
+    WalkOnSpotNormalNorth
+    EndMovement
 
     .balign 4, 0
 _0194:
@@ -190,4 +175,4 @@ _021A:
     ShowScrollingSign 13
     End
 
-    .byte 0
+    .balign 4, 0

@@ -1,5 +1,5 @@
 #include "macros/scrcmd.inc"
-#include "res/text/bank/unk_0007.h"
+#include "res/text/bank/bag.h"
 
 
     ScriptEntry _000A
@@ -9,7 +9,7 @@
 _000A:
     LockAll
     BufferNumber 0, VAR_0x8000
-    Message 106
+    Message Bag_Text_BatteryHasRunDry
     WaitABXPadPress
     CloseMessage
     ReleaseAll
@@ -17,12 +17,10 @@ _000A:
 
 _001C:
     LockAll
-    Message 107
+    Message Bag_Text_GrassyPatchRemainedQuiet
     WaitABXPadPress
     CloseMessage
     ReleaseAll
     End
 
-    .byte 0
-    .byte 0
-    .byte 0
+    .balign 4, 0

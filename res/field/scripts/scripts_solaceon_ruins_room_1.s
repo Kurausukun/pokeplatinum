@@ -13,11 +13,10 @@ _000A:
 _0010:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
-    ScrCmd_26D 0
+    MessageUnown 0
     WaitABXPadPress
     CloseMessage
     ReleaseAll
     End
 
-    .byte 0
-    .byte 0
+    .balign 4, 0

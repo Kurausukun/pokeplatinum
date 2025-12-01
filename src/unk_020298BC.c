@@ -16,9 +16,9 @@
 #include "inlines.h"
 #include "pokemon.h"
 #include "savedata.h"
+#include "software_sprite.h"
 #include "strbuf.h"
 #include "unk_02014A84.h"
-#include "unk_02015064.h"
 
 typedef struct UnkStruct_0202A138_t {
     u32 unk_00;
@@ -338,7 +338,7 @@ int sub_02029C64(void)
 
 UnkStruct_02029C68 *sub_02029C68(u32 heapID)
 {
-    UnkStruct_02029C68 *v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_02029C68));
+    UnkStruct_02029C68 *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_02029C68));
     inline_02029BFC(v0);
 
     return v0;
@@ -346,7 +346,7 @@ UnkStruct_02029C68 *sub_02029C68(u32 heapID)
 
 UnkStruct_02029C88 *sub_02029C88(u32 heapID)
 {
-    UnkStruct_02029C88 *v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_02029C88));
+    UnkStruct_02029C88 *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_02029C88));
     inline_02029BFC_1(v0);
 
     return v0;
@@ -570,8 +570,8 @@ void sub_02029FAC(UnkStruct_02029C68 *param0, Pokemon *param1, UnkStruct_020298D
 
 void sub_02029FD0(UnkStruct_02029C68 *param0, const UnkStruct_ov22_02255040 *param1, int param2)
 {
-    NNSG2dSVec2 v0 = sub_0201525C(param1->unk_04);
-    int v1 = sub_02015290(param1->unk_04);
+    NNSG2dSVec2 v0 = SoftwareSprite_GetPosition(param1->unk_04);
+    int v1 = SoftwareSprite_GetPriority(param1->unk_04);
 
     GF_ASSERT(param2 < (11 - 1));
     GF_ASSERT(v0.x < 256);
@@ -701,8 +701,8 @@ void sub_0202A284(UnkStruct_02029C88 *param0, Pokemon *param1, UnkStruct_020298D
 
 void sub_0202A2A8(UnkStruct_02029C88 *param0, const UnkStruct_ov22_02255040 *param1, int param2)
 {
-    NNSG2dSVec2 v0 = sub_0201525C(param1->unk_04);
-    int v1 = sub_02015290(param1->unk_04);
+    NNSG2dSVec2 v0 = SoftwareSprite_GetPosition(param1->unk_04);
+    int v1 = SoftwareSprite_GetPriority(param1->unk_04);
 
     GF_ASSERT(param2 < (21 - 1));
     GF_ASSERT(v0.x < 256);

@@ -3,8 +3,8 @@
 #include <nitro.h>
 #include <string.h>
 
+#include "applications/pokedex/footprint.h"
 #include "applications/pokedex/ov21_021DE668.h"
-#include "applications/pokedex/pokedex_footprint.h"
 #include "applications/pokedex/pokedex_graphics.h"
 #include "applications/pokedex/pokedex_main.h"
 #include "applications/pokedex/pokedex_text_manager.h"
@@ -32,6 +32,7 @@
 #include "text.h"
 #include "vram_transfer.h"
 
+#include "res/graphics/pokedex/zukan.naix.h"
 #include "res/text/bank/pokedex.h"
 
 typedef struct {
@@ -50,8 +51,8 @@ typedef struct {
 } UnkStruct_ov21_021E968C;
 
 typedef struct {
-    void *unk_00[2];
-    NNSG2dPaletteData *unk_08[2];
+    void *paletteBuffers[2];
+    NNSG2dPaletteData *paletteData[2];
     int unk_10;
     int unk_14[2];
     int unk_1C;
@@ -112,7 +113,7 @@ static void ov21_021E968C(UnkStruct_ov21_021E968C *param0);
 static void ov21_021E96A8(BgConfig *param0, int param1, NARC *param2);
 static void ov21_021E97C4(BgConfig *param0, int param1, NARC *param2);
 static void ov21_021E9968(Window *param0, int param1, int param2);
-static void ov21_021E998C(Window *param0, enum HeapId heapID);
+static void ov21_021E998C(Window *param0, enum HeapID heapID);
 static void ov21_021E9A0C(int param0);
 static void ov21_021E9A38(void);
 static void ov21_021E9A40(UnkStruct_ov21_021E9A9C *param0, int param1, int param2, NARC *param3);
@@ -123,7 +124,7 @@ static void ov21_021E9B08(UnkStruct_ov21_021E9A9C *param0, int param1);
 
 UnkStruct_ov21_021E8D48 *ov21_021E8D48(const UnkStruct_ov21_021E8E0C *param0)
 {
-    UnkStruct_ov21_021E8D48 *v0 = Heap_AllocFromHeap(param0->heapID, sizeof(UnkStruct_ov21_021E8D48));
+    UnkStruct_ov21_021E8D48 *v0 = Heap_Alloc(param0->heapID, sizeof(UnkStruct_ov21_021E8D48));
 
     memset(v0, 0, sizeof(UnkStruct_ov21_021E8D48));
 
@@ -203,7 +204,7 @@ static void ov21_021E8E0C(UnkStruct_ov21_021E8D48 *param0, const UnkStruct_ov21_
     param0->unk_1B0 = PokedexTextManager_New(&textManTemplate);
 
     ov21_021E90B0(param0->unk_00, param1->heapID);
-    G2_SetBlendBrightness((GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_BG1 | GX_BLEND_PLANEMASK_BG2 | GX_BLEND_PLANEMASK_BG3 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD), -16);
+    G2_SetBlendBrightness(GX_BLEND_PLANEMASK_BG0 | GX_BLEND_PLANEMASK_BG1 | GX_BLEND_PLANEMASK_BG2 | GX_BLEND_PLANEMASK_BG3 | GX_BLEND_PLANEMASK_OBJ | GX_BLEND_PLANEMASK_BD, -16);
 
     param0->unk_04 = ov21_021E91B0(param0->unk_00, param1->heapID);
 
@@ -267,19 +268,18 @@ static void ov21_021E90B0(BgConfig *param0, int heapID)
 {
     {
         BgTemplate v0 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0000,
-            GX_BG_CHARBASE_0x04000,
-            GX_BG_EXTPLTT_01,
-            1,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0000,
+            .charBase = GX_BG_CHARBASE_0x04000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 1,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_FreeTilemapBuffer(param0, BG_LAYER_MAIN_1);
@@ -290,19 +290,18 @@ static void ov21_021E90B0(BgConfig *param0, int heapID)
 
     {
         BgTemplate v1 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0800,
-            GX_BG_CHARBASE_0x0c000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0800,
+            .charBase = GX_BG_CHARBASE_0x0c000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_FreeTilemapBuffer(param0, BG_LAYER_MAIN_2);
@@ -317,19 +316,18 @@ static void ov21_021E90B0(BgConfig *param0, int heapID)
 
     {
         BgTemplate v2 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x1000,
-            GX_BG_CHARBASE_0x14000,
-            GX_BG_EXTPLTT_01,
-            3,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x1000,
+            .charBase = GX_BG_CHARBASE_0x14000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 3,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_FreeTilemapBuffer(param0, BG_LAYER_MAIN_3);
@@ -421,34 +419,34 @@ static void ov21_021E92B0(PokedexSpeciesLabel *pokedexSpeciesLabel)
 
 static void ov21_021E92C4(SpriteResource **param0, SpriteResourceCollection **param1, int param2, int param3, int param4, int param5, int param6, int param7, int param8, int param9)
 {
-    param0[0] = SpriteResourceCollection_AddTiles(param1[0], param3, param4, 1, param9, NNS_G2D_VRAM_TYPE_2DMAIN, param2);
+    param0[0] = SpriteResourceCollection_AddTiles(param1[0], param3, param4, TRUE, param9, NNS_G2D_VRAM_TYPE_2DMAIN, param2);
 
     SpriteTransfer_RequestCharAtEnd(param0[0]);
     SpriteResource_ReleaseData(param0[0]);
 
-    param0[1] = SpriteResourceCollection_AddPalette(param1[1], param3, param5, 0, param9, NNS_G2D_VRAM_TYPE_2DMAIN, param8, param2);
+    param0[1] = SpriteResourceCollection_AddPalette(param1[1], param3, param5, FALSE, param9, NNS_G2D_VRAM_TYPE_2DMAIN, param8, param2);
 
     SpriteTransfer_RequestPlttFreeSpace(param0[1]);
     SpriteResource_ReleaseData(param0[1]);
 
-    param0[2] = SpriteResourceCollection_Add(param1[2], param3, param6, 1, param9, 2, param2);
-    param0[3] = SpriteResourceCollection_Add(param1[3], param3, param7, 1, param9, 3, param2);
+    param0[2] = SpriteResourceCollection_Add(param1[2], param3, param6, TRUE, param9, 2, param2);
+    param0[3] = SpriteResourceCollection_Add(param1[3], param3, param7, TRUE, param9, 3, param2);
 }
 
 static void ov21_021E9344(SpriteResource **param0, SpriteResourceCollection **param1, int param2, NARC *param3, int param4, int param5, int param6, int param7, int param8, int param9)
 {
-    param0[0] = SpriteResourceCollection_AddTilesFrom(param1[0], param3, param4, 1, param9, NNS_G2D_VRAM_TYPE_2DMAIN, param2);
+    param0[0] = SpriteResourceCollection_AddTilesFrom(param1[0], param3, param4, TRUE, param9, NNS_G2D_VRAM_TYPE_2DMAIN, param2);
 
     SpriteTransfer_RequestCharAtEnd(param0[0]);
     SpriteResource_ReleaseData(param0[0]);
 
-    param0[1] = SpriteResourceCollection_AddPaletteFrom(param1[1], param3, param5, 0, param9, NNS_G2D_VRAM_TYPE_2DMAIN, param8, param2);
+    param0[1] = SpriteResourceCollection_AddPaletteFrom(param1[1], param3, param5, FALSE, param9, NNS_G2D_VRAM_TYPE_2DMAIN, param8, param2);
 
     SpriteTransfer_RequestPlttFreeSpace(param0[1]);
     SpriteResource_ReleaseData(param0[1]);
 
-    param0[2] = SpriteResourceCollection_AddFrom(param1[2], param3, param6, 1, param9, 2, param2);
-    param0[3] = SpriteResourceCollection_AddFrom(param1[3], param3, param7, 1, param9, 3, param2);
+    param0[2] = SpriteResourceCollection_AddFrom(param1[2], param3, param6, TRUE, param9, 2, param2);
+    param0[3] = SpriteResourceCollection_AddFrom(param1[3], param3, param7, TRUE, param9, 3, param2);
 }
 
 static void ov21_021E93C4(SpriteResource **param0, SpriteResourceCollection **param1)
@@ -464,7 +462,7 @@ static void ov21_021E93C4(SpriteResource **param0, SpriteResourceCollection **pa
 
 static void ov21_021E93F8(SpriteResource **param0, SpriteResourceCollection **param1, SpriteResourcesHeader *param2, int param3)
 {
-    SpriteResourcesHeader_Init(param2, SpriteResource_GetID(param0[0]), SpriteResource_GetID(param0[1]), SpriteResource_GetID(param0[2]), SpriteResource_GetID(param0[3]), 0xffffffff, 0xffffffff, 0, param3, param1[0], param1[1], param1[2], param1[3], NULL, NULL);
+    SpriteResourcesHeader_Init(param2, SpriteResource_GetID(param0[0]), SpriteResource_GetID(param0[1]), SpriteResource_GetID(param0[2]), SpriteResource_GetID(param0[3]), 0xffffffff, 0xffffffff, FALSE, param3, param1[0], param1[1], param1[2], param1[3], NULL, NULL);
 }
 
 static void ov21_021E9458(UnkStruct_ov21_021E94F8 *param0, SpriteResourceCollection **param1, int param2, int param3)
@@ -563,7 +561,7 @@ static void ov21_021E95B0(UnkStruct_ov21_021E95B0 *param0)
 
 static void ov21_021E95BC(UnkStruct_ov21_021E968C *param0, SpriteResourceCollection **param1, int param2, int param3, NARC *param4)
 {
-    ov21_021E9344(param0->unk_08, param1, param3, param4, 90, 13, 88, 89, 5, 17000);
+    ov21_021E9344(param0->unk_08, param1, param3, param4, type_icons_NCGR_lz, type_icons_NCLR, type_icons_cell_NCER_lz, type_icons_anim_NANR_lz, 5, 17000);
 }
 
 static void ov21_021E95EC(UnkStruct_ov21_021E968C *param0, SpriteResourceCollection **param1)
@@ -620,25 +618,25 @@ static void ov21_021E96A8(BgConfig *param0, int param1, NARC *param2)
     void *v0;
     NNSG2dScreenData *v1;
 
-    Graphics_LoadPaletteFromOpenNARC(param2, 6, 0, 0, 0, param1);
-    Graphics_LoadTilesToBgLayerFromOpenNARC(param2, 33, param0, 3, 0, 0, 1, param1);
+    Graphics_LoadPaletteFromOpenNARC(param2, banner_sinnoh_NCLR, 0, 0, 0, param1);
+    Graphics_LoadTilesToBgLayerFromOpenNARC(param2, entry_main_NCGR_lz, param0, 3, 0, 0, 1, param1);
 
-    v0 = Graphics_GetScrnDataFromOpenNARC(param2, 50, 1, &v1, param1);
+    v0 = Graphics_GetScrnDataFromOpenNARC(param2, info_main_NSCR_lz, 1, &v1, param1);
 
     Bg_LoadToTilemapRect(param0, 3, v1->rawData, 0, 0, v1->screenWidth / 8, v1->screenHeight / 8);
     Heap_Free(v0);
 
-    v0 = Graphics_GetScrnDataFromOpenNARC(param2, 51, 1, &v1, param1);
+    v0 = Graphics_GetScrnDataFromOpenNARC(param2, info_species_window_NSCR_lz, 1, &v1, param1);
 
     Bg_LoadToTilemapRect(param0, 3, v1->rawData, 0, 3, v1->screenWidth / 8, v1->screenHeight / 8);
     Heap_Free(v0);
 
-    v0 = Graphics_GetScrnDataFromOpenNARC(param2, 52, 1, &v1, param1);
+    v0 = Graphics_GetScrnDataFromOpenNARC(param2, info_footprint_window_NSCR_lz, 1, &v1, param1);
 
     Bg_LoadToTilemapRect(param0, 3, v1->rawData, 12, 8, v1->screenWidth / 8, v1->screenHeight / 8);
     Heap_Free(v0);
 
-    v0 = Graphics_GetScrnDataFromOpenNARC(param2, 54, 1, &v1, param1);
+    v0 = Graphics_GetScrnDataFromOpenNARC(param2, info_entry_window_NSCR_lz, 1, &v1, param1);
 
     Bg_LoadToTilemapRect(param0, 3, v1->rawData, 0, 16, v1->screenWidth / 8, v1->screenHeight / 8);
     Heap_Free(v0);
@@ -650,9 +648,9 @@ static void ov21_021E97C4(BgConfig *param0, int param1, NARC *param2)
     void *v0;
     NNSG2dScreenData *v1;
 
-    Graphics_LoadTilesToBgLayerFromOpenNARC(param2, 33, param0, 2, 0, 0, 1, param1);
+    Graphics_LoadTilesToBgLayerFromOpenNARC(param2, entry_main_NCGR_lz, param0, 2, 0, 0, 1, param1);
 
-    v0 = Graphics_GetScrnDataFromOpenNARC(param2, 57, 1, &v1, param1);
+    v0 = Graphics_GetScrnDataFromOpenNARC(param2, banner_sinnoh_NSCR_lz, 1, &v1, param1);
 
     Bg_LoadToTilemapRect(param0, 2, v1->rawData, 0, 0, v1->screenWidth / 8, v1->screenHeight / 8);
     Heap_Free(v0);
@@ -700,7 +698,7 @@ static void ov21_021E9828(SysTask *param0, void *param1)
 static void ov21_021E98D8(PaletteData *param0, PokemonSprite *param1)
 {
     PaletteData_LoadBufferFromHardware(param0, 0, 0, 32 * 0x10);
-    PaletteData_LoadBufferFromHardware(param0, 2, 0, (((16 - 2) * 16) * sizeof(u16)));
+    PaletteData_LoadBufferFromHardware(param0, 2, 0, ((16 - 2) * 16) * sizeof(u16));
 }
 
 static void ov21_021E98F8(PaletteData *param0, PokemonSprite *param1, int param2, int param3, int param4, int param5, int param6)
@@ -730,10 +728,10 @@ static void ov21_021E9968(Window *param0, int param1, int param2)
     ov21_021E998C(param0, param1);
 }
 
-static void ov21_021E998C(Window *param0, enum HeapId heapID)
+static void ov21_021E998C(Window *param0, enum HeapID heapID)
 {
     Strbuf *v0 = Strbuf_Init(64, heapID);
-    MessageLoader *pokedexMessageBank = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_POKEDEX, heapID);
+    MessageLoader *pokedexMessageBank = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_POKEDEX, heapID);
 
     MessageLoader_GetStrbuf(pokedexMessageBank, pl_msg_pokedex_registered, v0);
     Text_AddPrinterWithParamsAndColor(param0, FONT_SYSTEM, v0, 32, 0, TEXT_SPEED_INSTANT, TEXT_COLOR(3, 4, 0), NULL);
@@ -753,7 +751,7 @@ static PokemonSprite *ov21_021E99E0(PokemonSpriteManager *param0, Pokemon *param
 static void ov21_021E9A0C(int param0)
 {
     CharTransferTemplate v0 = {
-        32, (1024 * 0x40), (512 * 0x20), 0
+        32, 1024 * 0x40, 512 * 0x20, 0
     };
 
     v0.heapID = param0;
@@ -765,17 +763,17 @@ static void ov21_021E9A38(void)
     CharTransfer_Free();
 }
 
-static void ov21_021E9A40(UnkStruct_ov21_021E9A9C *param0, int param1, int param2, NARC *param3)
+static void ov21_021E9A40(UnkStruct_ov21_021E9A9C *param0, int heapID, int param2, NARC *param3)
 {
     int v0;
 
     if (param2 == 0) {
-        param0->unk_00[0] = Graphics_GetPlttDataFromOpenNARC(param3, 23, &param0->unk_08[0], param1);
+        param0->paletteBuffers[0] = Graphics_GetPlttDataFromOpenNARC(param3, banner_register_NCLR, &param0->paletteData[0], heapID);
     } else {
-        param0->unk_00[0] = Graphics_GetPlttDataFromOpenNARC(param3, 24, &param0->unk_08[0], param1);
+        param0->paletteBuffers[0] = Graphics_GetPlttDataFromOpenNARC(param3, banner_national_NCLR, &param0->paletteData[0], heapID);
     }
 
-    param0->unk_00[1] = Graphics_GetPlttDataFromOpenNARC(param3, 26, &param0->unk_08[1], param1);
+    param0->paletteBuffers[1] = Graphics_GetPlttDataFromOpenNARC(param3, dummy3_NCLR, &param0->paletteData[1], heapID);
     param0->unk_10 = 0;
     param0->unk_1C = 0;
 
@@ -807,7 +805,7 @@ static void ov21_021E9AC8(UnkStruct_ov21_021E9A9C *param0)
     int v0;
 
     for (v0 = 0; v0 < 2; v0++) {
-        Heap_Free(param0->unk_00[0]);
+        Heap_Free(param0->paletteBuffers[0]);
     }
 
     memset(param0, 0, sizeof(UnkStruct_ov21_021E9A9C));
@@ -815,11 +813,11 @@ static void ov21_021E9AC8(UnkStruct_ov21_021E9A9C *param0)
 
 static void ov21_021E9AE8(UnkStruct_ov21_021E9A9C *param0, int param1)
 {
-    DC_FlushRange((void *)param0->unk_08[param1]->pRawData, 1 * 32);
-    GX_LoadBGPltt(param0->unk_08[param1]->pRawData, 0 * 32, 1 * 32);
+    DC_FlushRange((void *)param0->paletteData[param1]->pRawData, 1 * 32);
+    GX_LoadBGPltt(param0->paletteData[param1]->pRawData, 0 * 32, 1 * 32);
 }
 
 static void ov21_021E9B08(UnkStruct_ov21_021E9A9C *param0, int param1)
 {
-    VramTransfer_Request(NNS_GFD_DST_2D_BG_PLTT_MAIN, 0 * 32, param0->unk_08[param1]->pRawData, 1 * 32);
+    VramTransfer_Request(NNS_GFD_DST_2D_BG_PLTT_MAIN, 0 * 32, param0->paletteData[param1]->pRawData, 1 * 32);
 }

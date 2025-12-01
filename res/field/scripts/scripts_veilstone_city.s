@@ -1,5 +1,6 @@
 #include "macros/scrcmd.inc"
 #include "res/text/bank/veilstone_city.h"
+#include "res/field/events/events_veilstone_city.h"
 
 
     ScriptEntry _0082
@@ -11,13 +12,13 @@
     ScriptEntry _0C77
     ScriptEntry _0CD1
     ScriptEntry _0CE4
-    ScriptEntry _0CF7
+    ScriptEntry VeilstoneCity_GalacticGruntWarehouseGuard
     ScriptEntry _0D5C
     ScriptEntry _0D8D
     ScriptEntry _0DBE
     ScriptEntry _0FF0
     ScriptEntry _00F6
-    ScriptEntry _05CC
+    ScriptEntry VeilstoneCity_Counterpart
     ScriptEntry _1003
     ScriptEntry _101A
     ScriptEntry _102F
@@ -38,7 +39,7 @@
 
 _0082:
     CallIfSet FLAG_UNK_0x0155, _00E0
-    CallIfGe VAR_UNK_0x411A, 2, _00BA
+    CallIfGe VAR_VEILSTONE_STATE, 2, _00BA
     GetPlayerGender VAR_MAP_LOCAL_0
     GoToIfEq VAR_MAP_LOCAL_0, GENDER_MALE, _00D0
     GoToIfEq VAR_MAP_LOCAL_0, GENDER_FEMALE, _00D8
@@ -79,16 +80,16 @@ _00F6:
     CallIfEq VAR_0x8004, GENDER_FEMALE, _029F
     CloseMessage
     CallCommonScript 0x7F9
-    ScrCmd_168 21, 19, 12, 3, 77
-    ScrCmd_16B 77
-    ScrCmd_169 77
+    LoadDoorAnimation 21, 19, 12, 3, ANIMATION_TAG_DOOR_1
+    PlayDoorOpenAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
     ClearFlag FLAG_UNK_0x0191
     AddObject 25
     ApplyMovement 25, _0564
     WaitMovement
-    ScrCmd_16C 77
-    ScrCmd_169 77
-    ScrCmd_16A 77
+    PlayDoorCloseAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
+    UnloadAnimation ANIMATION_TAG_DOOR_1
     ApplyMovement 6, _0484
     WaitMovement
     Message 4
@@ -332,18 +333,10 @@ _04D4:
     WalkOnSpotNormalSouth
     EndMovement
 
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 32
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+VeilstoneCity_UnusedMovement:
+    Delay8
+    WalkOnSpotNormalNorth
+    EndMovement
 
     .balign 4, 0
 _04EC:
@@ -455,46 +448,46 @@ _05C4:
     WalkNormalSouth 8
     EndMovement
 
-_05CC:
+VeilstoneCity_Counterpart:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
     GetPlayerGender VAR_0x8004
-    GoToIfEq VAR_0x8004, 0, _05F4
-    GoToIfEq VAR_0x8004, 1, _0625
+    GoToIfEq VAR_0x8004, GENDER_MALE, VeilstoneCity_Dawn
+    GoToIfEq VAR_0x8004, GENDER_FEMALE, VeilstoneCity_Lucas
     End
 
-_05F4:
+VeilstoneCity_Dawn:
     BufferPlayerName 0
-    Message 19
+    Message VeilstoneCity_Text_DawnAskForHelp
     ShowYesNoMenu VAR_RESULT
-    GoToIfEq VAR_RESULT, MENU_YES, _0611
-    GoTo _061A
+    GoToIfEq VAR_RESULT, MENU_YES, VeilstoneCity_DawnAcceptTeamUp
+    GoTo VeilstoneCity_DawnDeclineTeamUp
 
-_0611:
-    Message 20
+VeilstoneCity_DawnAcceptTeamUp:
+    Message VeilstoneCity_Text_DawnTeamUp
     GoTo _0656
 
-_061A:
-    Message 21
+VeilstoneCity_DawnDeclineTeamUp:
+    Message VeilstoneCity_Text_DawnIllBeWaiting
     WaitABXPadPress
     CloseMessage
     ReleaseAll
     End
 
-_0625:
+VeilstoneCity_Lucas:
     BufferPlayerName 0
-    Message 24
+    Message VeilstoneCity_Text_LucasAskForHelp
     ShowYesNoMenu VAR_RESULT
-    GoToIfEq VAR_RESULT, MENU_YES, _0642
-    GoTo _064B
+    GoToIfEq VAR_RESULT, MENU_YES, VeilstoneCity_LucasAcceptTeamUp
+    GoTo VeilstoneCity_LucasDeclineTeamUp
 
-_0642:
-    Message 25
+VeilstoneCity_LucasAcceptTeamUp:
+    Message VeilstoneCity_Text_LucasTeamUp
     GoTo _0656
 
-_064B:
-    Message 26
+VeilstoneCity_LucasDeclineTeamUp:
+    Message VeilstoneCity_Text_LucasIllBeWaiting
     WaitABXPadPress
     CloseMessage
     ReleaseAll
@@ -591,26 +584,13 @@ _086E:
     GoToIfEq VAR_0x8005, 0x255, _08C3
     End
 
-    .byte 134
-    .byte 1
-    .byte 26
-    .byte 0
-    .byte 180
-    .byte 2
-    .byte 91
-    .byte 2
-    .byte 27
-    .byte 0
-    .byte 134
-    .byte 1
-    .byte 26
-    .byte 0
-    .byte 180
-    .byte 2
-    .byte 93
-    .byte 2
-    .byte 27
-    .byte 0
+VeilstoneCity_Unused:
+    SetObjectEventPos 26, 692, 603
+    Return
+
+VeilstoneCity_Unused2:
+    SetObjectEventPos 26, 692, 605
+    Return
 
 _08A9:
     ApplyMovement 26, _0AAC
@@ -632,10 +612,10 @@ _08DD:
     ClearFlag FLAG_UNK_0x020D
     SetVar VAR_UNK_0x411F, 1
     PlayFanfare SEQ_SE_DP_KAIDAN2
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     Warp MAP_HEADER_VEILSTONE_CITY_GALACTIC_WAREHOUSE, 0, 8, 11, 0
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     End
 
@@ -812,82 +792,34 @@ _0AD4:
     WalkOnSpotNormalEast
     EndMovement
 
-    .byte 62
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 75
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 14
-    .byte 0
-    .byte 4
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 13
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 14
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 13
-    .byte 0
-    .byte 6
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 32
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 33
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+VeilstoneCity_UnusedMovement2:
+    Delay4
+    WalkOnSpotNormalWest
+    EmoteExclamationMark
+    Delay8
+    EndMovement
+
+VeilstoneCity_UnusedMovement3:
+    WalkNormalWest 4
+    EndMovement
+
+VeilstoneCity_UnusedMovement4:
+    WalkNormalSouth 2
+    WalkNormalWest 2
+    WalkNormalSouth 6
+    EndMovement
+
+VeilstoneCity_UnusedMovement5:
+    Delay8
+    WalkOnSpotNormalNorth
+    WalkOnSpotNormalWest
+    EndMovement
+
+VeilstoneCity_UnusedMovement6:
+    Delay8
+    WalkOnSpotNormalSouth
+    WalkOnSpotNormalWest
+    EndMovement
 
     .balign 4, 0
 _0B2C:
@@ -926,38 +858,17 @@ _0B64:
     WalkOnSpotNormalEast
     EndMovement
 
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 33
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 32
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+VeilstoneCity_UnusedMovement7:
+    Delay8
+    WalkOnSpotNormalSouth
+    WalkOnSpotNormalWest
+    EndMovement
+
+VeilstoneCity_UnusedMovement8:
+    Delay8
+    WalkOnSpotNormalNorth
+    WalkOnSpotNormalWest
+    EndMovement
 
     .balign 4, 0
 _0B8C:
@@ -974,18 +885,10 @@ _0B9C:
     WalkOnSpotNormalWest
     EndMovement
 
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 34
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+VeilstoneCity_UnusedMovement9:
+    Delay8
+    WalkOnSpotNormalWest
+    EndMovement
 
     .balign 4, 0
 _0BB0:
@@ -1093,7 +996,7 @@ _0C77:
     SetVar VAR_0x8004, ITEM_TM63
     SetVar VAR_0x8005, 1
     GoToIfCannotFitItem VAR_0x8004, VAR_0x8005, VAR_RESULT, _0CC7
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     SetFlag FLAG_UNK_0x00CC
     GoTo _0CBC
 
@@ -1105,7 +1008,7 @@ _0CBC:
     End
 
 _0CC7:
-    CallCommonScript 0x7E1
+    MessageBagIsFull
     CloseMessage
     ReleaseAll
     End
@@ -1130,32 +1033,32 @@ _0CE4:
     ReleaseAll
     End
 
-_0CF7:
+VeilstoneCity_GalacticGruntWarehouseGuard:
     LockAll
-    ApplyMovement 7, _0D30
-    ApplyMovement LOCALID_PLAYER, _0D28
+    ApplyMovement VEILSTONE_CITY_GRUNT_M_7, VeilstoneCity_Grunt_FaceSouth
+    ApplyMovement LOCALID_PLAYER, VeilstoneCity_Player_FaceNorth
     WaitMovement
-    Message 11
+    Message VeilstoneCity_Text_ThisIsGalacticWarehouse
     CloseMessage
-    ApplyMovement 7, _0D3C
-    ApplyMovement LOCALID_PLAYER, _0D54
+    ApplyMovement VEILSTONE_CITY_GRUNT_M_7, VeilstoneCity_Grunt_PushPlayerBack
+    ApplyMovement LOCALID_PLAYER, VeilstoneCity_Player_GetPushed
     WaitMovement
     ReleaseAll
     End
 
     .balign 4, 0
-_0D28:
+VeilstoneCity_Player_FaceNorth:
     WalkOnSpotNormalNorth
     EndMovement
 
     .balign 4, 0
-_0D30:
+VeilstoneCity_Grunt_FaceSouth:
     WalkOnSpotNormalSouth
     EmoteExclamationMark
     EndMovement
 
     .balign 4, 0
-_0D3C:
+VeilstoneCity_Grunt_PushPlayerBack:
     WalkFastSouth
     WalkOnSpotNormalWest
     Delay8 2
@@ -1164,7 +1067,7 @@ _0D3C:
     EndMovement
 
     .balign 4, 0
-_0D54:
+VeilstoneCity_Player_GetPushed:
     WalkNormalWest
     EndMovement
 
@@ -1172,9 +1075,8 @@ _0D5C:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    CheckBadgeAcquired BADGE_ID_COBBLE, VAR_RESULT
-    GoToIfEq VAR_RESULT, 1, _0D82
-    Message 12
+    GoToIfBadgeAcquired BADGE_ID_COBBLE, _0D82
+    Message VeilstoneCity_Text_ThisIsGalacticWarehouse1
     WaitABXPadPress
     CloseMessage
     ReleaseAll
@@ -1191,8 +1093,7 @@ _0D8D:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    CheckBadgeAcquired BADGE_ID_COBBLE, VAR_RESULT
-    GoToIfEq VAR_RESULT, 1, _0DB3
+    GoToIfBadgeAcquired BADGE_ID_COBBLE, _0DB3
     Message 13
     WaitABXPadPress
     CloseMessage
@@ -1375,10 +1276,7 @@ _0FB0:
     CallCommonScript 0x807
     GoToIfSet FLAG_UNK_0x009B, _0EF4
     GoTo _0ED8
-
-    .byte 2
-    .byte 0
-    .byte 0
+    End
 
     .balign 4, 0
 _0FE0:
@@ -1494,19 +1392,19 @@ VeilstoneCity_MeteoriteFromTheStars:
 
 _1184:
     LockAll
-    ApplyMovement 6, _11E8
+    ApplyMovement VEILSTONE_CITY_COUNTERPART, _11E8
     WaitMovement
     GetPlayerGender VAR_0x8004
     CallIfEq VAR_0x8004, GENDER_MALE, _11D6
     CallIfEq VAR_0x8004, GENDER_FEMALE, _11DE
     CloseMessage
-    ApplyMovement 6, _11FC
+    ApplyMovement VEILSTONE_CITY_COUNTERPART, _11FC
     WaitMovement
-    RemoveObject 6
+    RemoveObject VEILSTONE_CITY_COUNTERPART
     Call _00BA
-    ClearFlag FLAG_UNK_0x01A8
-    AddObject 6
-    SetVar VAR_UNK_0x411A, 2
+    ClearFlag FLAG_HIDE_VEILSTONE_COUNTERPART
+    AddObject VEILSTONE_CITY_COUNTERPART
+    SetVar VAR_VEILSTONE_STATE, 2
     ReleaseAll
     End
 
@@ -1565,6 +1463,4 @@ _123E:
     ReleaseAll
     End
 
-    .byte 0
-    .byte 0
-    .byte 0
+    .balign 4, 0

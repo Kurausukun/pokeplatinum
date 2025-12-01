@@ -114,7 +114,7 @@ int ov22_0225B738(ApplicationManager *appMan, int *param1)
     UnkStruct_ov22_0225B85C *v0 = ApplicationManager_Data(appMan);
 
     {
-        sub_020241B4();
+        G3_ResetG3X();
         NNS_G2dSetupSoftwareSpriteCamera();
         ov22_0225AFF8(v0->unk_10);
         G3_RequestSwapBuffers(GX_SORTMODE_AUTO, GX_BUFFERMODE_Z);
@@ -276,7 +276,7 @@ static void ov22_0225BB00(UnkStruct_ov22_0225B85C *param0)
     StringTemplate *v5;
     Strbuf *v6;
     Strbuf *v7;
-    MessageLoader *v8 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0385, HEAP_ID_13);
+    MessageLoader *v8 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0385, HEAP_ID_13);
     GF_ASSERT(v8);
     v5 = StringTemplate_Default(HEAP_ID_13);
 
@@ -346,7 +346,7 @@ static void ov22_0225BC18(UnkStruct_ov22_0225B85C *param0)
     StringTemplate_SetNickname(v1, 4, v6);
     Heap_Free(v5);
 
-    v7 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0385, HEAP_ID_13);
+    v7 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0385, HEAP_ID_13);
     GF_ASSERT(v7);
 
     v3 = MessageLoader_GetNewStrbuf(v7, 43);

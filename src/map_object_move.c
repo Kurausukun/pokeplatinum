@@ -28,6 +28,12 @@
 #include "unk_020655F4.h"
 #include "unk_020673B8.h"
 
+#define sinkInDeepSnowDistance    -12
+#define sinkInDeeperSnowDistance  -14
+#define sinkInDeepestSnowDistance -16
+#define sinkInMudDistance         -12
+#define sinkInDeepMudDistance     -14
+
 static int sub_02063478(const MapObject *mapObj);
 static void sub_020634DC(MapObject *mapObj);
 static void sub_020634F4(MapObject *mapObj);
@@ -39,7 +45,7 @@ static void sub_0206363C(MapObject *mapObj);
 static void sub_020636F0(MapObject *mapObj);
 static void sub_0206375C(MapObject *mapObj);
 static void sub_020637D4(MapObject *mapObj);
-static void sub_02063864(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3);
+static void MapObject_SinkIntoTerrain(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3);
 static void sub_02063964(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3);
 static void sub_0206397C(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3);
 static void sub_02063994(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3);
@@ -60,7 +66,7 @@ static void sub_02063CFC(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBeha
 static void sub_02063D30(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3);
 static void sub_02063DA8(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3);
 static void sub_02063DDC(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3);
-static void sub_02063E14(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3);
+static void MapObject_EmptyFunction(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3);
 
 static BOOL (*const Unk_020EE76C[4])(u8);
 static BOOL (*const Unk_020EE77C[4])(u8);
@@ -119,7 +125,7 @@ static BOOL sub_02063478(const MapObject *mapObj)
 static void sub_020634DC(MapObject *mapObj)
 {
     if (MapObject_CheckStatus(mapObj, MAP_OBJ_STATUS_12)) {
-        sub_020642F8(mapObj);
+        MapObject_RecalculateObjectHeight(mapObj);
     }
 }
 
@@ -174,7 +180,7 @@ static void sub_020635AC(MapObject *mapObj)
         sub_02063964(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063A30(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063A70(mapObj, currTileBehavior, prevTileBehavior, v2);
-        sub_02063864(mapObj, currTileBehavior, prevTileBehavior, v2);
+        MapObject_SinkIntoTerrain(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063C00(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063C30(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063D30(mapObj, currTileBehavior, prevTileBehavior, v2);
@@ -201,7 +207,7 @@ static void sub_0206363C(MapObject *mapObj)
         sub_02063CC8(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063D30(mapObj, currTileBehavior, prevTileBehavior, v2);
 
-        sub_02063E14(mapObj, currTileBehavior, prevTileBehavior, v2);
+        MapObject_EmptyFunction(mapObj, currTileBehavior, prevTileBehavior, v2);
     }
 }
 
@@ -218,7 +224,7 @@ static void sub_020636F0(MapObject *mapObj)
         sub_02063A78(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063D30(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063A64(mapObj, currTileBehavior, prevTileBehavior, v2);
-        sub_02063E14(mapObj, currTileBehavior, prevTileBehavior, v2);
+        MapObject_EmptyFunction(mapObj, currTileBehavior, prevTileBehavior, v2);
     }
 }
 
@@ -231,7 +237,7 @@ static void sub_0206375C(MapObject *mapObj)
         u8 prevTileBehavior = MapObject_GetPrevTileBehavior(mapObj);
         const UnkStruct_ov5_021ECD10 *v2 = ov5_021ECD04(mapObj);
 
-        sub_02063864(mapObj, currTileBehavior, prevTileBehavior, v2);
+        MapObject_SinkIntoTerrain(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063C94(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063CFC(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063A30(mapObj, currTileBehavior, prevTileBehavior, v2);
@@ -249,7 +255,7 @@ static void sub_020637D4(MapObject *mapObj)
         u8 prevTileBehavior = MapObject_GetPrevTileBehavior(mapObj);
         const UnkStruct_ov5_021ECD10 *v2 = ov5_021ECD04(mapObj);
 
-        sub_02063864(mapObj, currTileBehavior, prevTileBehavior, v2);
+        MapObject_SinkIntoTerrain(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063C94(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063CFC(mapObj, currTileBehavior, prevTileBehavior, v2);
         sub_02063A30(mapObj, currTileBehavior, prevTileBehavior, v2);
@@ -260,47 +266,47 @@ static void sub_020637D4(MapObject *mapObj)
     }
 }
 
-static void sub_02063864(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3)
+static void MapObject_SinkIntoTerrain(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3)
 {
-    if (sub_02062EFC(mapObj) == FALSE) {
+    if (MapObject_CheckFlagDoNotSinkIntoTerrain(mapObj) == FALSE) {
         if (TileBehavior_IsDeepMud(currTileBehavior) == TRUE || TileBehavior_IsDeepMudWithGrass(currTileBehavior) == TRUE) {
-            VecFx32 v0 = { 0, (FX32_ONE * -14), 0 };
+            VecFx32 spriteOffset = { 0, FX32_ONE * sinkInDeepMudDistance, 0 };
 
-            sub_020630CC(mapObj, &v0);
+            MapObject_SetSpriteTerrainOffset(mapObj, &spriteOffset);
             return;
         }
 
         if (TileBehavior_IsMud(currTileBehavior) == TRUE || TileBehavior_IsMudWithGrass(currTileBehavior) == TRUE) {
-            VecFx32 v1 = { 0, (FX32_ONE * -12), 0 };
+            VecFx32 spriteOffset = { 0, FX32_ONE * sinkInMudDistance, 0 };
 
-            sub_020630CC(mapObj, &v1);
+            MapObject_SetSpriteTerrainOffset(mapObj, &spriteOffset);
             return;
         }
 
         if (TileBehavior_IsDeepestSnow(currTileBehavior) == TRUE) {
-            VecFx32 v2 = { 0, (FX32_ONE * -16), 0 };
+            VecFx32 spriteOffset = { 0, FX32_ONE * sinkInDeepestSnowDistance, 0 };
 
-            sub_020630CC(mapObj, &v2);
+            MapObject_SetSpriteTerrainOffset(mapObj, &spriteOffset);
             return;
         }
 
         if (TileBehavior_IsDeeperSnow(currTileBehavior) == TRUE) {
-            VecFx32 v3 = { 0, (FX32_ONE * -14), 0 };
+            VecFx32 spriteOffset = { 0, FX32_ONE * sinkInDeeperSnowDistance, 0 };
 
-            sub_020630CC(mapObj, &v3);
+            MapObject_SetSpriteTerrainOffset(mapObj, &spriteOffset);
             return;
         }
 
         if (TileBehavior_IsDeepSnow(currTileBehavior) == TRUE) {
-            VecFx32 v4 = { 0, (FX32_ONE * -12), 0 };
+            VecFx32 spriteOffset = { 0, FX32_ONE * sinkInDeepSnowDistance, 0 };
 
-            sub_020630CC(mapObj, &v4);
+            MapObject_SetSpriteTerrainOffset(mapObj, &spriteOffset);
             return;
         }
     }
 
-    VecFx32 v5 = { 0, 0, 0 };
-    sub_020630CC(mapObj, &v5);
+    VecFx32 spriteOffset = { 0, 0, 0 };
+    MapObject_SetSpriteTerrainOffset(mapObj, &spriteOffset);
 }
 
 static void sub_02063964(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3)
@@ -561,7 +567,7 @@ static void sub_02063DDC(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBeha
     }
 }
 
-static void sub_02063E14(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3)
+static void MapObject_EmptyFunction(MapObject *mapObj, u8 currTileBehavior, u8 prevTileBehavior, const UnkStruct_ov5_021ECD10 *param3)
 {
     return;
 }
@@ -904,24 +910,24 @@ void MapObject_MovePosInDir(MapObject *mapObj, int dir, fx32 distance)
     MapObject_SetPos(mapObj, &pos);
 }
 
-int sub_020642F8(MapObject *mapObj)
+int MapObject_RecalculateObjectHeight(MapObject *mapObj)
 {
-    VecFx32 pos, v1;
+    VecFx32 pos, updatedPos;
 
     MapObject_GetPosPtr(mapObj, &pos);
-    v1 = pos;
+    updatedPos = pos;
 
     if (MapObject_IsHeightCalculationDisabled(mapObj) == TRUE) {
         MapObject_SetStatusFlagOff(mapObj, MAP_OBJ_STATUS_12);
-        return 0;
+        return FALSE;
     }
 
-    int v2 = sub_02062FAC(mapObj);
+    int dynamicHeightCalculationEnabled = MapObject_IsDynamicHeightCalculationEnabled(mapObj);
     FieldSystem *fieldSystem = MapObject_FieldSystem(mapObj);
-    int v4 = sub_020644D0(fieldSystem, &v1, v2);
+    int heightUpdated = MapObject_RecalculatePositionHeight(fieldSystem, &updatedPos, dynamicHeightCalculationEnabled);
 
-    if (v4 == TRUE) {
-        pos.y = v1.y;
+    if (heightUpdated == TRUE) {
+        pos.y = updatedPos.y;
         MapObject_SetPos(mapObj, &pos);
         MapObject_SetYPrev(mapObj, MapObject_GetY(mapObj));
         MapObject_SetY(mapObj, (((pos.y) >> 3) / FX32_ONE));
@@ -930,7 +936,7 @@ int sub_020642F8(MapObject *mapObj)
         MapObject_SetStatusFlagOn(mapObj, MAP_OBJ_STATUS_12);
     }
 
-    return v4;
+    return heightUpdated;
 }
 
 int MapObject_SetTileBehaviors(MapObject *mapObj)
@@ -1041,21 +1047,21 @@ int sub_020644A4(FieldSystem *fieldSystem, VecFx32 *pos)
     return TRUE;
 }
 
-int sub_020644D0(FieldSystem *fieldSystem, VecFx32 *pos, int param2)
+int MapObject_RecalculatePositionHeight(FieldSystem *fieldSystem, VecFx32 *pos, int dynamicHeightCalculationEnabled)
 {
-    fx32 v0;
-    u8 v1;
+    fx32 objectHeight;
+    u8 newObjectHeightSource;
 
-    v0 = TerrainCollisionManager_GetHeight(fieldSystem, pos->y, pos->x, pos->z, &v1);
+    objectHeight = TerrainCollisionManager_GetHeight(fieldSystem, pos->y, pos->x, pos->z, &newObjectHeightSource);
 
-    if (v1 == 0) {
+    if (newObjectHeightSource == CALCULATED_HEIGHT_SOURCE_NONE) {
         return FALSE;
     }
 
-    if (v1 == 2 && param2 == 0) {
+    if (newObjectHeightSource == CALCULATED_HEIGHT_SOURCE_DYNAMIC && dynamicHeightCalculationEnabled == FALSE) {
         return FALSE;
     }
 
-    pos->y = v0;
+    pos->y = objectHeight;
     return TRUE;
 }

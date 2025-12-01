@@ -187,11 +187,11 @@ int ov117_02260668(ApplicationManager *appMan, int *param1)
     GX_SetVisibleWnd(GX_WNDMASK_NONE);
     GXS_SetVisibleWnd(GX_WNDMASK_NONE);
     G2_SetBlendAlpha(GX_BLEND_PLANEMASK_BG0, GX_BLEND_ALL, 16, 16);
-    G2S_SetBlendAlpha((GX_BLEND_PLANEMASK_BG3), (GX_BLEND_BGALL | GX_BLEND_PLANEMASK_OBJ), 13, 3);
+    G2S_SetBlendAlpha(GX_BLEND_PLANEMASK_BG3, GX_BLEND_BGALL | GX_BLEND_PLANEMASK_OBJ, 13, 3);
 
     v0 = ApplicationManager_NewData(appMan, sizeof(UnkStruct_ov117_02261280), HEAP_ID_110);
     MI_CpuClear8(v0, sizeof(UnkStruct_ov117_02261280));
-    Heap_FndInitAllocatorForExpHeap(&v0->unk_A8, HEAP_ID_110, 32);
+    HeapExp_FndInitAllocator(&v0->unk_A8, HEAP_ID_110, 32);
 
     v0->unk_98 = ov117_02260E14(HEAP_ID_110);
     v0->unk_00 = ApplicationManager_Args(appMan);
@@ -201,7 +201,7 @@ int ov117_02260668(ApplicationManager *appMan, int *param1)
     PaletteData_SetAutoTransparent(v0->unk_8C, 1);
     PaletteData_AllocBuffer(v0->unk_8C, 0, 0x200, HEAP_ID_110);
     PaletteData_AllocBuffer(v0->unk_8C, 1, 0x200, HEAP_ID_110);
-    PaletteData_AllocBuffer(v0->unk_8C, 2, (((16 - 2) * 16) * sizeof(u16)), HEAP_ID_110);
+    PaletteData_AllocBuffer(v0->unk_8C, 2, ((16 - 2) * 16) * sizeof(u16), HEAP_ID_110);
     PaletteData_AllocBuffer(v0->unk_8C, 3, 0x200, HEAP_ID_110);
 
     v0->unk_2C = BgConfig_New(HEAP_ID_110);
@@ -215,21 +215,21 @@ int ov117_02260668(ApplicationManager *appMan, int *param1)
 
     v0->unk_24 = SpriteSystem_Alloc(HEAP_ID_110);
 
-    SpriteSystem_Init(v0->unk_24, &Unk_ov117_022669A8, &Unk_ov117_0226697C, (16 + 16));
+    SpriteSystem_Init(v0->unk_24, &Unk_ov117_022669A8, &Unk_ov117_0226697C, 16 + 16);
     ReserveVramForWirelessIconChars(NNS_G2D_VRAM_TYPE_2DMAIN, GX_OBJVRAMMODE_CHAR_1D_64K);
     ReserveSlotsForWirelessIconPalette(NNS_G2D_VRAM_TYPE_2DMAIN);
 
     v0->unk_28 = SpriteManager_New(v0->unk_24);
 
-    SpriteSystem_InitSprites(v0->unk_24, v0->unk_28, (96 + 128));
+    SpriteSystem_InitSprites(v0->unk_24, v0->unk_28, 96 + 128);
     SpriteSystem_InitManagerWithCapacities(v0->unk_24, v0->unk_28, &Unk_ov117_02266990);
-    SetSubScreenViewRect(SpriteSystem_GetRenderer(v0->unk_24), 0, ((192 + 160) << FX32_SHIFT));
+    SetSubScreenViewRect(SpriteSystem_GetRenderer(v0->unk_24), 0, (192 + 160) << FX32_SHIFT);
     ov117_02261574(v0);
 
-    v0->unk_80 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0009, HEAP_ID_110);
+    v0->unk_80 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0009, HEAP_ID_110);
     v0->unk_84 = StringTemplate_Default(HEAP_ID_110);
-    v0->unk_88 = Strbuf_Init((2 * 160), HEAP_ID_110);
-    v0->unk_90 = sub_02012744((2 * 6 + 6 + 1), HEAP_ID_110);
+    v0->unk_88 = Strbuf_Init(2 * 160, HEAP_ID_110);
+    v0->unk_90 = sub_02012744(2 * 6 + 6 + 1, HEAP_ID_110);
 
     ov117_02265210(v0, &v0->unk_1468);
 
@@ -265,9 +265,9 @@ int ov117_02260668(ApplicationManager *appMan, int *param1)
     GXLayers_EngineBToggleLayers(GX_PLANEMASK_OBJ, 1);
 
     {
-        RenderControlFlags_SetAutoScrollFlags(1);
-        RenderControlFlags_SetCanABSpeedUpPrint(0);
-        RenderControlFlags_SetSpeedUpOnTouch(0);
+        RenderControlFlags_SetAutoScrollFlags(AUTO_SCROLL_ENABLED);
+        RenderControlFlags_SetCanABSpeedUpPrint(FALSE);
+        RenderControlFlags_SetSpeedUpOnTouch(FALSE);
     }
 
     v0->unk_1C = ov114_0225CAD4(SpriteManager_GetSpriteList(v0->unk_28), HEAP_ID_110);
@@ -477,10 +477,10 @@ int ov117_02260C10(ApplicationManager *appMan, int *param1)
     ov117_02260EB8(v0->unk_98);
     DisableTouchPad();
     ApplicationManager_FreeData(appMan);
-    RenderControlFlags_SetCanABSpeedUpPrint(0);
-    RenderControlFlags_SetAutoScrollFlags(0);
-    RenderControlFlags_SetSpeedUpOnTouch(0);
-    sub_02039794();
+    RenderControlFlags_SetCanABSpeedUpPrint(FALSE);
+    RenderControlFlags_SetAutoScrollFlags(AUTO_SCROLL_DISABLED);
+    RenderControlFlags_SetSpeedUpOnTouch(FALSE);
+    NetworkIcon_Destroy();
 
     return 1;
 }
@@ -539,14 +539,14 @@ static void ov117_02260EC0(UnkStruct_ov117_02261280 *param0)
 
     param0->camera1 = Camera_Alloc(110);
 
-    Camera_InitWithTarget(&v0, (0x7b << FX32_SHIFT), &Unk_ov117_02266918, ((22 * 0xffff) / 360), 1, 0, param0->camera1);
-    Camera_SetClipping((FX32_ONE), (FX32_ONE * 900), param0->camera1);
+    Camera_InitWithTarget(&v0, 0x7b << FX32_SHIFT, &Unk_ov117_02266918, (22 * 0xffff) / 360, 1, 0, param0->camera1);
+    Camera_SetClipping(FX32_ONE, FX32_ONE * 900, param0->camera1);
     Camera_SetAsActive(param0->camera1);
 
     param0->camera2 = Camera_Alloc(110);
 
-    Camera_InitWithTarget(&v0, (80 << FX32_SHIFT), &Unk_ov117_02266918, ((22 * 0xffff) / 360), 1, 0, param0->camera2);
-    Camera_SetClipping((FX32_ONE), (FX32_ONE * 900), param0->camera2);
+    Camera_InitWithTarget(&v0, 80 << FX32_SHIFT, &Unk_ov117_02266918, (22 * 0xffff) / 360, 1, 0, param0->camera2);
+    Camera_SetClipping(FX32_ONE, FX32_ONE * 900, param0->camera2);
 }
 
 static void ov117_02260F64(UnkStruct_ov117_02261280 *param0)
@@ -581,7 +581,7 @@ static void ov117_02260F7C(SysTask *param0, void *param1)
     ov117_02264930(v0);
 
     {
-        sub_020241B4();
+        G3_ResetG3X();
         Camera_SetAsActive(v0->camera1);
         Camera_ComputeProjectionMatrix(1, v0->camera1);
         Camera_ComputeViewMatrix();
@@ -610,11 +610,11 @@ static void ov117_02260F7C(SysTask *param0, void *param1)
     {
         int v4;
 
-        sub_020241B4();
+        G3_ResetG3X();
         v4 = ParticleSystem_DrawAll();
 
         if (v4 > 0) {
-            sub_020241B4();
+            G3_ResetG3X();
         }
 
         ParticleSystem_UpdateAll();
@@ -665,47 +665,48 @@ static void ov117_022610D8(BgConfig *param0)
 
     {
         BgTemplate v2[] = {
-            { 0,
-                0,
-                0x1000,
-                0,
-                3,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x0000,
-                GX_BG_CHARBASE_0x04000,
-                GX_BG_EXTPLTT_01,
-                0,
-                0,
-                0,
-                0 },
-
-            { 0,
-                0,
-                0x2000,
-                0,
-                4,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x1000,
-                GX_BG_CHARBASE_0x0c000,
-                GX_BG_EXTPLTT_01,
-                1,
-                0,
-                0,
-                0 },
-
-            { 0,
-                0,
-                0x1000,
-                0,
-                3,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x3000,
-                GX_BG_CHARBASE_0x10000,
-                GX_BG_EXTPLTT_01,
-                2,
-                0,
-                0,
-                0 },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x1000,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_512x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x0000,
+                .charBase = GX_BG_CHARBASE_0x04000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 0,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x2000,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_512x512,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x1000,
+                .charBase = GX_BG_CHARBASE_0x0c000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 1,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x1000,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_512x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x3000,
+                .charBase = GX_BG_CHARBASE_0x10000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 2,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_1, &v2[0], 0);
@@ -728,61 +729,62 @@ static void ov117_022610D8(BgConfig *param0)
     {
         int v3;
         static const BgTemplate v4[] = {
-            { 0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x0000,
-                GX_BG_CHARBASE_0x08000,
-                GX_BG_EXTPLTT_01,
-                1,
-                0,
-                0,
-                0 },
-
-            { 0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x2000,
-                GX_BG_CHARBASE_0x10000,
-                GX_BG_EXTPLTT_01,
-                3,
-                0,
-                0,
-                0 },
-
-            { 0,
-                0,
-                0x1000,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0x4000,
-                GX_BG_CHARBASE_0x14000,
-                GX_BG_EXTPLTT_01,
-                3,
-                0,
-                0,
-                0 },
-
-            { 0,
-                0,
-                0x400,
-                0,
-                1,
-                GX_BG_COLORMODE_256,
-                GX_BG_SCRBASE_0x6000,
-                GX_BG_CHARBASE_0x18000,
-                GX_BG_EXTPLTT_01,
-                0,
-                0,
-                0,
-                0 },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x0000,
+                .charBase = GX_BG_CHARBASE_0x08000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 1,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x2000,
+                .charBase = GX_BG_CHARBASE_0x10000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 3,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x1000,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0x4000,
+                .charBase = GX_BG_CHARBASE_0x14000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 3,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x400,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_256,
+                .screenBase = GX_BG_SCRBASE_0x6000,
+                .charBase = GX_BG_CHARBASE_0x18000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 0,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
         };
 
         for (v3 = 0; v3 < NELEMS(v4); v3++) {
@@ -806,14 +808,14 @@ static void ov117_02261280(UnkStruct_ov117_02261280 *param0)
 {
     int v0;
 
-    Window_Add(param0->unk_2C, &param0->unk_30[0], 1, 11, 0x13, 20, 4, 0xe, ((0x8000 - 0x2000) / 32));
-    Window_Add(param0->unk_2C, &param0->unk_30[1], 4, 0x12, 1, 10, 2, 5, (((0x8000 - 0x2000) / 32) + (10 * 2)));
-    Window_Add(param0->unk_2C, &param0->unk_30[2], 4, 0x15, 0xe, 10, 2, 5, ((((0x8000 - 0x2000) / 32) + (10 * 2)) + (10 * 2)));
-    Window_Add(param0->unk_2C, &param0->unk_30[3], 4, 1, 14, 10, 2, 5, (((((0x8000 - 0x2000) / 32) + (10 * 2)) + (10 * 2)) + (10 * 2)));
+    Window_Add(param0->unk_2C, &param0->unk_30[0], 1, 11, 0x13, 20, 4, 0xe, (0x8000 - 0x2000) / 32);
+    Window_Add(param0->unk_2C, &param0->unk_30[1], 4, 0x12, 1, 10, 2, 5, ((0x8000 - 0x2000) / 32) + (10 * 2));
+    Window_Add(param0->unk_2C, &param0->unk_30[2], 4, 0x15, 0xe, 10, 2, 5, (((0x8000 - 0x2000) / 32) + (10 * 2)) + (10 * 2));
+    Window_Add(param0->unk_2C, &param0->unk_30[3], 4, 1, 14, 10, 2, 5, ((((0x8000 - 0x2000) / 32) + (10 * 2)) + (10 * 2)) + (10 * 2));
     Window_FillTilemap(&param0->unk_30[1], 0xf);
     Window_FillTilemap(&param0->unk_30[2], 0xf);
     Window_FillTilemap(&param0->unk_30[3], 0xf);
-    Window_Add(param0->unk_2C, &param0->unk_30[4], 4, 2, 0x13, 0x1c, 4, 5, (((((((0x8000 - 0x2000) / 32) + (10 * 2)) + (10 * 2)) + (10 * 2)) + (10 * 2)) + 9));
+    Window_Add(param0->unk_2C, &param0->unk_30[4], 4, 2, 0x13, 0x1c, 4, 5, ((((((0x8000 - 0x2000) / 32) + (10 * 2)) + (10 * 2)) + (10 * 2)) + (10 * 2)) + 9);
     Window_FillTilemap(&param0->unk_30[4], 0xf);
 }
 
@@ -821,7 +823,7 @@ static void ov117_02261368(UnkStruct_ov117_02261280 *param0)
 {
     Strbuf *v0;
 
-    Window_DrawStandardFrame(&param0->unk_30[4], 1, ((((((0x8000 - 0x2000) / 32) + (10 * 2)) + (10 * 2)) + (10 * 2)) + (10 * 2)), 6);
+    Window_DrawStandardFrame(&param0->unk_30[4], 1, (((((0x8000 - 0x2000) / 32) + (10 * 2)) + (10 * 2)) + (10 * 2)) + (10 * 2), 6);
 
     v0 = MessageLoader_GetNewStrbuf(param0->unk_80, 3);
     Text_AddPrinterWithParamsAndColor(&param0->unk_30[4], FONT_SYSTEM, v0, 0, 0, TEXT_SPEED_INSTANT, TEXT_COLOR(1, 2, 15), NULL);
@@ -901,11 +903,11 @@ static void ov117_02261574(UnkStruct_ov117_02261280 *param0)
 
     ParticleSystem_ZeroAll();
 
-    v0 = Heap_AllocFromHeap(HEAP_ID_110, 0x4800);
+    v0 = Heap_Alloc(HEAP_ID_110, 0x4800);
     param0->unk_A4 = ParticleSystem_New(ov117_02261644, ov117_02261668, v0, 0x4800, 1, HEAP_ID_110);
     camera = ParticleSystem_GetCamera(param0->unk_A4);
 
-    Camera_SetClipping((FX32_ONE), (FX32_ONE * 900), camera);
+    Camera_SetClipping(FX32_ONE, FX32_ONE * 900, camera);
     v2 = ParticleSystem_LoadResourceFromNARC(190, 0, 110);
     ParticleSystem_SetResource(param0->unk_A4, v2, (1 << 1) | (1 << 3), 1);
 }
@@ -1054,7 +1056,7 @@ static void ov117_02261AC4(UnkStruct_ov117_02261280 *param0)
 static void ov117_02261AC8(UnkStruct_ov117_02261280 *param0, NARC *param1)
 {
     PaletteData_LoadBufferFromFileStart(param0->unk_8C, 173, 5, 110, 1, 5 * 0x20, 0);
-    PaletteData_LoadBufferFromFile(param0->unk_8C, 173, 6, 110, 1, (0x20 * 10), 6 * 16, 6 * 16);
+    PaletteData_LoadBufferFromFile(param0->unk_8C, 173, 6, 110, 1, 0x20 * 10, 6 * 16, 6 * 16);
     Graphics_LoadTilesToBgLayerFromOpenNARC(param1, 13, param0->unk_2C, 6, 0, 0, 0, HEAP_ID_110);
     Graphics_LoadTilemapToBgLayerFromOpenNARC(param1, 14, param0->unk_2C, 6, 0, 0, 0, HEAP_ID_110);
     Graphics_LoadTilesToBgLayerFromOpenNARC(param1, 18, param0->unk_2C, 5, 0, 0, 0, HEAP_ID_110);
@@ -1077,7 +1079,7 @@ static void ov117_02261AC8(UnkStruct_ov117_02261280 *param0, NARC *param1)
     ov117_02264AF0(param0);
     ov117_02264AB0(param0);
 
-    LoadStandardWindowGraphics(param0->unk_2C, BG_LAYER_SUB_0, ((((((0x8000 - 0x2000) / 32) + (10 * 2)) + (10 * 2)) + (10 * 2)) + (10 * 2)), 6, 0, HEAP_ID_110);
+    LoadStandardWindowGraphics(param0->unk_2C, BG_LAYER_SUB_0, (((((0x8000 - 0x2000) / 32) + (10 * 2)) + (10 * 2)) + (10 * 2)) + (10 * 2), 6, 0, HEAP_ID_110);
     PaletteData_LoadBufferFromHardware(param0->unk_8C, 1, 6 * 16, 0x20);
     PaletteData_FillBufferRange(param0->unk_8C, 1, 2, 0x0, 0, 1);
 }
@@ -1099,8 +1101,8 @@ static void ov117_02261C2C(UnkStruct_ov117_02261280 *param0, NARC *param1)
 
     Easy3DModel_LoadFrom(&v2->unk_00, param1, Unk_ov117_022669F0[v4].unk_00, HEAP_ID_110);
     Easy3DObject_Init(&v2->unk_10, &v2->unk_00);
-    Easy3DObject_SetPosition(&v2->unk_10, (FX32_CONST(0)), (FX32_CONST(-25)), (FX32_CONST(0)));
-    Easy3DObject_SetScale(&v2->unk_10, (FX32_CONST(1.00f)), (FX32_CONST(1.00f)), (FX32_CONST(1.00f)));
+    Easy3DObject_SetPosition(&v2->unk_10, FX32_CONST(0), FX32_CONST(-25), FX32_CONST(0));
+    Easy3DObject_SetScale(&v2->unk_10, FX32_CONST(1.00f), FX32_CONST(1.00f), FX32_CONST(1.00f));
     Easy3DObject_SetVisible(&v2->unk_10, 1);
     Easy3DModel_LoadFrom(&v2->unk_88[0], param1, Unk_ov117_022669F0[v4].unk_04, HEAP_ID_110);
     Easy3DModel_LoadFrom(&v2->unk_88[1], param1, Unk_ov117_022669F0[v4].unk_08, HEAP_ID_110);
@@ -1122,8 +1124,8 @@ static void ov117_02261C2C(UnkStruct_ov117_02261280 *param0, NARC *param1)
 
     Easy3DModel_LoadFrom(&v3->unk_00, param1, 30, HEAP_ID_110);
     Easy3DObject_Init(&v3->unk_10, &v3->unk_00);
-    Easy3DObject_SetPosition(&v3->unk_10, (FX32_CONST(0)), (FX32_CONST(-25)), (FX32_CONST(0)));
-    Easy3DObject_SetScale(&v3->unk_10, (FX32_CONST(1.00f)), (FX32_CONST(1.00f)), (FX32_CONST(1.00f)));
+    Easy3DObject_SetPosition(&v3->unk_10, FX32_CONST(0), FX32_CONST(-25), FX32_CONST(0));
+    Easy3DObject_SetScale(&v3->unk_10, FX32_CONST(1.00f), FX32_CONST(1.00f), FX32_CONST(1.00f));
     Easy3DObject_SetVisible(&v3->unk_10, 1);
 }
 
@@ -1168,8 +1170,8 @@ BOOL ov117_02261E38(UnkStruct_ov117_02261280 *param0, int param1)
     for (v2 = 0; v2 < 8; v2++) {
         if (v0->unk_C8[v2][v3].unk_00 == 0) {
             Easy3DObject_Init(&v0->unk_C8[v2][v3].unk_04, v1);
-            Easy3DObject_SetPosition(&v0->unk_C8[v2][v3].unk_04, (FX32_CONST(0)), (FX32_CONST(-25)), (FX32_CONST(0)));
-            Easy3DObject_SetScale(&v0->unk_C8[v2][v3].unk_04, (FX32_CONST(1.00f)), (FX32_CONST(1.00f)), (FX32_CONST(1.00f)));
+            Easy3DObject_SetPosition(&v0->unk_C8[v2][v3].unk_04, FX32_CONST(0), FX32_CONST(-25), FX32_CONST(0));
+            Easy3DObject_SetScale(&v0->unk_C8[v2][v3].unk_04, FX32_CONST(1.00f), FX32_CONST(1.00f), FX32_CONST(1.00f));
             Easy3DObject_SetVisible(&v0->unk_C8[v2][v3].unk_04, 1);
             Easy3DAnim_SetFrame(&v0->unk_C8[v2][v3].unk_7C, 0);
             Easy3DObject_AddAnim(&v0->unk_C8[v2][v3].unk_04, &v0->unk_C8[v2][v3].unk_7C);

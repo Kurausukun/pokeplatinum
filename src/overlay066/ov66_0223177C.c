@@ -99,7 +99,7 @@ static BOOL ov66_022324D0(enum PlazaMinigame param0, u32 param1);
 
 UnkStruct_ov66_0223177C *ov66_0223177C(u32 heapID)
 {
-    UnkStruct_ov66_0223177C *v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_ov66_0223177C));
+    UnkStruct_ov66_0223177C *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_ov66_0223177C));
     memset(v0, 0, sizeof(UnkStruct_ov66_0223177C));
 
     ov66_02231D38(&v0->unk_08);
@@ -418,7 +418,7 @@ BOOL ov66_02231C94(const UnkStruct_ov66_0223177C *param0, const UnkStruct_ov66_0
     GF_ASSERT(ov66_02231C60(param0));
 
     v2 = param0->unk_5C.unk_188.unk_2C;
-    v1 = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0653, heapID);
+    v1 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0653, heapID);
     v0 = StringTemplate_Default(heapID);
 
     if (v2->unk_00 < 9) {

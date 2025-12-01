@@ -18,7 +18,7 @@ _0022:
     End
 
 _0026:
-    GoToIfSet FLAG_UNK_0x008E, _0033
+    GoToIfSet FLAG_MAP_LOCAL, _0033
     End
 
 _0033:
@@ -44,18 +44,18 @@ _0061:
     EnableHiddenLocation HIDDEN_LOCATION_SPRING_PATH
     SetVar VAR_UNK_0x40AA, 1
     PlayFanfare SEQ_SE_PL_SYUWA
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     Warp MAP_HEADER_SENDOFF_SPRING, 0, 32, 17, 1
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     End
 
 _009E:
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     Warp MAP_HEADER_DISTORTION_WORLD_B7F, 0, 89, 57, 1
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     End
 
@@ -66,16 +66,16 @@ _00C4:
     Message 2
     WaitCry
     CloseMessage
-    SetFlag FLAG_UNK_0x008E
+    SetFlag FLAG_MAP_LOCAL
     StartGiratinaOriginBattle SPECIES_GIRATINA, 47
-    ClearFlag FLAG_UNK_0x008E
+    ClearFlag FLAG_MAP_LOCAL
     CheckWonBattle VAR_RESULT
-    ScrCmd_314 VAR_RESULT
-    GoToIfEq VAR_RESULT, 2, _0204
-    GoToIfEq VAR_RESULT, 3, _0204
-    GoToIfEq VAR_RESULT, 5, _014E
-    GoToIfEq VAR_RESULT, 6, _014E
-    GoToIfEq VAR_RESULT, 4, _016E
+    GetBattleResult VAR_RESULT
+    GoToIfEq VAR_RESULT, BATTLE_RESULT_LOSE, _0204
+    GoToIfEq VAR_RESULT, BATTLE_RESULT_DRAW, _0204
+    GoToIfEq VAR_RESULT, BATTLE_RESULT_PLAYER_FLED, _014E
+    GoToIfEq VAR_RESULT, BATTLE_RESULT_ENEMY_FLED, _014E
+    GoToIfEq VAR_RESULT, BATTLE_RESULT_CAPTURED_MON, _016E
     ScrCmd_311 130
     ScrCmd_311 129
     ApplyMovement 129, _0250
@@ -109,8 +109,8 @@ _016E:
 _0194:
     CloseMessage
     GetPlayerMapPos VAR_0x8004, VAR_0x8005
-    ScrCmd_066 VAR_0x8004, VAR_0x8005
-    ApplyMovement 241, _0280
+    AddFreeCamera VAR_0x8004, VAR_0x8005
+    ApplyFreeCameraMovement _0280
     ApplyMovement 130, _026C
     ApplyMovement 129, _0258
     ApplyMovement LOCALID_PLAYER, _0244
@@ -123,9 +123,9 @@ _0194:
     ApplyMovement 130, _0274
     WaitMovement
     ScrCmd_312 130
-    ApplyMovement 241, _0288
+    ApplyFreeCameraMovement _0288
     WaitMovement
-    ScrCmd_067
+    RestoreCamera
     Message 11
     ApplyMovement 129, _0264
     WaitMovement

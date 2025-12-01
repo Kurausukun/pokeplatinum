@@ -2,17 +2,9 @@
 #define POKEPLATINUM_BERRY_PATCHES_H
 
 #include "constants/heap.h"
+#include "generated/berry_growth_stages.h"
 
 #define MAX_BERRY_PATCHES 128
-
-enum BerryGrowthStage {
-    BERRY_GROWTH_STAGE_NONE = 0,
-    BERRY_GROWTH_STAGE_PLANTED,
-    BERRY_GROWTH_STAGE_SPROUTED,
-    BERRY_GROWTH_STAGE_GROWING,
-    BERRY_GROWTH_STAGE_BLOOMING,
-    BERRY_GROWTH_STAGE_FRUIT,
-};
 
 enum MulchType {
     MULCH_TYPE_NONE = 0,
@@ -48,8 +40,8 @@ typedef struct BerryGrowthData {
 } BerryGrowthData;
 
 void BerryPatches_Clear(BerryPatch *patches);
-void BerryPatches_Init(BerryPatch *patches, enum HeapId heapID, const u16 *initPatches, int initSize);
-BerryGrowthData *BerryGrowthData_Init(enum HeapId heapID);
+void BerryPatches_Init(BerryPatch *patches, enum HeapID heapID, const u16 *initPatches, int initSize);
+BerryGrowthData *BerryGrowthData_Init(enum HeapID heapID);
 enum BerryGrowthStage BerryPatches_GetPatchGrowthStage(const BerryPatch *patches, int patchID);
 int BerryPatches_GetPatchBerryID(const BerryPatch *patches, int patchID);
 enum SoilMoisture BerryPatches_GetPatchMoisture(const BerryPatch *patches, int patchID);

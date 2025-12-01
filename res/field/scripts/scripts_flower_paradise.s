@@ -25,13 +25,13 @@ _005C:
     End
 
 _0062:
-    GoToIfSet FLAG_UNK_0x008E, _006F
+    GoToIfSet FLAG_MAP_LOCAL, _006F
     End
 
 _006F:
     SetFlag FLAG_UNK_0x0251
     RemoveObject 0
-    ClearFlag FLAG_UNK_0x008E
+    ClearFlag FLAG_MAP_LOCAL
     End
 
 _007D:
@@ -41,9 +41,9 @@ _007D:
     PlayCry SPECIES_SHAYMIN
     Message 0
     CloseMessage
-    SetFlag FLAG_UNK_0x008E
+    SetFlag FLAG_MAP_LOCAL
     StartFatefulEncounter SPECIES_SHAYMIN, 30
-    ClearFlag FLAG_UNK_0x008E
+    ClearFlag FLAG_MAP_LOCAL
     CheckWonBattle VAR_RESULT
     GoToIfEq VAR_RESULT, FALSE, _00D7
     CheckDidNotCapture VAR_RESULT
@@ -66,6 +66,4 @@ _00D7:
     ReleaseAll
     End
 
-    .byte 0
-    .byte 0
-    .byte 0
+    .balign 4, 0

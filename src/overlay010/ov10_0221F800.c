@@ -4,11 +4,11 @@
 #include <string.h>
 
 #include "struct_decls/font_oam.h"
-#include "struct_decls/struct_0200C440_decl.h"
 #include "struct_decls/struct_02012744_decl.h"
 #include "struct_defs/struct_020127E8.h"
 #include "struct_defs/struct_02099F80.h"
 
+#include "applications/party_menu/main.h"
 #include "applications/pokemon_summary_screen/main.h"
 #include "overlay010/struct_ov10_0221F800.h"
 
@@ -18,6 +18,7 @@
 #include "communication_information.h"
 #include "communication_system.h"
 #include "font.h"
+#include "font_special_chars.h"
 #include "g3d_pipeline.h"
 #include "game_options.h"
 #include "graphics.h"
@@ -48,14 +49,12 @@
 #include "trainer_data.h"
 #include "trainer_info.h"
 #include "unk_0200679C.h"
-#include "unk_0200C440.h"
 #include "unk_02012744.h"
 #include "unk_0202419C.h"
 #include "unk_0202F1D4.h"
 #include "unk_020363E8.h"
 #include "unk_020366A0.h"
 #include "unk_020393C8.h"
-#include "unk_0207E0B8.h"
 #include "unk_0208C098.h"
 #include "vram_transfer.h"
 
@@ -484,7 +483,7 @@ static void ov10_0221F930(UnkStruct_ov10_0221FB28 *param0)
         Window_DrawMessageBoxWithScrollCursor(&param0->unk_B8C, 0, 1, 15);
 
         param0->unk_BAC = Text_AddPrinterWithParams(&param0->unk_B8C, FONT_MESSAGE, param0->unk_BA8, 0, 0, TEXT_SPEED_INSTANT, NULL);
-        param0->unk_BB4 = Menu_MakeYesNoChoiceWithCursorAt(param0->unk_0C, &Unk_ov10_02222A68, (1 + (18 + 12)), 14, 1, param0->unk_00->heapID);
+        param0->unk_BB4 = Menu_MakeYesNoChoiceWithCursorAt(param0->unk_0C, &Unk_ov10_02222A68, 1 + (18 + 12), 14, 1, param0->unk_00->heapID);
 
         Bg_ScheduleTilemapTransfer(param0->unk_0C, 0);
         param0->unk_BB0 = 4;
@@ -593,7 +592,7 @@ static u8 ov10_0221FBFC(UnkStruct_ov10_0221FB28 *param0)
         ov10_02222720(param0);
         ov10_02221C14(param0);
         sub_02039734();
-        sub_0208C120(0, param0->unk_00->heapID);
+        App_StartScreenFade(FALSE, param0->unk_00->heapID);
         SetVBlankCallback(ov10_02220C64, param0);
         return 1;
     }
@@ -617,7 +616,7 @@ static u8 ov10_0221FC78(UnkStruct_ov10_0221FB28 *param0)
         ov10_022217CC(param0);
         break;
     case 2:
-        sub_0208C120(0, param0->unk_00->heapID);
+        App_StartScreenFade(FALSE, param0->unk_00->heapID);
         SetVBlankCallback(ov10_02220C64, param0);
         param0->unk_B76 = 0;
         param0->unk_B70 = 8;
@@ -669,15 +668,15 @@ static u8 ov10_0221FD00(UnkStruct_ov10_0221FB28 *param0)
         sub_02039734();
         break;
     case 2:
-        sub_0208C120(0, param0->unk_00->heapID);
+        App_StartScreenFade(FALSE, param0->unk_00->heapID);
         SetVBlankCallback(ov10_02220C64, param0);
         param0->unk_B76 = 0;
         param0->unk_B70 = 4;
         param0->unk_B71 = 2;
         param0->unk_B68 = 12;
-        param0->unk_BA0 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0605, param0->unk_00->heapID);
+        param0->unk_BA0 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_BATTLE_VIDEO, param0->unk_00->heapID);
         param0->unk_BA4 = StringTemplate_Default(param0->unk_00->heapID);
-        param0->unk_BA8 = Strbuf_Init((2 * 160), param0->unk_00->heapID);
+        param0->unk_BA8 = Strbuf_Init(2 * 160, param0->unk_00->heapID);
         param0->unk_BB0 = 1;
 
         return 1;
@@ -1123,7 +1122,7 @@ static u8 ov10_022209E0(UnkStruct_ov10_0221FB28 *param0)
 
 static u8 ov10_02220A34(UnkStruct_ov10_0221FB28 *param0)
 {
-    sub_0208C120(1, param0->unk_00->heapID);
+    App_StartScreenFade(TRUE, param0->unk_00->heapID);
     param0->unk_B73 = 2;
     return 1;
 }
@@ -1276,19 +1275,18 @@ static void ov10_02220C94(UnkStruct_ov10_0221FB28 *param0, GXBG0As param1, int p
 
     {
         BgTemplate v1 = {
-            0,
-            0,
-            0x1000,
-            0,
-            3,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xf000,
-            GX_BG_CHARBASE_0x10000,
-            GX_BG_EXTPLTT_23,
-            3,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x1000,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_512x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xf000,
+            .charBase = GX_BG_CHARBASE_0x10000,
+            .bgExtPltt = GX_BG_EXTPLTT_23,
+            .priority = 3,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_0C, BG_LAYER_MAIN_3, &v1, 0);
@@ -1298,19 +1296,18 @@ static void ov10_02220C94(UnkStruct_ov10_0221FB28 *param0, GXBG0As param1, int p
 
     {
         BgTemplate v2 = {
-            0,
-            0,
-            0x1000,
-            0,
-            3,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xe000,
-            GX_BG_CHARBASE_0x10000,
-            GX_BG_EXTPLTT_23,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x1000,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_512x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xe000,
+            .charBase = GX_BG_CHARBASE_0x10000,
+            .bgExtPltt = GX_BG_EXTPLTT_23,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_0C, BG_LAYER_MAIN_2, &v2, 0);
@@ -1320,19 +1317,18 @@ static void ov10_02220C94(UnkStruct_ov10_0221FB28 *param0, GXBG0As param1, int p
 
     {
         BgTemplate v3 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xd800,
-            GX_BG_CHARBASE_0x10000,
-            GX_BG_EXTPLTT_01,
-            1,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xd800,
+            .charBase = GX_BG_CHARBASE_0x10000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 1,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_0C, BG_LAYER_MAIN_1, &v3, 0);
@@ -1346,19 +1342,18 @@ static void ov10_02220C94(UnkStruct_ov10_0221FB28 *param0, GXBG0As param1, int p
 
     if (param1 == GX_BG0_AS_2D) {
         BgTemplate v4 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0x0000,
-            GX_BG_CHARBASE_0x18000,
-            GX_BG_EXTPLTT_01,
-            0,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0x0000,
+            .charBase = GX_BG_CHARBASE_0x18000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 0,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_0C, BG_LAYER_MAIN_0, &v4, 0);
@@ -1435,12 +1430,12 @@ static void ov10_02220F1C(UnkStruct_ov10_0221FB28 *param0)
 
     LoadMessageBoxGraphics(param0->unk_0C, BG_LAYER_MAIN_0, 1, 15, v0, param0->unk_00->heapID);
     PaletteData_LoadBufferFromHardware(param0->unk_08, 0, 15 * 16, 0x20 * 1);
-    LoadStandardWindowGraphics(param0->unk_0C, BG_LAYER_MAIN_0, (1 + (18 + 12)), 14, 0, param0->unk_00->heapID);
+    LoadStandardWindowGraphics(param0->unk_0C, BG_LAYER_MAIN_0, 1 + (18 + 12), 14, 0, param0->unk_00->heapID);
     PaletteData_LoadBufferFromHardware(param0->unk_08, 0, 14 * 16, 0x20 * 1);
     Font_LoadTextPalette(0, 13 * 0x20, param0->unk_00->heapID);
     PaletteData_LoadBufferFromHardware(param0->unk_08, 0, 13 * 16, 0x20 * 1);
-    Window_Add(param0->unk_0C, &param0->unk_B7C, 0, 0x2, 0x13, 27, 4, 13, ((1 + (18 + 12)) + 9));
-    Window_Add(param0->unk_0C, &param0->unk_B8C, 0, 0x2, 0x13, 27, 4, 13, ((1 + (18 + 12)) + 9));
+    Window_Add(param0->unk_0C, &param0->unk_B7C, 0, 0x2, 0x13, 27, 4, 13, (1 + (18 + 12)) + 9);
+    Window_Add(param0->unk_0C, &param0->unk_B8C, 0, 0x2, 0x13, 27, 4, 13, (1 + (18 + 12)) + 9);
 }
 
 static void ov10_02221004(void)
@@ -1595,7 +1590,7 @@ static void ov10_022213B8(UnkStruct_ov10_0221FB28 *param0)
 
 static void ov10_02221440(UnkStruct_ov10_0221FB28 *param0, u32 param1, s16 param2, s16 param3)
 {
-    sub_020128C4(param0->unk_B3C[param1], param0->unk_B60[param1] + param2, param0->unk_B64[param1] + param3);
+    FontOAM_SetXY(param0->unk_B3C[param1], param0->unk_B60[param1] + param2, param0->unk_B64[param1] + param3);
 }
 
 static void ov10_0222146C(UnkStruct_ov10_0221FB28 *param0)
@@ -1694,26 +1689,26 @@ static void ov10_022216E0(UnkStruct_ov10_0221FB28 *param0)
     ManagedSprite_SetDrawFlag(param0->unk_198[13], 0);
 
     if (param0->unk_00->unk_2A == 3) {
-        ManagedSprite_SetPositionXY(param0->unk_198[12], 128, (96 - 24));
+        ManagedSprite_SetPositionXY(param0->unk_198[12], 128, 96 - 24);
         ManagedSprite_SetAnim(param0->unk_198[12], 3 - 1);
         return;
     }
 
     if (ov10_02220AD0() == 1) {
         if (param0->unk_00->unk_2A == 1) {
-            ManagedSprite_SetPositionXY(param0->unk_198[12], 48, (96 - 24));
-            ManagedSprite_SetPositionXY(param0->unk_198[13], 208, (96 - 24));
+            ManagedSprite_SetPositionXY(param0->unk_198[12], 48, 96 - 24);
+            ManagedSprite_SetPositionXY(param0->unk_198[13], 208, 96 - 24);
         } else {
-            ManagedSprite_SetPositionXY(param0->unk_198[12], 208, (96 - 24));
-            ManagedSprite_SetPositionXY(param0->unk_198[13], 48, (96 - 24));
+            ManagedSprite_SetPositionXY(param0->unk_198[12], 208, 96 - 24);
+            ManagedSprite_SetPositionXY(param0->unk_198[13], 48, 96 - 24);
         }
     } else {
         if (param0->unk_00->unk_2A == 1) {
-            ManagedSprite_SetPositionXY(param0->unk_198[12], 208, (96 - 24));
-            ManagedSprite_SetPositionXY(param0->unk_198[13], 48, (96 - 24));
+            ManagedSprite_SetPositionXY(param0->unk_198[12], 208, 96 - 24);
+            ManagedSprite_SetPositionXY(param0->unk_198[13], 48, 96 - 24);
         } else {
-            ManagedSprite_SetPositionXY(param0->unk_198[12], 48, (96 - 24));
-            ManagedSprite_SetPositionXY(param0->unk_198[13], 208, (96 - 24));
+            ManagedSprite_SetPositionXY(param0->unk_198[12], 48, 96 - 24);
+            ManagedSprite_SetPositionXY(param0->unk_198[13], 208, 96 - 24);
         }
     }
 
@@ -1731,11 +1726,11 @@ static void ov10_022217CC(UnkStruct_ov10_0221FB28 *param0)
     G3X_AlphaBlend(1);
     ParticleSystem_ZeroAll();
 
-    param0->unk_B54 = Heap_AllocFromHeap(param0->unk_00->heapID, 0x4800);
+    param0->unk_B54 = Heap_Alloc(param0->unk_00->heapID, 0x4800);
     param0->unk_B50 = ParticleSystem_New(ov10_02221928, ov10_0222194C, param0->unk_B54, 0x4800, 1, param0->unk_00->heapID);
 
     camera = ParticleSystem_GetCamera(param0->unk_B50);
-    Camera_SetClipping((FX32_ONE), (FX32_ONE * 900), camera);
+    Camera_SetClipping(FX32_ONE, FX32_ONE * 900, camera);
 
     v1 = ParticleSystem_LoadResourceFromNARC(61, 2, param0->unk_00->heapID);
     ParticleSystem_SetResource(param0->unk_B50, v1, (1 << 1) | (1 << 3), 1);
@@ -1756,7 +1751,7 @@ static int ov10_022218BC(UnkStruct_ov10_0221FB28 *param0)
         return 0;
     }
 
-    sub_020241B4();
+    G3_ResetG3X();
 
     if (ParticleSystem_GetActiveEmitterCount(param0->unk_B50) == 0) {
         return 0;
@@ -1825,19 +1820,18 @@ static void ov10_02221970(UnkStruct_ov10_0221FB28 *param0)
 
     {
         BgTemplate v1 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xf800,
-            GX_BG_CHARBASE_0x00000,
-            GX_BG_EXTPLTT_01,
-            1,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xf800,
+            .charBase = GX_BG_CHARBASE_0x00000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 1,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_0C, BG_LAYER_MAIN_1, &v1, 0);
@@ -1846,19 +1840,18 @@ static void ov10_02221970(UnkStruct_ov10_0221FB28 *param0)
 
     {
         BgTemplate v2 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xf000,
-            GX_BG_CHARBASE_0x10000,
-            GX_BG_EXTPLTT_01,
-            2,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xf000,
+            .charBase = GX_BG_CHARBASE_0x10000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 2,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_0C, BG_LAYER_MAIN_2, &v2, 0);
@@ -1867,19 +1860,18 @@ static void ov10_02221970(UnkStruct_ov10_0221FB28 *param0)
 
     {
         BgTemplate v3 = {
-            0,
-            0,
-            0x800,
-            0,
-            1,
-            GX_BG_COLORMODE_16,
-            GX_BG_SCRBASE_0xe800,
-            GX_BG_CHARBASE_0x10000,
-            GX_BG_EXTPLTT_01,
-            3,
-            0,
-            0,
-            0
+            .x = 0,
+            .y = 0,
+            .bufferSize = 0x800,
+            .baseTile = 0,
+            .screenSize = BG_SCREEN_SIZE_256x256,
+            .colorMode = GX_BG_COLORMODE_16,
+            .screenBase = GX_BG_SCRBASE_0xe800,
+            .charBase = GX_BG_CHARBASE_0x10000,
+            .bgExtPltt = GX_BG_EXTPLTT_01,
+            .priority = 3,
+            .areaOver = 0,
+            .mosaic = FALSE,
         };
 
         Bg_InitFromTemplate(param0->unk_0C, BG_LAYER_MAIN_3, &v3, 0);
@@ -1916,7 +1908,7 @@ static void ov10_02221A3C(UnkStruct_ov10_0221FB28 *param0)
         Heap_Free(v2);
     }
 
-    LoadScreenDataFromNARC(param0->unk_00->heapID, param0->unk_298, param0->unk_358, param0->unk_418);
+    PartyMenu_LoadMemberPanelTilemaps(param0->unk_00->heapID, param0->unk_298, param0->unk_358, param0->unk_418);
     NARC_dtor(v0);
 }
 
@@ -2017,14 +2009,14 @@ static void ov10_02221D14(UnkStruct_ov10_0221FB28 *param0, Party *param1, u8 par
         }
 
         param0->unk_214[v1 + param2].unk_0F = (u16)Pokemon_GetValue(v0, MON_DATA_IS_EGG, NULL);
-        param0->unk_214[v1 + param2].unk_06 = (u16)Pokemon_GetValue(v0, MON_DATA_CURRENT_HP, NULL);
+        param0->unk_214[v1 + param2].unk_06 = (u16)Pokemon_GetValue(v0, MON_DATA_HP, NULL);
         param0->unk_214[v1 + param2].unk_08 = (u16)Pokemon_GetValue(v0, MON_DATA_MAX_HP, NULL);
         param0->unk_214[v1 + param2].unk_0C = (u16)Pokemon_GetValue(v0, MON_DATA_LEVEL, NULL);
         param0->unk_214[v1 + param2].unk_0A = (u16)Pokemon_GetValue(v0, MON_DATA_HELD_ITEM, NULL);
         param0->unk_214[v1 + param2].unk_10 = (u8)Pokemon_GetValue(v0, MON_DATA_BALL_CAPSULE_ID, NULL);
         param0->unk_214[v1 + param2].unk_11 = (u8)Pokemon_GetValue(v0, MON_DATA_FORM, NULL);
 
-        if (Pokemon_GetValue(v0, MON_DATA_NIDORAN_HAS_NICKNAME, NULL) == 1) {
+        if (Pokemon_GetValue(v0, MON_DATA_NO_PRINT_GENDER, NULL) == 1) {
             param0->unk_214[v1 + param2].unk_0E = 0;
         } else {
             param0->unk_214[v1 + param2].unk_0E = 1;
@@ -2215,7 +2207,7 @@ static void ov10_022223E8(UnkStruct_ov10_0221FB28 *param0)
     }
 }
 
-static void ov10_02222400(UnkStruct_ov10_0221FB28 *param0, MessageLoader *param1, UnkStruct_0200C440 *param2, StringTemplate *param3, Strbuf *param4, u32 param5)
+static void ov10_02222400(UnkStruct_ov10_0221FB28 *param0, MessageLoader *param1, FontSpecialCharsContext *param2, StringTemplate *param3, Strbuf *param4, u32 param5)
 {
     Pokemon *v0;
     Window *v1;
@@ -2247,17 +2239,17 @@ static void ov10_02222400(UnkStruct_ov10_0221FB28 *param0, MessageLoader *param1
     }
 }
 
-static void ov10_022224F0(UnkStruct_ov10_0221FB28 *param0, MessageLoader *param1, UnkStruct_0200C440 *param2, StringTemplate *param3, Strbuf *param4, u32 param5)
+static void ov10_022224F0(UnkStruct_ov10_0221FB28 *param0, MessageLoader *param1, FontSpecialCharsContext *param2, StringTemplate *param3, Strbuf *param4, u32 param5)
 {
     Window *v0;
     Strbuf *v1;
 
     v0 = &param0->unk_10[param5 * 4 + 1];
 
-    sub_0200C648(param2, 1, param0->unk_214[param5].unk_0C, 3, 0, v0, 0, 5 - 3);
+    FontSpecialChars_DrawPartyScreenText(param2, 1, param0->unk_214[param5].unk_0C, 3, 0, v0, 0, 5 - 3);
 }
 
-static void ov10_02222528(UnkStruct_ov10_0221FB28 *param0, MessageLoader *param1, UnkStruct_0200C440 *param2, StringTemplate *param3, Strbuf *param4, u32 param5)
+static void ov10_02222528(UnkStruct_ov10_0221FB28 *param0, MessageLoader *param1, FontSpecialCharsContext *param2, StringTemplate *param3, Strbuf *param4, u32 param5)
 {
     Window *v0;
     Strbuf *v1;
@@ -2266,9 +2258,9 @@ static void ov10_02222528(UnkStruct_ov10_0221FB28 *param0, MessageLoader *param1
     int v4 = 0 + 2;
     v0 = &param0->unk_10[param5 * 4 + 2];
 
-    sub_0200C5BC(param2, param0->unk_214[param5].unk_06, 3, 1, v0, v3, v4);
-    sub_0200C578(param2, 0, v0, v3 + 8 * 3, v4);
-    sub_0200C5BC(param2, param0->unk_214[param5].unk_08, 3, 0, v0, v3 + (8 * 3) + 8, v4);
+    FontSpecialChars_DrawPartyScreenHPText(param2, param0->unk_214[param5].unk_06, 3, 1, v0, v3, v4);
+    FontSpecialChars_DrawPartyScreenLevelText(param2, 0, v0, v3 + 8 * 3, v4);
+    FontSpecialChars_DrawPartyScreenHPText(param2, param0->unk_214[param5].unk_08, 3, 0, v0, v3 + (8 * 3) + 8, v4);
 }
 
 static void ov10_02222594(UnkStruct_ov10_0221FB28 *param0, u32 param1)
@@ -2304,7 +2296,7 @@ static void ov10_02222594(UnkStruct_ov10_0221FB28 *param0, u32 param1)
     Window_FillRectWithColor(v0, 10, 0, 5, v1, 1);
 }
 
-static void ov10_02222684(UnkStruct_ov10_0221FB28 *param0, MessageLoader *param1, UnkStruct_0200C440 *param2, StringTemplate *param3, Strbuf *param4, u32 param5)
+static void ov10_02222684(UnkStruct_ov10_0221FB28 *param0, MessageLoader *param1, FontSpecialCharsContext *param2, StringTemplate *param3, Strbuf *param4, u32 param5)
 {
     Pokemon *v0;
     Window *v1;
@@ -2332,13 +2324,13 @@ static void ov10_02222684(UnkStruct_ov10_0221FB28 *param0, MessageLoader *param1
 static void ov10_02222720(UnkStruct_ov10_0221FB28 *param0)
 {
     MessageLoader *v0;
-    UnkStruct_0200C440 *v1;
+    FontSpecialCharsContext *v1;
     StringTemplate *v2;
     Strbuf *v3;
     u32 v4;
 
-    v0 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0453, param0->unk_00->heapID);
-    v1 = sub_0200C440(15, 14, 0, param0->unk_00->heapID);
+    v0 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_PARTY_MENU, param0->unk_00->heapID);
+    v1 = FontSpecialChars_Init(15, 14, 0, param0->unk_00->heapID);
     v2 = StringTemplate_Default(param0->unk_00->heapID);
     v3 = Strbuf_Init(32, param0->unk_00->heapID);
 
@@ -2352,7 +2344,7 @@ static void ov10_02222720(UnkStruct_ov10_0221FB28 *param0)
 
     Strbuf_Free(v3);
     MessageLoader_Free(v0);
-    sub_0200C560(v1);
+    FontSpecialChars_Free(v1);
     StringTemplate_Free(v2);
 }
 
@@ -2375,7 +2367,7 @@ static void ov10_022227A4(UnkStruct_ov10_0221F800 *param0)
 
     if (MapHeader_IsUnionRoom(param0->unk_00->mapHeaderID) == 1) {
         opponentGender1 = TrainerClass_Gender(param0->unk_00->trainer[v6 ^ 1].header.trainerType);
-        opponentName1 = Heap_AllocFromHeap(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
+        opponentName1 = Heap_Alloc(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
 
         Strbuf_ToChars(param0->unk_14[sub_020362F4(v6 ^ 1)], opponentName1, TRAINER_NAME_LEN + 1);
         journalEntryOnlineEvent = JournalEntry_CreateEventUnionBattle(opponentName1, opponentGender1, battleResult, param0->heapID);
@@ -2384,7 +2376,7 @@ static void ov10_022227A4(UnkStruct_ov10_0221F800 *param0)
         switch (sub_0203895C()) {
         case 1:
             opponentGender1 = TrainerClass_Gender(param0->unk_00->trainer[v6 ^ 1].header.trainerType);
-            opponentName1 = Heap_AllocFromHeap(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
+            opponentName1 = Heap_Alloc(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
 
             Strbuf_ToChars(param0->unk_14[sub_020362F4(v6 ^ 1)], opponentName1, TRAINER_NAME_LEN + 1);
 
@@ -2393,7 +2385,7 @@ static void ov10_022227A4(UnkStruct_ov10_0221F800 *param0)
             break;
         case 2:
             opponentGender1 = TrainerClass_Gender(param0->unk_00->trainer[v6 ^ 1].header.trainerType);
-            opponentName1 = Heap_AllocFromHeap(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
+            opponentName1 = Heap_Alloc(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
 
             Strbuf_ToChars(param0->unk_14[sub_020362F4(v6 ^ 1)], opponentName1, TRAINER_NAME_LEN + 1);
 
@@ -2402,7 +2394,7 @@ static void ov10_022227A4(UnkStruct_ov10_0221F800 *param0)
             break;
         case 3:
             opponentGender1 = TrainerClass_Gender(param0->unk_00->trainer[v6 ^ 1].header.trainerType);
-            opponentName1 = Heap_AllocFromHeap(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
+            opponentName1 = Heap_Alloc(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
 
             Strbuf_ToChars(param0->unk_14[sub_020362F4(v6 ^ 1)], opponentName1, TRAINER_NAME_LEN + 1);
 
@@ -2410,8 +2402,8 @@ static void ov10_022227A4(UnkStruct_ov10_0221F800 *param0)
             Heap_Free(opponentName1);
             break;
         case 4:
-            opponentName1 = Heap_AllocFromHeap(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
-            opponentName2 = Heap_AllocFromHeap(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
+            opponentName1 = Heap_Alloc(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
+            opponentName2 = Heap_Alloc(param0->heapID, sizeof(u16) * (TRAINER_NAME_LEN + 1));
 
             if (ov10_02220AD0() == 1) {
                 opponentGender1 = TrainerClass_Gender(param0->unk_00->trainer[1].header.trainerType);

@@ -28,7 +28,7 @@ static CommTool *sCommTool = NULL;
 void CommTool_Init(int netId)
 {
     if (!sCommTool) {
-        sCommTool = Heap_AllocFromHeap(netId, sizeof(CommTool));
+        sCommTool = Heap_Alloc(netId, sizeof(CommTool));
         MI_CpuFill8(sCommTool, 0, sizeof(CommTool));
     }
 
@@ -176,12 +176,10 @@ void CommList_Refresh(void)
     }
 }
 
-void sub_020365F4(void)
+void CommTool_ClearReceivedTempDataAllPlayers(void)
 {
-    int v0;
-
-    for (v0 = 0; v0 < MAX_CONNECTED_PLAYERS; v0++) {
-        sCommTool->hasRecievedTempData[v0] = 0;
+    for (int i = 0; i < MAX_CONNECTED_PLAYERS; i++) {
+        sCommTool->hasRecievedTempData[i] = 0;
     }
 }
 

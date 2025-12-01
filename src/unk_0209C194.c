@@ -3,10 +3,10 @@
 #include <nitro.h>
 #include <string.h>
 
-#include "struct_defs/struct_02098C44.h"
 #include "struct_defs/struct_0209C194.h"
 #include "struct_defs/struct_0209C194_1.h"
 
+#include "applications/party_menu/defs.h"
 #include "applications/pokemon_summary_screen/main.h"
 #include "field/field_system.h"
 #include "overlay109/ov109_021D0D80.h"
@@ -31,7 +31,7 @@ typedef struct {
     UnkStruct_0209C194_1 unk_08;
     UnkStruct_0209C194 *unk_28;
     FieldSystem *fieldSystem;
-    PartyManagementData *unk_30;
+    PartyMenu *unk_30;
     PokemonSummary *unk_34;
 } UnkStruct_0209C1EC;
 
@@ -41,7 +41,7 @@ static const ApplicationManagerTemplate Unk_020F950C;
 
 UnkStruct_0209C194 *sub_0209C194(UnkStruct_0209C194_1 *param0, u32 heapID)
 {
-    UnkStruct_0209C194 *v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_0209C194));
+    UnkStruct_0209C194 *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_0209C194));
     memset(v0, 0, sizeof(UnkStruct_0209C194));
     v0->unk_14 = *param0;
     v0->unk_34 = sub_0209BDF8(v0, heapID);
@@ -63,7 +63,7 @@ BOOL sub_0209C1E8(UnkStruct_0209C194 *param0)
 
 void *sub_0209C1EC(FieldSystem *fieldSystem)
 {
-    UnkStruct_0209C1EC *v0 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_0209C1EC));
+    UnkStruct_0209C1EC *v0 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(UnkStruct_0209C1EC));
     memset(v0, 0, sizeof(UnkStruct_0209C1EC));
 
     v0->fieldSystem = fieldSystem;
@@ -92,7 +92,7 @@ BOOL sub_0209C238(void *param0)
 
 static BOOL sub_0209C25C(UnkStruct_0209C1EC *param0)
 {
-    param0->unk_28 = sub_0209C194(&param0->unk_08, HEAP_ID_FIELDMAP);
+    param0->unk_28 = sub_0209C194(&param0->unk_08, HEAP_ID_FIELD2);
     param0->unk_00 = 1;
     FieldSystem_StartChildProcess(param0->fieldSystem, &Unk_020F94FC, param0->unk_28);
     return 0;
@@ -106,7 +106,7 @@ static BOOL sub_0209C280(UnkStruct_0209C1EC *param0)
         } else {
             CommMan_SetErrorHandling(1, 1);
 
-            param0->unk_30 = sub_0203D644(param0->fieldSystem, param0->unk_04);
+            param0->unk_30 = FieldSystem_OpenPartyMenu_SelectForSpinTrade(param0->fieldSystem, param0->unk_04);
             param0->unk_28->unk_00 = 1;
             param0->unk_00 = 2;
         }
@@ -143,7 +143,7 @@ static BOOL sub_0209C324(UnkStruct_0209C1EC *param0)
 {
     if (FieldSystem_IsRunningApplication(param0->fieldSystem) == 0) {
         Heap_Free(param0->unk_34);
-        param0->unk_30 = sub_0203D644(param0->fieldSystem, param0->unk_04);
+        param0->unk_30 = FieldSystem_OpenPartyMenu_SelectForSpinTrade(param0->fieldSystem, param0->unk_04);
         param0->unk_00 = 2;
     }
 

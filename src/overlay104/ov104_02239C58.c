@@ -4,9 +4,10 @@
 #include <string.h>
 
 #include "struct_decls/struct_0209B75C_decl.h"
-#include "struct_defs/struct_02098C44.h"
 #include "struct_defs/struct_0209BBA4.h"
 
+#include "applications/party_menu/defs.h"
+#include "applications/party_menu/main.h"
 #include "applications/pokemon_summary_screen/main.h"
 #include "field/field_system.h"
 
@@ -21,7 +22,6 @@
 #include "unk_0209B6F8.h"
 #include "unk_0209BA80.h"
 
-#include "constdata/const_020F1E88.h"
 #include "constdata/const_020F410C.h"
 
 void ov104_02239C7C(UnkStruct_0209BBA4 *param0);
@@ -36,7 +36,7 @@ UnkStruct_0209BBA4 *ov104_02239C58(SaveData *saveData)
 {
     static UnkStruct_0209BBA4 *v0;
 
-    v0 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(UnkStruct_0209BBA4));
+    v0 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(UnkStruct_0209BBA4));
     MI_CpuClear8(v0, sizeof(UnkStruct_0209BBA4));
 
     v0->saveData = saveData;
@@ -92,7 +92,7 @@ void ov104_02239CD0(UnkStruct_0209B75C *param0, UnkStruct_0209BBA4 *param1, u16 
         ov104_02239F38(param0, param1, fieldSystem, 11);
         break;
     case 2:
-        ov104_02239FB0(param0, param1, fieldSystem, HEAP_ID_FIELDMAP);
+        ov104_02239FB0(param0, param1, fieldSystem, HEAP_ID_FIELD2);
         break;
     case 3:
         ov104_0223A090(param0, param1, fieldSystem, 11);
@@ -108,23 +108,23 @@ static void ov104_02239D1C(UnkStruct_0209B75C *param0, UnkStruct_0209BBA4 *param
 {
     u8 v0;
 
-    param1->unk_A8 = Heap_AllocFromHeap(HEAP_ID_FIELDMAP, sizeof(PartyManagementData));
-    MI_CpuClearFast(param1->unk_A8, sizeof(PartyManagementData));
+    param1->unk_A8 = Heap_Alloc(HEAP_ID_FIELD2, sizeof(PartyMenu));
+    MI_CpuClearFast(param1->unk_A8, sizeof(PartyMenu));
 
     param1->unk_A8->party = SaveData_GetParty(param1->saveData);
     param1->unk_A8->bag = SaveData_GetBag(param1->saveData);
     param1->unk_A8->mailbox = SaveData_GetMailbox(param1->saveData);
     param1->unk_A8->options = SaveData_GetOptions(param1->saveData);
-    param1->unk_A8->unk_21 = 0;
+    param1->unk_A8->type = PARTY_MENU_TYPE_BASIC;
 
     if (param1->unk_A0 == 1) {
-        param1->unk_A8->unk_20 = 17;
+        param1->unk_A8->mode = 17;
     } else if (param1->unk_A0 == 5) {
-        param1->unk_A8->unk_20 = 22;
+        param1->unk_A8->mode = 22;
     } else if (param1->unk_A0 == 4) {
-        param1->unk_A8->unk_20 = 23;
+        param1->unk_A8->mode = 23;
     } else if (param1->unk_A0 == 6) {
-        param1->unk_A8->unk_20 = 23;
+        param1->unk_A8->mode = 23;
     } else {
         GF_ASSERT(0);
     }
@@ -133,30 +133,30 @@ static void ov104_02239D1C(UnkStruct_0209B75C *param0, UnkStruct_0209BBA4 *param
     param1->unk_A8->selectedMonSlot = param1->unk_9F;
 
     for (v0 = 0; v0 < 2; v0++) {
-        param1->unk_A8->unk_2C[v0] = param1->unk_A1[v0];
+        param1->unk_A8->selectionOrder[v0] = param1->unk_A1[v0];
     }
 
     if (param1->unk_A0 == 1) {
-        param1->unk_A8->unk_32_0 = 2;
-        param1->unk_A8->unk_32_4 = 2;
-        param1->unk_A8->unk_33 = 100;
+        param1->unk_A8->minSelectionSlots = 2;
+        param1->unk_A8->maxSelectionSlots = 2;
+        param1->unk_A8->reqLevel = 100;
     } else if (param1->unk_A0 == 5) {
-        param1->unk_A8->unk_32_0 = 1;
-        param1->unk_A8->unk_32_4 = 1;
-        param1->unk_A8->unk_33 = 30;
+        param1->unk_A8->minSelectionSlots = 1;
+        param1->unk_A8->maxSelectionSlots = 1;
+        param1->unk_A8->reqLevel = 30;
     } else if (param1->unk_A0 == 4) {
-        param1->unk_A8->unk_32_0 = 2;
-        param1->unk_A8->unk_32_4 = 2;
-        param1->unk_A8->unk_33 = 100;
+        param1->unk_A8->minSelectionSlots = 2;
+        param1->unk_A8->maxSelectionSlots = 2;
+        param1->unk_A8->reqLevel = 100;
     } else if (param1->unk_A0 == 6) {
-        param1->unk_A8->unk_32_0 = 2;
-        param1->unk_A8->unk_32_4 = 2;
-        param1->unk_A8->unk_33 = 100;
+        param1->unk_A8->minSelectionSlots = 2;
+        param1->unk_A8->maxSelectionSlots = 2;
+        param1->unk_A8->reqLevel = 100;
     } else {
         GF_ASSERT(0);
     }
 
-    sub_0209B988(param0, &Unk_020F1E88, param1->unk_A8, 0, NULL);
+    sub_0209B988(param0, &gPokemonPartyAppTemplate, param1->unk_A8, 0, NULL);
     return;
 }
 
@@ -177,7 +177,7 @@ static void ov104_02239F38(UnkStruct_0209B75C *param0, UnkStruct_0209BBA4 *param
         break;
     }
 
-    MI_CpuCopy8(param1->unk_A8->unk_2C, param1->unk_A1, 2);
+    MI_CpuCopy8(param1->unk_A8->selectionOrder, param1->unk_A1, 2);
     param1->unk_9F = param1->unk_A8->selectedMonSlot;
     Heap_Free(param1->unk_A8);
 
@@ -194,7 +194,7 @@ static void ov104_02239FB0(UnkStruct_0209B75C *param0, UnkStruct_0209BBA4 *param
         0, 1, 2, 4, 3, 5, 6, 7, 8
     };
 
-    param1->unk_AC = Heap_AllocFromHeapAtEnd(heapID, sizeof(PokemonSummary));
+    param1->unk_AC = Heap_AllocAtEnd(heapID, sizeof(PokemonSummary));
     MI_CpuClear8(param1->unk_AC, sizeof(PokemonSummary));
 
     param1->unk_AC->options = SaveData_GetOptions(param1->saveData);

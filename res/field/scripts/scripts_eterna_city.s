@@ -180,7 +180,7 @@ _0276:
 _0286:
     ClearFlag FLAG_UNK_0x0180
     AddObject 12
-    ScrCmd_062 12
+    LockObject 12
     CallIfEq VAR_0x8005, 0x20A, _034B
     CallIfNe VAR_0x8005, 0x20A, _0361
     BufferPlayerName 0
@@ -189,9 +189,9 @@ _0286:
     CallIfEq VAR_0x8005, 0x20A, _0377
     CallIfNe VAR_0x8005, 0x20A, _0383
     Message 7
-    SetVar VAR_0x8004, 0x1A4
+    SetVar VAR_0x8004, ITEM_HM01
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     Message 8
     CloseMessage
     GetPlayerMapPos VAR_0x8004, VAR_0x8005
@@ -439,7 +439,7 @@ _056E:
     End
 
 _057F:
-    GoToIfSet FLAG_UNK_0x0079, _059D
+    GoToIfSet FLAG_EXPLORER_KIT_RECEIVED, _059D
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
@@ -568,14 +568,9 @@ _0714:
     WalkNormalEast 4
     EndMovement
 
-    .byte 39
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+EternaCity_UnusedMovement:
+    WalkOnSpotFastEast
+    EndMovement
 
     .balign 4, 0
 _0730:
@@ -749,15 +744,15 @@ _08FC:
     CloseMessage
     ApplyMovement 31, _0944
     WaitMovement
-    ScrCmd_168 9, 17, 24, 18, 77
-    ScrCmd_16B 77
-    ScrCmd_169 77
+    LoadDoorAnimation 9, 17, 24, 18, ANIMATION_TAG_DOOR_1
+    PlayDoorOpenAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
     ApplyMovement 31, _094C
     WaitMovement
     RemoveObject 31
-    ScrCmd_16C 77
-    ScrCmd_169 77
-    ScrCmd_16A 77
+    PlayDoorCloseAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
+    UnloadAnimation ANIMATION_TAG_DOOR_1
     ReleaseAll
     End
 
@@ -778,7 +773,7 @@ _0954:
     SetObjectEventPos 33, 0x12B, 0x215
     ClearFlag FLAG_UNK_0x018C
     AddObject 33
-    ScrCmd_062 33
+    LockObject 33
     GetPlayerMapPos VAR_0x8004, VAR_0x8005
     GoToIfEq VAR_0x8005, 0x20B, _099D
     GoToIfEq VAR_0x8005, 0x20C, _09B7
@@ -858,16 +853,16 @@ _0AB6:
     CallCommonScript 0x7FB
     ScrCmd_32E
     ScrCmd_332
-    ScrCmd_066 0x143, 0x20C
-    ApplyMovement 241, _0CD4
+    AddFreeCamera 0x143, 0x20C
+    ApplyFreeCameraMovement _0CD4
     WaitMovement
     Message 3
     CloseMessage
     WaitTime 15, VAR_RESULT
     ApplyMovement 32, _0CE4
-    ApplyMovement 241, _0CDC
+    ApplyFreeCameraMovement _0CDC
     WaitMovement
-    ScrCmd_067
+    RestoreCamera
     Message 4
     CloseMessage
     ApplyMovement 32, _0CF4
@@ -1129,7 +1124,7 @@ _0DD2:
 _0DE8:
     ClearFlag FLAG_UNK_0x0180
     AddObject 12
-    ScrCmd_062 12
+    LockObject 12
     Return
 
 _0DF6:

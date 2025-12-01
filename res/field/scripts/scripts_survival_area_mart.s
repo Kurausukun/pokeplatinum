@@ -12,8 +12,8 @@ _0012:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    CallCommonScript 0x7E3
-    ScrCmd_035
+    VendorGreeting
+    CloseMessageWithoutErasing
     PokeMartCommon
     ReleaseAll
     End

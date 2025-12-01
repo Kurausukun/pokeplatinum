@@ -152,7 +152,6 @@ static void ov70_02269488(const UnkStruct_ov70_022692B4 *param0, fx32 *param1, f
 static void ov70_0226949C(UnkStruct_ov70_0226949C *param0, u16 param1, u16 param2, fx32 param3);
 static void ov70_022694D0(UnkStruct_ov70_0226949C *param0);
 static void ov70_02269508(const UnkStruct_ov70_0226949C *param0, fx32 *param1);
-static void ov70_02269510(UnkStruct_ov70_02269204 *param0, UnkStruct_ov70_02269800 *param1, u32 param2);
 static void ov70_02269540(UnkStruct_ov70_02269204 *param0, NARC *param1, u32 heapID);
 static void ov70_022695C4(UnkStruct_ov70_02269204 *param0);
 static void ov70_022695E0(UnkStruct_ov70_02269204 *param0, NARC *param1, u32 param2);
@@ -628,7 +627,7 @@ static const UnkStruct_ov70_0226E5A4 Unk_ov70_0226E5A4[39] = {
 
 UnkStruct_ov70_02269204 *ov70_02269190(UnkStruct_ov66_0222DFF8 *param0, UnkStruct_ov70_0225C894 *param1, UnkStruct_ov70_02260AD4 *param2, UnkStruct_ov70_0225CA20 *param3, u32 heapID, u32 heapID2)
 {
-    UnkStruct_ov70_02269204 *v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_ov70_02269204));
+    UnkStruct_ov70_02269204 *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_ov70_02269204));
     memset(v0, 0, sizeof(UnkStruct_ov70_02269204));
 
     v0->unk_00 = param0;
@@ -641,7 +640,7 @@ UnkStruct_ov70_02269204 *ov70_02269190(UnkStruct_ov66_0222DFF8 *param0, UnkStruc
 
         v1 = NARC_ctor(NARC_INDEX_GRAPHIC__WIFI_LOBBY_OTHER, heapID);
 
-        Heap_FndInitAllocatorForExpHeap(&v0->unk_1081C, heapID2, 4);
+        HeapExp_FndInitAllocator(&v0->unk_1081C, heapID2, 4);
 
         ov70_02269540(v0, v1, heapID2);
         ov70_022695E0(v0, v1, heapID2);
@@ -775,13 +774,13 @@ static void ov70_02269508(const UnkStruct_ov70_0226949C *param0, fx32 *param1)
     *param1 = param0->unk_08;
 }
 
-static void ov70_02269510(UnkStruct_ov70_02269204 *param0, UnkStruct_ov70_02269800 *param1, u32 param2)
+static void ov70_02269510(UnkStruct_ov70_02269204 *param0, UnkStruct_ov70_02269800 *param1, u32 seqID)
 {
     if (param1->unk_08 == ov70_0225CCAC(param0->unk_04)) {
-        Sound_PlayEffectOnPlayer(param2, 5);
+        Sound_PlayEffectOnPlayer(seqID, 5);
     } else {
         if (ov70_0225CE70(param1->unk_08) == 0) {
-            Sound_PlayEffect(param2);
+            Sound_PlayEffect(seqID);
         }
     }
 }
@@ -900,33 +899,33 @@ static void ov70_02269738(UnkStruct_ov70_02269204 *param0, UnkStruct_ov70_022698
     };
 
     static const u32 v1[27] = {
-        1413,
-        1414,
-        1415,
-        1419,
-        1420,
-        1421,
-        1416,
-        1417,
-        1418,
-        1427,
-        1428,
-        1429,
-        1433,
-        1434,
-        1435,
-        1422,
-        1423,
-        1424,
-        1439,
-        1440,
-        1441,
-        1442,
-        1443,
-        1444,
-        1426,
-        1426,
-        1426
+        SEQ_SE_PL_HIROBA01_4,
+        SEQ_SE_PL_HIROBA01_5,
+        SEQ_SE_PL_HIROBA01_6,
+        SEQ_SE_PL_HIROBA03,
+        SEQ_SE_PL_HIROBA03_2,
+        SEQ_SE_PL_HIROBA03_3,
+        SEQ_SE_PL_HIROBA02_4,
+        SEQ_SE_PL_HIROBA02_5,
+        SEQ_SE_PL_HIROBA02_6,
+        SEQ_SE_PL_HIROBA70,
+        SEQ_SE_PL_HIROBA70_2,
+        SEQ_SE_PL_HIROBA70_3,
+        SEQ_SE_PL_HIROBA100,
+        SEQ_SE_PL_HIROBA100_2,
+        SEQ_SE_PL_HIROBA100_3,
+        SEQ_SE_PL_HIROBA05,
+        SEQ_SE_PL_HIROBA05_2,
+        SEQ_SE_PL_HIROBA05_3,
+        SEQ_SE_PL_W030,
+        SEQ_SE_PL_W030_2,
+        SEQ_SE_PL_W030_3,
+        SEQ_SE_PL_W019,
+        SEQ_SE_PL_W019_2,
+        SEQ_SE_PL_W019_3,
+        SEQ_SE_PL_HIROBA30,
+        SEQ_SE_PL_HIROBA30,
+        SEQ_SE_PL_HIROBA30
     };
 
     GF_ASSERT(param3 < 27);
@@ -2095,7 +2094,7 @@ static BOOL ov70_0226AF7C(UnkStruct_ov70_02269204 *param0, UnkStruct_ov70_022698
             param1->unk_954.val1.unk_02 = 0;
             param1->unk_954.val1.unk_04 = v3.y;
 
-            ov70_02269510(param0, param1, 1451);
+            ov70_02269510(param0, param1, SEQ_SE_PL_SUTYA);
         }
     } break;
     case 4: {
@@ -2150,7 +2149,7 @@ static BOOL ov70_0226AF7C(UnkStruct_ov70_02269204 *param0, UnkStruct_ov70_022698
                 v10 = ov70_0226B714(param0, param1, v0, 4);
 
                 if (v10 == 1) {
-                    ov70_02269510(param0, param1, 1425);
+                    ov70_02269510(param0, param1, SEQ_SE_PL_HIROBA20);
                 }
             }
         }
@@ -2171,7 +2170,7 @@ static BOOL ov70_0226B1D0(UnkStruct_ov70_02269204 *param0, UnkStruct_ov70_022698
 
     switch (param1->unk_954.val1.unk_00) {
     case 0:
-        ov70_02269510(param0, param1, 1425);
+        ov70_02269510(param0, param1, SEQ_SE_PL_HIROBA20);
 
         for (v0 = 0; v0 < param1->unk_954.val1.unk_01; v0++) {
             ov70_0226B714(param0, param1, v0, 4);
@@ -2215,7 +2214,7 @@ static BOOL ov70_0226B1D0(UnkStruct_ov70_02269204 *param0, UnkStruct_ov70_022698
             param1->unk_954.val1.unk_02 = 0;
             param1->unk_954.val1.unk_04 = v3.y;
 
-            ov70_02269510(param0, param1, 1451);
+            ov70_02269510(param0, param1, SEQ_SE_PL_SUTYA);
             ov70_0225D030(param1->unk_08, 1);
 
             {

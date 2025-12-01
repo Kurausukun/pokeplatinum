@@ -1,5 +1,7 @@
 #include "macros/scrcmd.inc"
 #include "res/text/bank/unk_0221.h"
+#include "res/text/bank/menu_entries.h"
+#include "constants/map_object.h"
 
 
     ScriptEntry _0046
@@ -18,7 +20,7 @@
     ScriptEntry _0075
     ScriptEntry _005B
     ScriptEntry _005B
-    ScriptEntry _0763
+    ScriptEntry CommonScript_HasBadEgg @ 0x2338
     ScriptEntryEnd
 
 _0046:
@@ -26,7 +28,7 @@ _0046:
     End
 
 _0055:
-    ScrCmd_1B2 0xFF
+    HideObject LOCALID_PLAYER
     Return
 
 _005B:
@@ -45,15 +47,15 @@ _0075:
 
 _008F:
     LockAll
-    ScrCmd_168 0, 0, VAR_MAP_LOCAL_0, VAR_MAP_LOCAL_2, 77
+    LoadDoorAnimation 0, 0, VAR_MAP_LOCAL_0, VAR_MAP_LOCAL_2, ANIMATION_TAG_DOOR_1
     Call _050B
-    ScrCmd_1B1 0xFF
+    ShowObject LOCALID_PLAYER
     ApplyMovement LOCALID_PLAYER, _00F0
     WaitMovement
     Call _0513
     ApplyMovement LOCALID_PLAYER, _00F8
     WaitMovement
-    ScrCmd_168 0, 0, VAR_MAP_LOCAL_0, VAR_MAP_LOCAL_1, 77
+    LoadDoorAnimation 0, 0, VAR_MAP_LOCAL_0, VAR_MAP_LOCAL_1, ANIMATION_TAG_DOOR_1
     Call _050B
     ApplyMovement LOCALID_PLAYER, _0100
     WaitMovement
@@ -82,7 +84,7 @@ _0108:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    ScrCmd_2B7 VAR_RESULT
+    CheckPartyHasBadEgg VAR_RESULT
     GoToIfEq VAR_RESULT, 1, _0755
     Message 0
     GoTo _012C
@@ -91,14 +93,14 @@ _0108:
 _012C:
     Message 1
     InitGlobalTextListMenu 1, 1, 1, VAR_RESULT
-    AddListMenuEntry 163, LIST_MENU_BUILDER_HEADER
-    AddListMenuEntry 6, 0
-    AddListMenuEntry 7, 1
-    AddListMenuEntry 8, 2
-    AddListMenuEntry 164, LIST_MENU_BUILDER_HEADER
-    AddListMenuEntry 9, 3
-    AddListMenuEntry 10, 4
-    AddListMenuEntry 11, 5
+    AddListMenuEntry MenuEntries_Text_BattlesForTwo, LIST_MENU_BUILDER_HEADER
+    AddListMenuEntry MenuEntries_Text_SingleBattle, 0
+    AddListMenuEntry MenuEntries_Text_DoubleBattle, 1
+    AddListMenuEntry MenuEntries_Text_MixBattle, 2
+    AddListMenuEntry MenuEntries_Text_BattlesForFour, LIST_MENU_BUILDER_HEADER
+    AddListMenuEntry MenuEntries_Text_MultiBattle, 3
+    AddListMenuEntry MenuEntries_Text_Battle_Info, 4
+    AddListMenuEntry MenuEntries_Text_Battle_Exit, 5
     ShowListMenu
     SetVar VAR_0x8008, VAR_RESULT
     GoToIfEq VAR_0x8008, 0, _01DE
@@ -125,18 +127,13 @@ _01DE:
     SetVar VAR_0x8004, 1
     GoTo _026A
 
-    .byte 22
-    .byte 0
-    .byte 160
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 2
-    .byte 0
+Unk213_Unused:
+    GoTo _0290
+    End
 
 _01F2:
     SetVar VAR_0x8004, 2
-    GetPartyCountHatched VAR_RESULT
+    CountPartyNonEggs VAR_RESULT
     GoToIfLt VAR_RESULT, 2, _020F
     GoTo _026A
 
@@ -149,7 +146,7 @@ _020F:
 
 _021A:
     SetVar VAR_0x8004, 3
-    GetPartyCountHatched VAR_RESULT
+    CountPartyNonEggs VAR_RESULT
     GoToIfLt VAR_RESULT, 3, _0237
     GoTo _0290
 
@@ -162,7 +159,7 @@ _0237:
 
 _0242:
     SetVar VAR_0x8004, 4
-    GetPartyCountHatched VAR_RESULT
+    CountPartyNonEggs VAR_RESULT
     GoToIfLt VAR_RESULT, 3, _025F
     GoTo _0290
 
@@ -183,79 +180,32 @@ _026A:
 _0290:
     SetVar VAR_0x8005, 0
     GoTo _02E4
+    End
 
-    .byte 2
-    .byte 0
-    .byte 40
-    .byte 0
-    .byte 5
-    .byte 128
-    .byte 0
-    .byte 0
-    .byte 22
-    .byte 0
-    .byte 58
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 40
-    .byte 0
-    .byte 5
-    .byte 128
-    .byte 1
-    .byte 0
-    .byte 22
-    .byte 0
-    .byte 44
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 40
-    .byte 0
-    .byte 5
-    .byte 128
-    .byte 2
-    .byte 0
-    .byte 22
-    .byte 0
-    .byte 30
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 40
-    .byte 0
-    .byte 5
-    .byte 128
-    .byte 3
-    .byte 0
-    .byte 22
-    .byte 0
-    .byte 16
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 40
-    .byte 0
-    .byte 5
-    .byte 128
-    .byte 4
-    .byte 0
-    .byte 22
-    .byte 0
-    .byte 2
-    .byte 0
-    .byte 0
-    .byte 0
-    .byte 2
-    .byte 0
+Unk213_Unused2:
+    SetVar VAR_0x8005, 0
+    GoTo _02E4
+    End
+
+Unk213_Unused3:
+    SetVar VAR_0x8005, 1
+    GoTo _02E4
+    End
+
+Unk213_Unused4:
+    SetVar VAR_0x8005, 2
+    GoTo _02E4
+    End
+
+Unk213_Unused5:
+    SetVar VAR_0x8005, 3
+    GoTo _02E4
+    End
+
+Unk213_Unused6:
+    SetVar VAR_0x8005, 4
+    GoTo _02E4
+    End
 
 _02E4:
     HealParty
@@ -295,20 +245,20 @@ _0384:
     ShowYesNoMenu VAR_RESULT
     GoToIfEq VAR_RESULT, MENU_NO, _0305
     CloseMessage
-    ScrCmd_0F2 VAR_0x8004, VAR_0x8005, 0, VAR_RESULT
-    GoToIfEq VAR_RESULT, 1, _03D3
-    GoToIfEq VAR_RESULT, 3, _03DD
-    GoToIfEq VAR_RESULT, 4, _03EA
+    StartBattleClient VAR_0x8004, VAR_0x8005, 0, VAR_RESULT
+    GoToIfEq VAR_RESULT, COMM_CLUB_RET_CANCEL, _03D3
+    GoToIfEq VAR_RESULT, COMM_CLUB_RET_ERROR, _03DD
+    GoToIfEq VAR_RESULT, COMM_CLUB_RET_4, _03EA
     GoTo _046A
     End
 
 _03D3:
-    ScrCmd_150
+    EndCommunication
     GoTo _0305
     End
 
 _03DD:
-    ScrCmd_150
+    EndCommunication
     Message 16
     WaitABXPadPress
     CloseMessage
@@ -316,7 +266,7 @@ _03DD:
     End
 
 _03EA:
-    ScrCmd_150
+    EndCommunication
     Message 15
     WaitABXPadPress
     CloseMessage
@@ -328,20 +278,20 @@ _03F7:
     ShowYesNoMenu VAR_RESULT
     GoToIfEq VAR_RESULT, MENU_NO, _0305
     CloseMessage
-    ScrCmd_0F3 VAR_0x8004, VAR_0x8005, 0, VAR_RESULT
-    GoToIfEq VAR_RESULT, 1, _0446
-    GoToIfEq VAR_RESULT, 3, _0450
-    GoToIfEq VAR_RESULT, 4, _045D
+    StartBattleServer VAR_0x8004, VAR_0x8005, 0, VAR_RESULT
+    GoToIfEq VAR_RESULT, COMM_CLUB_RET_CANCEL, _0446
+    GoToIfEq VAR_RESULT, COMM_CLUB_RET_ERROR, _0450
+    GoToIfEq VAR_RESULT, COMM_CLUB_RET_4, _045D
     GoTo _046A
     End
 
 _0446:
-    ScrCmd_150
+    EndCommunication
     GoTo _0305
     End
 
 _0450:
-    ScrCmd_150
+    EndCommunication
     Message 16
     WaitABXPadPress
     CloseMessage
@@ -349,7 +299,7 @@ _0450:
     End
 
 _045D:
-    ScrCmd_150
+    EndCommunication
     Message 15
     WaitABXPadPress
     CloseMessage
@@ -359,43 +309,43 @@ _045D:
 _046A:
     SetVar VAR_UNK_0x40D5, 1
     SetFlag FLAG_COMMUNICATION_CLUB_ACCESSIBLE
-    ScrCmd_02E 52
+    MessageNoSkip 52
     WaitABPressTime 45
     ScrCmd_135 96
     CloseMessage
-    ScrCmd_168 0, 0, 13, 5, 77
+    LoadDoorAnimation 0, 0, 13, 5, ANIMATION_TAG_DOOR_1
     Call _050B
     ApplyMovement LOCALID_PLAYER, _0524
     WaitMovement
     Call _0513
     ApplyMovement LOCALID_PLAYER, _0530
     WaitMovement
-    ScrCmd_168 0, 0, 13, 2, 77
+    LoadDoorAnimation 0, 0, 13, 2, ANIMATION_TAG_DOOR_1
     Call _050B
     ApplyMovement LOCALID_PLAYER, _0538
     WaitMovement
     Call _0513
     GoToIfEq VAR_0x8004, 4, _04F3
-    ScrCmd_207 VAR_RESULT
+    GetCurNetID VAR_RESULT
     AddVar VAR_RESULT, 7
     ScrCmd_203 0x14C, 0, VAR_RESULT, 11, 0
     End
 
 _04F3:
-    ScrCmd_207 VAR_RESULT
+    GetCurNetID VAR_RESULT
     AddVar VAR_RESULT, 6
     ScrCmd_203 0x14D, 0, VAR_RESULT, 11, 0
     End
 
 _050B:
-    ScrCmd_16B 77
-    ScrCmd_169 77
+    PlayDoorOpenAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
     Return
 
 _0513:
-    ScrCmd_16C 77
-    ScrCmd_169 77
-    ScrCmd_16A 77
+    PlayDoorCloseAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
+    UnloadAnimation ANIMATION_TAG_DOOR_1
     Return
 
 _051E:
@@ -424,7 +374,7 @@ _0544:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    ScrCmd_2B7 VAR_RESULT
+    CheckPartyHasBadEgg VAR_RESULT
     GoToIfEq VAR_RESULT, 1, _0755
     GoTo _0565
     End
@@ -472,14 +422,14 @@ _062D:
     SetFlag FLAG_COMMUNICATION_CLUB_ACCESSIBLE
     Message 63
     CloseMessage
-    ScrCmd_168 0, 0, 8, 5, 77
+    LoadDoorAnimation 0, 0, 8, 5, ANIMATION_TAG_DOOR_1
     Call _050B
     ApplyMovement LOCALID_PLAYER, _0524
     WaitMovement
     Call _0513
     ApplyMovement LOCALID_PLAYER, _0530
     WaitMovement
-    ScrCmd_168 0, 0, 8, 2, 77
+    LoadDoorAnimation 0, 0, 8, 2, ANIMATION_TAG_DOOR_1
     Call _050B
     ApplyMovement LOCALID_PLAYER, _0538
     WaitMovement
@@ -514,7 +464,7 @@ _06A0:
     ScrCmd_1F8
     ScrCmd_0A3
     ReturnToField
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     End
 
@@ -548,11 +498,11 @@ _0719:
 
 _0724:
     CloseMessage
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
     ScrCmd_12B
     ReturnToField
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     GoTo _074A
     End
@@ -571,14 +521,13 @@ _0755:
     ReleaseAll
     End
 
-_0763:
+CommonScript_HasBadEgg:
     Call _076D
     ReturnCommonScript
     End
 
 _076D:
-    Message 127
+    Message pl_msg_00000221_00127
     Return
 
-    .byte 0
-    .byte 0
+    .balign 4, 0

@@ -40,8 +40,8 @@ _0062:
     ApplyMovement LOCALID_PLAYER, _0310
     WaitMovement
     GetPlayerMapPos VAR_0x8004, VAR_0x8005
-    ScrCmd_066 VAR_0x8004, VAR_0x8005
-    ApplyMovement 241, _0340
+    AddFreeCamera VAR_0x8004, VAR_0x8005
+    ApplyFreeCameraMovement _0340
     WaitMovement
     WaitTime 30, VAR_RESULT
     BufferRivalName 0
@@ -139,16 +139,16 @@ _0184:
     ApplyMovement 4, _03AC
     ApplyMovement LOCALID_PLAYER, _0330
     WaitMovement
-    FadeScreen 6, 1, 0, 0
+    FadeScreenOut
     WaitFadeScreen
-    ScrCmd_067
+    RestoreCamera
     ScrCmd_310
     ReturnToField
     GetPlayerMapPos VAR_0x8004, VAR_0x8005
-    ScrCmd_066 VAR_0x8004, VAR_0x8005
-    ApplyMovement 241, _0340
+    AddFreeCamera VAR_0x8004, VAR_0x8005
+    ApplyFreeCameraMovement _0340
     WaitMovement
-    FadeScreen 6, 1, 1, 0
+    FadeScreenIn
     WaitFadeScreen
     Message 22
     CloseMessage
@@ -164,11 +164,11 @@ _0184:
     ApplyMovement 3, _03BC
     ApplyMovement 4, _0388
     ApplyMovement 2, _02F0
-    ApplyMovement 241, _0348
+    ApplyFreeCameraMovement _0348
     WaitMovement
     RemoveObject 4
     RemoveObject 3
-    ScrCmd_067
+    RestoreCamera
     ApplyMovement LOCALID_PLAYER, _02C0
     WaitMovement
     Message 25
@@ -179,13 +179,13 @@ _0184:
     PlayFanfare SEQ_SE_DP_KAIDAN2
     RemoveObject 2
     StopFanfare SEQ_SE_DP_KAIDAN2
-    SetVar VAR_UNK_0x4078, 4
+    SetVar VAR_CANALAVE_STATE, 4
     SetVar VAR_UNK_0x40B2, 2
     SetFlag FLAG_UNK_0x00A8
     SetFlag FLAG_UNK_0x01AE
     ClearFlag FLAG_UNK_0x01B3
     ClearFlag FLAG_UNK_0x01B5
-    ClearFlag FLAG_UNK_0x01B2
+    ClearFlag FLAG_HIDE_CANALAVE_RIVAL
     ReleaseAll
     End
 
@@ -579,4 +579,4 @@ _06A2:
     ReleaseAll
     End
 
-    .byte 0
+    .balign 4, 0

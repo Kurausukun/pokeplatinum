@@ -3,23 +3,20 @@
 #include <nitro.h>
 #include <string.h>
 
-#include "struct_decls/struct_0207CB08_decl.h"
-
+#include "applications/bag/application.h"
 #include "overlay082/ov82_0223B140.h"
 #include "overlay083/struct_ov83_0223C344.h"
-#include "overlay084/const_ov84_02241130.h"
-#include "overlay084/ov84_0223B5A0.h"
 #include "overlay085/ov85_02241440.h"
 
 #include "bag.h"
+#include "bag_context.h"
 #include "heap.h"
 #include "item.h"
 #include "overlay_manager.h"
-#include "unk_0207CB08.h"
 #include "unk_020972FC.h"
 
 FS_EXTERN_OVERLAY(overlay83);
-FS_EXTERN_OVERLAY(overlay84);
+FS_EXTERN_OVERLAY(bag);
 FS_EXTERN_OVERLAY(overlay85);
 
 static int ov82_0223B380(UnkStruct_ov83_0223C344 *param0);
@@ -92,16 +89,16 @@ static int ov82_0223B380(UnkStruct_ov83_0223C344 *param0)
     void *v0;
     u32 v1;
 
-    FS_EXTERN_OVERLAY(overlay84);
+    FS_EXTERN_OVERLAY(bag);
 
     const ApplicationManagerTemplate Unk_ov84_02241130 = {
-        ov84_0223B5A0, ov84_0223B76C, ov84_0223B900, FS_OVERLAY_ID(overlay84)
+        BagApplication_Init, BagApplication_Main, BagApplication_Exit, FS_OVERLAY_ID(bag)
     };
     static const u8 v3[] = {
         4, 0xff
     };
 
-    v0 = sub_0207D824(param0->unk_10->bag, v3, param0->heapID);
+    v0 = BagContext_CreateWithPockets(param0->unk_10->bag, v3, param0->heapID);
 
     if (param0->unk_06_0 == 1) {
         v1 = 5;
@@ -109,7 +106,7 @@ static int ov82_0223B380(UnkStruct_ov83_0223C344 *param0)
         v1 = 4;
     }
 
-    sub_0207CB2C(v0, param0->unk_10->saveData, v1, param0->unk_0C);
+    BagContext_Init(v0, param0->unk_10->saveData, v1, param0->unk_0C);
 
     param0->appMan = ApplicationManager_New(&Unk_ov84_02241130, v0, param0->heapID);
     param0->unk_18 = v0;
@@ -119,23 +116,23 @@ static int ov82_0223B380(UnkStruct_ov83_0223C344 *param0)
 
 static int ov82_0223B3DC(UnkStruct_ov83_0223C344 *param0)
 {
-    UnkStruct_0207CB08 *v0 = NULL;
+    BagContext *v0 = NULL;
     BOOL v1;
 
     if (!ov82_0223B140(&param0->appMan)) {
         return 1;
     }
 
-    v0 = sub_0207CB08(param0->heapID);
-    memcpy(v0, param0->unk_18, sub_0207CB20());
+    v0 = BagContext_New(param0->heapID);
+    memcpy(v0, param0->unk_18, BagContext_GetSize());
     Heap_Free(param0->unk_18);
 
     param0->unk_18 = NULL;
-    param0->unk_08 = sub_0207CB94(v0);
+    param0->unk_08 = BagContext_GetItem(v0); //
 
     Heap_Free(v0);
 
-    switch (sub_0207CB9C(v0)) {
+    switch (BagContext_GetExitCode(v0)) {
     case 1:
         return 2;
     case 0:

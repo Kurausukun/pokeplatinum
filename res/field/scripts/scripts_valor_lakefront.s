@@ -74,7 +74,7 @@ _010E:
     GoTo _0126
 
 _0126:
-    ScrCmd_187 5, 0x2D3, 1, 0x301, 0
+    SetPosition 5, 0x2D3, 1, 0x301, 0
     SetFlag FLAG_UNK_0x0106
     ReleaseAll
     End
@@ -340,9 +340,9 @@ _04F7:
 
 _0502:
     Message 12
-    SetVar VAR_0x8004, 0x1D0
+    SetVar VAR_0x8004, ITEM_SECRETPOTION
     SetVar VAR_0x8005, 1
-    CallCommonScript 0x7FC
+    GiveItemQuantity
     Message 13
     CloseMessage
     GoTo _0522
@@ -360,7 +360,7 @@ _053A:
     SetFlag FLAG_UNK_0x00B7
     SetFlag FLAG_UNK_0x01A9
     ClearFlag FLAG_UNK_0x020F
-    SetVar VAR_UNK_0x407C, 6
+    SetVar VAR_PASTORIA_STATE, 6
     ReleaseAll
     End
 
@@ -420,18 +420,10 @@ _05BC:
     WalkNormalNorth 9
     EndMovement
 
-    .byte 63
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 35
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+ValorLakefront_UnusedMovement:
+    Delay8
+    WalkOnSpotNormalEast
+    EndMovement
 
     .balign 4, 0
 _05D0:
@@ -451,18 +443,10 @@ _05E8:
     WalkOnSpotNormalNorth
     EndMovement
 
-    .byte 63
-    .byte 0
-    .byte 3
-    .byte 0
-    .byte 32
-    .byte 0
-    .byte 1
-    .byte 0
-    .byte 254
-    .byte 0
-    .byte 0
-    .byte 0
+ValorLakefront_UnusedMovement2:
+    Delay8 3
+    WalkOnSpotNormalNorth
+    EndMovement
 
     .balign 4, 0
 _0600:
@@ -508,15 +492,15 @@ _065A:
     RemoveItem ITEM_SUITE_KEY, 1, VAR_RESULT
     ApplyMovement 8, _06A8
     WaitMovement
-    ScrCmd_168 22, 24, 11, 13, 77
-    ScrCmd_16B 77
-    ScrCmd_169 77
+    LoadDoorAnimation 22, 24, 11, 13, ANIMATION_TAG_DOOR_1
+    PlayDoorOpenAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
     ApplyMovement 8, _06B0
     WaitMovement
     RemoveObject 8
-    ScrCmd_16C 77
-    ScrCmd_169 77
-    ScrCmd_16A 77
+    PlayDoorCloseAnimation ANIMATION_TAG_DOOR_1
+    WaitForAnimation ANIMATION_TAG_DOOR_1
+    UnloadAnimation ANIMATION_TAG_DOOR_1
     ClearFlag FLAG_UNK_0x025E
     SetFlag FLAG_UNK_0x025D
     ReleaseAll

@@ -49,7 +49,7 @@ void ov5_021ECC78(MapObjectManager *param0)
 
 static void ov5_021ECCA4(MapObjectManager *param0)
 {
-    NARC *v0 = NARC_ctor(NARC_INDEX_DATA__MMODEL__MMODEL, HEAP_ID_FIELD);
+    NARC *v0 = NARC_ctor(NARC_INDEX_DATA__MMODEL__MMODEL, HEAP_ID_FIELD1);
     MapObjectMan_SetNARC(param0, v0);
 }
 
@@ -122,9 +122,9 @@ void *ov5_021ECD68(const MapObjectManager *param0, u32 param1, int param2)
     u32 v2 = NARC_GetMemberSize(v1, param1);
 
     if (param2 == 1) {
-        v0 = Heap_AllocFromHeap(HEAP_ID_FIELD, v2);
+        v0 = Heap_Alloc(HEAP_ID_FIELD1, v2);
     } else {
-        v0 = Heap_AllocFromHeapAtEnd(HEAP_ID_FIELD, v2);
+        v0 = Heap_AllocAtEnd(HEAP_ID_FIELD1, v2);
     }
 
     NARC_ReadWholeMember(v1, param1, v0);
@@ -132,18 +132,18 @@ void *ov5_021ECD68(const MapObjectManager *param0, u32 param1, int param2)
     return v0;
 }
 
-void ov5_021ECDA0(const MapObject *param0, VecFx32 *param1)
+void ov5_021ECDA0(const MapObject *param0, VecFx32 *adjustedObjectPos)
 {
-    VecFx32 v0, v1, v2, v3;
+    VecFx32 objectPosition, jumpOffset, v2, terrainSpriteOffset;
 
-    MapObject_GetPosPtr(param0, &v0);
-    sub_02063078(param0, &v1);
+    MapObject_GetPosPtr(param0, &objectPosition);
+    MapObject_GetSpriteJumpOffset(param0, &jumpOffset);
     sub_0206309C(param0, &v2);
-    sub_020630BC(param0, &v3);
+    MapObject_GetSpriteTerrainOffset(param0, &terrainSpriteOffset);
 
-    param1->x = v0.x + v1.x + v2.x + v3.x;
-    param1->y = v0.y + v1.y + v2.y + v3.y;
-    param1->z = v0.z + v1.z + v2.z + v3.z;
+    adjustedObjectPos->x = objectPosition.x + jumpOffset.x + v2.x + terrainSpriteOffset.x;
+    adjustedObjectPos->y = objectPosition.y + jumpOffset.y + v2.y + terrainSpriteOffset.y;
+    adjustedObjectPos->z = objectPosition.z + jumpOffset.z + v2.z + terrainSpriteOffset.z;
 }
 
 void ov5_021ECDFC(MapObject *param0, int param1)

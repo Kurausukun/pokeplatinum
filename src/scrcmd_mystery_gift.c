@@ -164,7 +164,7 @@ static BOOL CanReceivePokemon(FieldSystem *fieldSystem, GiftData *dummy)
 
 static void GenerateManaphyEgg(FieldSystem *fieldSystem, GiftData *dummy)
 {
-    sub_02054930(HEAP_ID_FIELD_TASK, fieldSystem->saveData, SPECIES_MANAPHY, 1, 2, 1);
+    sub_02054930(HEAP_ID_FIELD3, fieldSystem->saveData, SPECIES_MANAPHY, 1, 2, 1);
 }
 
 static void PrepReceivedManaphyEggMsg(MystGiftGiveMsgFormatter *formatter, u16 *outTextBank, u16 *outStringID)
@@ -184,7 +184,7 @@ static void GivePokemon(FieldSystem *fieldSystem, GiftData *dummy)
 
     Pokemon *pokemon = &giftData->pokemonGiftData.pokemon;
     u8 *giftSpecialRibbons = giftData->pokemonGiftData.specialRibbonsDescIDs;
-    int metLocation = Pokemon_GetValue(pokemon, MON_DATA_MET_LOCATION, NULL);
+    int metLocation = Pokemon_GetValue(pokemon, MON_DATA_EGG_LOCATION, NULL);
     u32 giftPersonality = Pokemon_GetValue(pokemon, MON_DATA_PERSONALITY, NULL);
     u32 giftOtID = Pokemon_GetValue(pokemon, MON_DATA_OT_ID, NULL);
     u32 personality = ARNG_Next(OS_GetTick());
@@ -232,55 +232,55 @@ static void GivePokemon(FieldSystem *fieldSystem, GiftData *dummy)
 
     u8 *specialRibbons = sub_0202D79C(fieldSystem->saveData);
 
-    if (Pokemon_GetValue(pokemon, MON_DATA_SINNOH_RED_RIBBON, NULL)) {
+    if (Pokemon_GetValue(pokemon, MON_DATA_RED_RIBBON, NULL)) {
         specialRibbons[Ribbon_TryGetSpecialDescriptionID(RIBBON_RED)] = giftSpecialRibbons[0];
     }
 
-    if (Pokemon_GetValue(pokemon, MON_DATA_SINNOH_GREEN_RIBBON, NULL)) {
+    if (Pokemon_GetValue(pokemon, MON_DATA_GREEN_RIBBON, NULL)) {
         specialRibbons[Ribbon_TryGetSpecialDescriptionID(RIBBON_GREEN)] = giftSpecialRibbons[1];
     }
 
-    if (Pokemon_GetValue(pokemon, MON_DATA_SINNOH_BLUE_RIBBON, NULL)) {
+    if (Pokemon_GetValue(pokemon, MON_DATA_BLUE_RIBBON, NULL)) {
         specialRibbons[Ribbon_TryGetSpecialDescriptionID(RIBBON_BLUE)] = giftSpecialRibbons[2];
     }
 
-    if (Pokemon_GetValue(pokemon, MON_DATA_SINNOH_FESTIVAL_RIBBON, NULL)) {
+    if (Pokemon_GetValue(pokemon, MON_DATA_FESTIVAL_RIBBON, NULL)) {
         specialRibbons[Ribbon_TryGetSpecialDescriptionID(RIBBON_FESTIVAL)] = giftSpecialRibbons[3];
     }
 
-    if (Pokemon_GetValue(pokemon, MON_DATA_SINNOH_CARNIVAL_RIBBON, NULL)) {
+    if (Pokemon_GetValue(pokemon, MON_DATA_CARNIVAL_RIBBON, NULL)) {
         specialRibbons[Ribbon_TryGetSpecialDescriptionID(RIBBON_CARNIVAL)] = giftSpecialRibbons[4];
     }
 
-    if (Pokemon_GetValue(pokemon, MON_DATA_SINNOH_CLASSIC_RIBBON, NULL)) {
+    if (Pokemon_GetValue(pokemon, MON_DATA_CLASSIC_RIBBON, NULL)) {
         specialRibbons[Ribbon_TryGetSpecialDescriptionID(RIBBON_CLASSIC)] = giftSpecialRibbons[5];
     }
 
-    if (Pokemon_GetValue(pokemon, MON_DATA_SINNOH_PREMIER_RIBBON, NULL)) {
+    if (Pokemon_GetValue(pokemon, MON_DATA_PREMIER_RIBBON, NULL)) {
         specialRibbons[Ribbon_TryGetSpecialDescriptionID(RIBBON_PREMIER)] = giftSpecialRibbons[6];
     }
 
-    if (Pokemon_GetValue(pokemon, MON_DATA_HOENN_MARINE_RIBBON, NULL)) {
+    if (Pokemon_GetValue(pokemon, MON_DATA_MARINE_RIBBON, NULL)) {
         specialRibbons[Ribbon_TryGetSpecialDescriptionID(RIBBON_HOENN_MARINE)] = giftSpecialRibbons[7];
     }
 
-    if (Pokemon_GetValue(pokemon, MON_DATA_HOENN_LAND_RIBBON, NULL)) {
+    if (Pokemon_GetValue(pokemon, MON_DATA_LAND_RIBBON, NULL)) {
         specialRibbons[Ribbon_TryGetSpecialDescriptionID(RIBBON_HOENN_LAND)] = giftSpecialRibbons[8];
     }
 
-    if (Pokemon_GetValue(pokemon, MON_DATA_HOENN_SKY_RIBBON, NULL)) {
+    if (Pokemon_GetValue(pokemon, MON_DATA_SKY_RIBBON, NULL)) {
         specialRibbons[Ribbon_TryGetSpecialDescriptionID(RIBBON_HOENN_SKY)] = giftSpecialRibbons[9];
     }
 
     if (giftData->pokemonGiftData.hasCustomOT == FALSE) {
-        Strbuf *playerName = TrainerInfo_NameNewStrbuf(trainerInfo, HEAP_ID_FIELD_TASK);
+        Strbuf *playerName = TrainerInfo_NameNewStrbuf(trainerInfo, HEAP_ID_FIELD3);
         u32 playerID = TrainerInfo_ID(trainerInfo);
         u32 playerGender = TrainerInfo_Gender(trainerInfo);
 
-        tmpPoke = Pokemon_New(HEAP_ID_FIELD_TASK);
+        tmpPoke = Pokemon_New(HEAP_ID_FIELD3);
 
         Pokemon_Copy(pokemon, tmpPoke);
-        Pokemon_SetValue(tmpPoke, MON_DATA_OTNAME_STRBUF, playerName);
+        Pokemon_SetValue(tmpPoke, MON_DATA_OT_NAME_STRING, playerName);
         Pokemon_SetValue(tmpPoke, MON_DATA_OT_ID, &playerID);
         Pokemon_SetValue(tmpPoke, MON_DATA_OT_GENDER, &playerGender);
 
@@ -288,7 +288,7 @@ static void GivePokemon(FieldSystem *fieldSystem, GiftData *dummy)
         Strbuf_Free(playerName);
     }
 
-    UpdateMonStatusAndTrainerInfo(pokemon, trainerInfo, 4, SpecialMetLoc_GetId(2, metLocation), HEAP_ID_FIELD_TASK);
+    UpdateMonStatusAndTrainerInfo(pokemon, trainerInfo, 4, SpecialMetLoc_GetId(2, metLocation), HEAP_ID_FIELD3);
 
     if (Pokemon_GetValue(pokemon, MON_DATA_SPECIES, NULL) == SPECIES_ARCEUS) {
         if (Pokemon_GetValue(pokemon, MON_DATA_FATEFUL_ENCOUNTER, NULL) == TRUE) {
@@ -354,7 +354,7 @@ static BOOL CanReceiveItem(FieldSystem *fieldSystem, GiftData *dummy)
     Bag *bag = SaveData_GetBag(fieldSystem->saveData);
     GiftData *giftData = GetCurrentPgtData(fieldSystem);
 
-    return Bag_CanFitItem(bag, giftData->itemGiftData.item, 1, HEAP_ID_FIELD_TASK);
+    return Bag_CanFitItem(bag, giftData->itemGiftData.item, 1, HEAP_ID_FIELD3);
 }
 
 static void GiveItem(FieldSystem *fieldSystem, GiftData *dummy)
@@ -363,7 +363,7 @@ static void GiveItem(FieldSystem *fieldSystem, GiftData *dummy)
     GiftData *giftData = GetCurrentPgtData(fieldSystem);
     u16 itemID = giftData->itemGiftData.item;
 
-    Bag_TryAddItem(bag, itemID, 1, HEAP_ID_FIELD_TASK);
+    Bag_TryAddItem(bag, itemID, 1, HEAP_ID_FIELD3);
 }
 
 static void PrepReceivedItemMsg(MystGiftGiveMsgFormatter *formatter, u16 *outTextBank, u16 *outStringID)
@@ -413,7 +413,7 @@ static void PrepReceivedRulesMsg(MystGiftGiveMsgFormatter *formatter, u16 *outTe
 
     StringTemplate_SetPlayerName(formatter->stringTemplate, 0, SaveData_GetTrainerInfo(formatter->fieldSystem->saveData));
 
-    Strbuf *battleRegName = sub_0202605C(battleReg, HEAP_ID_FIELD_TASK);
+    Strbuf *battleRegName = sub_0202605C(battleReg, HEAP_ID_FIELD3);
     StringTemplate_SetStrbuf(formatter->stringTemplate, 1, battleRegName, 0, 1, GAME_LANGUAGE);
     Strbuf_Free(battleRegName);
 }
@@ -426,7 +426,7 @@ static void PrepCannotReceiveRulesMsg(MystGiftGiveMsgFormatter *formatter, u16 *
 
 static BOOL CanReceiveDecorationGood(FieldSystem *fieldSystem, GiftData *dummy)
 {
-    int ownedCount = sub_020289A0(SaveData_GetUnderground(fieldSystem->saveData));
+    int ownedCount = Underground_GetGoodsCountPC(SaveData_GetUnderground(fieldSystem->saveData));
 
     return ownedCount < NUM_MAX_DECORATION_GOODS;
 }
@@ -436,7 +436,7 @@ static void GiveDecorationGood(FieldSystem *fieldSystem, GiftData *dummy)
     GiftData *giftData = GetCurrentPgtData(fieldSystem);
     int id = giftData->decorationGoodID;
 
-    sub_0202895C(SaveData_GetUnderground(fieldSystem->saveData), id);
+    Underground_TryAddGoodPC(SaveData_GetUnderground(fieldSystem->saveData), id);
 }
 
 static void PrepReceivedDecoGoodMsg(MystGiftGiveMsgFormatter *formatter, u16 *outTextBank, u16 *outStringID)
@@ -529,7 +529,7 @@ static BOOL CanReceiveMemberCard(FieldSystem *fieldSystem, GiftData *dummy)
     Bag *bag = SaveData_GetBag(fieldSystem->saveData);
     GiftData *giftData = GetCurrentPgtData(fieldSystem);
 
-    return Bag_CanFitItem(bag, ITEM_MEMBER_CARD, 1, HEAP_ID_FIELD_TASK);
+    return Bag_CanFitItem(bag, ITEM_MEMBER_CARD, 1, HEAP_ID_FIELD3);
 }
 
 static void InitDarkraiEvent(FieldSystem *fieldSystem, GiftData *dummy)
@@ -538,7 +538,7 @@ static void InitDarkraiEvent(FieldSystem *fieldSystem, GiftData *dummy)
     GiftData *giftData = GetCurrentPgtData(fieldSystem);
     VarsFlags *varsFlags = SaveData_GetVarsFlags(fieldSystem->saveData);
 
-    Bag_TryAddItem(bag, ITEM_MEMBER_CARD, 1, HEAP_ID_FIELD_TASK);
+    Bag_TryAddItem(bag, ITEM_MEMBER_CARD, 1, HEAP_ID_FIELD3);
     SystemVars_SetDistributionEventMagic(varsFlags, DISTRIBUTION_EVENT_DARKRAI);
 }
 
@@ -571,7 +571,7 @@ static BOOL CanReceiveOaksLetter(FieldSystem *fieldSystem, GiftData *dummy)
     Bag *bag = SaveData_GetBag(fieldSystem->saveData);
     GiftData *giftData = GetCurrentPgtData(fieldSystem);
 
-    return Bag_CanFitItem(bag, ITEM_OAKS_LETTER, 1, HEAP_ID_FIELD_TASK);
+    return Bag_CanFitItem(bag, ITEM_OAKS_LETTER, 1, HEAP_ID_FIELD3);
 }
 
 static void InitShayminEvent(FieldSystem *fieldSystem, GiftData *dummy)
@@ -580,7 +580,7 @@ static void InitShayminEvent(FieldSystem *fieldSystem, GiftData *dummy)
     GiftData *giftData = GetCurrentPgtData(fieldSystem);
     VarsFlags *varsFlags = SaveData_GetVarsFlags(fieldSystem->saveData);
 
-    Bag_TryAddItem(bag, ITEM_OAKS_LETTER, 1, HEAP_ID_FIELD_TASK);
+    Bag_TryAddItem(bag, ITEM_OAKS_LETTER, 1, HEAP_ID_FIELD3);
     SystemVars_SetDistributionEventMagic(varsFlags, DISTRIBUTION_EVENT_SHAYMIN);
 
     if (SystemVars_GetShayminEventState(varsFlags) == 0) {
@@ -617,7 +617,7 @@ static BOOL CanReceiveSecretKey(FieldSystem *fieldSystem, GiftData *dummy)
     Bag *bag = SaveData_GetBag(fieldSystem->saveData);
     GiftData *giftData = GetCurrentPgtData(fieldSystem);
 
-    return Bag_CanFitItem(bag, ITEM_SECRET_KEY, 1, HEAP_ID_FIELD_TASK);
+    return Bag_CanFitItem(bag, ITEM_SECRET_KEY, 1, HEAP_ID_FIELD3);
 }
 
 static void InitRotomEvent(FieldSystem *fieldSystem, GiftData *dummy)
@@ -626,7 +626,7 @@ static void InitRotomEvent(FieldSystem *fieldSystem, GiftData *dummy)
     GiftData *giftData = GetCurrentPgtData(fieldSystem);
     VarsFlags *varsFlags = SaveData_GetVarsFlags(fieldSystem->saveData);
 
-    Bag_TryAddItem(bag, ITEM_SECRET_KEY, 1, HEAP_ID_FIELD_TASK);
+    Bag_TryAddItem(bag, ITEM_SECRET_KEY, 1, HEAP_ID_FIELD3);
     SystemVars_SetDistributionEventMagic(varsFlags, DISTRIBUTION_EVENT_ROTOM);
 }
 
@@ -659,7 +659,7 @@ static BOOL CanReceiveAzureFlute(FieldSystem *fieldSystem, GiftData *dummy)
     Bag *bag = SaveData_GetBag(fieldSystem->saveData);
     GiftData *giftData = GetCurrentPgtData(fieldSystem);
 
-    return Bag_CanFitItem(bag, ITEM_AZURE_FLUTE, 1, HEAP_ID_FIELD_TASK);
+    return Bag_CanFitItem(bag, ITEM_AZURE_FLUTE, 1, HEAP_ID_FIELD3);
 }
 
 static void InitArceusEvent(FieldSystem *fieldSystem, GiftData *dummy)
@@ -668,7 +668,7 @@ static void InitArceusEvent(FieldSystem *fieldSystem, GiftData *dummy)
     GiftData *unused = GetCurrentPgtData(fieldSystem);
     VarsFlags *varsFlags = SaveData_GetVarsFlags(fieldSystem->saveData);
 
-    Bag_TryAddItem(bag, ITEM_AZURE_FLUTE, 1, HEAP_ID_FIELD_TASK);
+    Bag_TryAddItem(bag, ITEM_AZURE_FLUTE, 1, HEAP_ID_FIELD3);
     SystemVars_SetDistributionEventMagic(varsFlags, DISTRIBUTION_EVENT_ARCEUS);
 }
 

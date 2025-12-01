@@ -1,13 +1,12 @@
 #ifndef POKEPLATINUM_STRUCT_020708E0_H
 #define POKEPLATINUM_STRUCT_020708E0_H
 
-#include "struct_defs/struct_020684D0.h"
-
-#include "overlay005/struct_ov5_021D30A8.h"
+#include "overlay005/sprite_resource_manager.h"
 
 #include "bg_window.h"
 #include "field_move_tasks.h"
 #include "field_task.h"
+#include "item_use_functions.h"
 #include "menu.h"
 #include "string_list.h"
 
@@ -20,13 +19,13 @@ typedef struct {
     u16 state;
     u32 unk_2C;
     u8 options[7];
-    UnkStruct_ov5_021D30A8 unk_38;
+    SpriteResourceManager spriteManager;
     ManagedSprite *unk_200[8];
     u32 unk_220;
     u32 hideOptionFlags;
     u32 unk_228;
     FieldTaskFunc callback;
-    UnkStruct_020684D0 unk_230;
+    ItemUseContext unk_230;
     FieldMoveContext fieldMoveContext;
     void *taskData;
     void *unk_260;

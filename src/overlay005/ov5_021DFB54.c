@@ -22,12 +22,11 @@
 #include "overlay005/ov5_021F2850.h"
 #include "overlay005/ov5_021F8560.h"
 #include "overlay005/struct_ov5_021D1BEC_decl.h"
-#include "overlay006/ov6_02243258.h"
+#include "overlay006/hm_cut_in.h"
 #include "overlay006/ov6_02248050.h"
 #include "overlay006/wild_encounters.h"
 #include "overlay009/ov9_02249960.h"
 #include "overlay009/struct_ov9_0224F6EC_decl.h"
-#include "overlay101/struct_ov101_021D5D90_decl.h"
 
 #include "encounter.h"
 #include "field_battle_data_transfer.h"
@@ -37,6 +36,7 @@
 #include "map_object.h"
 #include "map_object_move.h"
 #include "map_tile_behavior.h"
+#include "overworld_anim_manager.h"
 #include "party.h"
 #include "persisted_map_features_init.h"
 #include "player_avatar.h"
@@ -64,7 +64,7 @@ typedef struct SurfTaskEnv {
     FieldSystem *fieldSystem;
     PlayerAvatar *playerAvatar;
     MapObject *surfBlob;
-    UnkStruct_ov101_021D5D90 *unk_28;
+    OverworldAnimManager *unk_28;
 } SurfTaskEnv;
 
 typedef struct RockClimbTaskEnv {
@@ -74,7 +74,7 @@ typedef struct RockClimbTaskEnv {
     FieldSystem *fieldSystem;
     PlayerAvatar *playerAvatar;
     MapObject *surfBlob;
-    UnkStruct_ov101_021D5D90 *unk_18;
+    OverworldAnimManager *unk_18;
     MonRideTask monRideTask;
     UnkStruct_ov5_021D1BEC *unk_2C;
 } RockClimbTaskEnv;
@@ -111,15 +111,15 @@ typedef struct {
     FieldSystem *fieldSystem;
     PlayerAvatar *playerAvatar;
     MapObject *unk_10;
-    UnkStruct_ov101_021D5D90 *unk_14;
+    OverworldAnimManager *unk_14;
 } UnkStruct_ov5_021E0390;
 
-typedef struct {
-    int unk_00;
-    int unk_04;
+typedef struct StuckInDeepMudTaskEnv {
+    int state;
+    int stepCounter;
     FieldSystem *fieldSystem;
     PlayerAvatar *playerAvatar;
-} UnkStruct_ov5_021E0534;
+} StuckInDeepMudTaskEnv;
 
 typedef struct {
     FieldSystem *fieldSystem;
@@ -148,9 +148,9 @@ static int ov5_021E032C(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, in
 static void ov5_021E0390(int param0, FieldSystem *param1, PlayerAvatar *playerAvatar);
 static BOOL ov5_021E03C8(FieldTask *param0);
 static int ov5_021E04A8(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, int param2, int param3);
-static int ov5_021E04EC(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, int param2, int param3);
-static void ov5_021E0534(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar);
-static BOOL ov5_021E0560(FieldTask *param0);
+static BOOL FieldSystem_TryGetStuckInDeepMud(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, int param2, int param3);
+static void FieldSystem_CreateTaskStuckInDeepMud(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar);
+static BOOL FieldTask_StuckInDeepMud(FieldTask *param0);
 static int ov5_021E067C(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, int param2);
 static int ov5_021E06A8(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar);
 static void RockClimbTask_Start(FieldSystem *fieldSystem, int param1, const MonRideTask *param2);
@@ -162,7 +162,7 @@ static void ov5_021E0FC0(SysTask *param0);
 static void ov5_021E0FF0(SysTask *param0, void *param1);
 static void MonRideTask_Init(FieldSystem *fieldSystem, Pokemon *partyMon, MonRideTask *monRideTask);
 static void NewMonRideCutIn(FieldSystem *fieldSystem, MonRideTask *monRideTask);
-static BOOL CheckCutInFinished(MonRideTask *monRideTask);
+static BOOL CheckMonRideCutInFinished(MonRideTask *monRideTask);
 static void PlayerAvatar_Redraw(PlayerAvatar *playerAvatar, int param1);
 static void ov5_021E10C0(void *param0, const UnkStruct_020216E0 *param1);
 static MapObject *ov5_021E10D4(PlayerAvatar *playerAvatar, int param1);
@@ -222,7 +222,7 @@ static const WaterfallTaskFunc sWaterfallTasksDescend[] = {
     SubTask_Waterfall_FinishDescent
 };
 
-void PlayerAvatar_SetRequestStateBit(PlayerAvatar *playerAvatar, u32 bit)
+void PlayerAvatar_SetTransitionState(PlayerAvatar *playerAvatar, u32 bit)
 {
     PlayerAvatar_TurnOnRequestStateBit(playerAvatar, bit);
 }
@@ -266,7 +266,7 @@ static void PlayerAvatar_RequestStateWalking(PlayerAvatar *playerAvatar)
     PlayerAvatar_ClearSpeed(playerAvatar);
 
     {
-        UnkStruct_ov101_021D5D90 *v4 = sub_0205EC04(playerAvatar);
+        OverworldAnimManager *v4 = sub_0205EC04(playerAvatar);
 
         if (v4 != NULL) {
             ov5_021DF74C(v4);
@@ -285,7 +285,7 @@ static void PlayerAvatar_RequestStateCycle(PlayerAvatar *playerAvatar)
     PlayerAvatar_ClearSpeed(playerAvatar);
 
     {
-        UnkStruct_ov101_021D5D90 *v1 = sub_0205EC04(playerAvatar);
+        OverworldAnimManager *v1 = sub_0205EC04(playerAvatar);
 
         if (v1 != NULL) {
             ov5_021DF74C(v1);
@@ -303,7 +303,7 @@ static void PlayerAvatar_RequestStateSurf(PlayerAvatar *playerAvatar)
     MapObject *mapObj = Player_MapObject(playerAvatar);
     FieldSystem *fieldSystem = MapObject_FieldSystem(mapObj);
     enum AvatarDistortionState distortionState = PlayerAvatar_MapDistortionState(playerAvatar);
-    UnkStruct_ov101_021D5D90 *v5 = sub_0205EC04(playerAvatar);
+    OverworldAnimManager *v5 = sub_0205EC04(playerAvatar);
 
     if (v5 != NULL) {
         ov5_021DF74C(v5);
@@ -391,7 +391,7 @@ static void PlayerAvatar_RequestStateSave(PlayerAvatar *playerAvatar)
     PlayerAvatar_Redraw(playerAvatar, v0);
 }
 
-static void ov5_021DFDA8(PlayerAvatar *playerAvatar)
+static void PlayerAvatar_RequestStateHeal(PlayerAvatar *playerAvatar)
 {
     int v0 = Player_MoveStateFromGender(0x16, PlayerAvatar_Gender(playerAvatar));
     PlayerAvatar_Redraw(playerAvatar, v0);
@@ -412,11 +412,11 @@ static void (*const sPlayerAvatarRequestStateTbl[10])(PlayerAvatar *) = {
     ov5_021DFD0C,
     PlayerAvatar_RequestStatePoketch,
     PlayerAvatar_RequestStateSave,
-    ov5_021DFDA8,
+    PlayerAvatar_RequestStateHeal,
     ov5_021DFDC4
 };
 
-int ov5_021DFDE0(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, int dir, int param3)
+int ov5_021DFDE0(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, enum FaceDirection dir, int param3)
 {
     {
         MapObject *v0;
@@ -479,7 +479,7 @@ static int ov5_021DFE68(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, in
         return 1;
     }
 
-    if (ov5_021E04EC(fieldSystem, playerAvatar, param2, v0) == 1) {
+    if (FieldSystem_TryGetStuckInDeepMud(fieldSystem, playerAvatar, param2, v0) == TRUE) {
         return 1;
     }
 
@@ -490,7 +490,7 @@ static int ov5_021DFEF4(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, in
 {
     int v0 = sub_02061434(playerAvatar, param2);
 
-    if (ov5_021E04EC(fieldSystem, playerAvatar, param2, v0) == 1) {
+    if (FieldSystem_TryGetStuckInDeepMud(fieldSystem, playerAvatar, param2, v0) == TRUE) {
         return 1;
     }
 
@@ -565,20 +565,18 @@ static BOOL ov5_021DFFBC(FieldTask *param0)
         }
 
         if (LocalMapObj_IsAnimationSet(v1) == 0) {
-            if (sub_020613AC(v0->playerAvatar) == 0) {
+            if (!PlayerAvatar_IsAnimationSetOrWalkOnSpotSlow(v0->playerAvatar)) {
                 break;
             }
         }
 
-        {
-            int v3 = MovementAction_TurnActionTowardsDir(v0->unk_04, MOVEMENT_ACTION_WALK_SLOW_NORTH);
+        int v3 = MovementAction_TurnActionTowardsDir(v0->unk_04, MOVEMENT_ACTION_WALK_SLOW_NORTH);
 
-            LocalMapObj_SetAnimationCode(v2, v3);
+        LocalMapObj_SetAnimationCode(v2, v3);
 
-            v3 = MovementAction_TurnActionTowardsDir(v0->unk_04, MOVEMENT_ACTION_WALK_ON_SPOT_NORMAL_NORTH);
-            LocalMapObj_SetAnimationCode(v1, v3);
-            Sound_PlayEffect(SEQ_SE_DP_UG_023);
-        }
+        v3 = MovementAction_TurnActionTowardsDir(v0->unk_04, MOVEMENT_ACTION_WALK_ON_SPOT_NORMAL_NORTH);
+        LocalMapObj_SetAnimationCode(v1, v3);
+        Sound_PlayEffect(SEQ_SE_DP_UG_023);
 
         v0->unk_00++;
         break;
@@ -676,7 +674,7 @@ static BOOL FieldTask_UseSurf(FieldTask *task)
         }
         break;
     case 1:
-        if (CheckCutInFinished(&taskEnv->monRideTask) == TRUE) {
+        if (CheckMonRideCutInFinished(&taskEnv->monRideTask) == TRUE) {
             taskEnv->state++;
         }
         break;
@@ -861,101 +859,99 @@ static int ov5_021E04A8(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, in
     return 1;
 }
 
-static int ov5_021E04EC(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, int param2, int param3)
+static BOOL FieldSystem_TryGetStuckInDeepMud(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, int param2, int param3)
 {
-    if (PlayerAvatar_IsNotInDeepSwamp(playerAvatar) == 1) {
-        return 0;
+    if (PlayerAvatar_CheckEscapedFromDeepMud(playerAvatar) == TRUE) {
+        return FALSE;
     }
 
-    {
-        MapObject *v0 = Player_MapObject(playerAvatar);
-        u8 v1 = MapObject_GetCurrTileBehavior(v0);
+    MapObject *playerMapObject = Player_MapObject(playerAvatar);
+    u8 tileBehavior = MapObject_GetCurrTileBehavior(playerMapObject);
 
-        if ((TileBehavior_IsDeepMud(v1) != 1) && (TileBehavior_IsDeepMudWithGrass(v1) != 1)) {
-            return 0;
-        }
+    if (TileBehavior_IsDeepMud(tileBehavior) != TRUE && TileBehavior_IsDeepMudWithGrass(tileBehavior) != TRUE) {
+        return FALSE;
     }
 
-    ov5_021E0534(fieldSystem, playerAvatar);
-    return 1;
+    FieldSystem_CreateTaskStuckInDeepMud(fieldSystem, playerAvatar);
+    return TRUE;
 }
 
-static void ov5_021E0534(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar)
+static void FieldSystem_CreateTaskStuckInDeepMud(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar)
 {
-    UnkStruct_ov5_021E0534 *v0 = MonRideTaskEnv_New(sizeof(UnkStruct_ov5_021E0534));
+    StuckInDeepMudTaskEnv *stuckInDeepMudTaskEnv = MonRideTaskEnv_New(sizeof(StuckInDeepMudTaskEnv));
 
-    v0->fieldSystem = fieldSystem;
-    v0->playerAvatar = playerAvatar;
+    stuckInDeepMudTaskEnv->fieldSystem = fieldSystem;
+    stuckInDeepMudTaskEnv->playerAvatar = playerAvatar;
 
-    FieldSystem_CreateTask(fieldSystem, ov5_021E0560, v0);
-    GameRecords_IncrementRecordValue(SaveData_GetGameRecords(fieldSystem->saveData), RECORD_UNK_056);
+    FieldSystem_CreateTask(fieldSystem, FieldTask_StuckInDeepMud, stuckInDeepMudTaskEnv);
+    GameRecords_IncrementRecordValue(SaveData_GetGameRecords(fieldSystem->saveData), RECORD_TIMES_STUCK_IN_DEEP_MUD);
 }
 
-static BOOL ov5_021E0560(FieldTask *param0)
+static BOOL FieldTask_StuckInDeepMud(FieldTask *fieldTaskEnv)
 {
-    UnkStruct_ov5_021E0534 *v0 = FieldTask_GetEnv(param0);
-    MapObject *v1 = Player_MapObject(v0->playerAvatar);
+    StuckInDeepMudTaskEnv *stuckInDeepMudTaskEnv = FieldTask_GetEnv(fieldTaskEnv);
+    MapObject *playerMapObject = Player_MapObject(stuckInDeepMudTaskEnv->playerAvatar);
 
-    switch (v0->unk_00) {
+    switch (stuckInDeepMudTaskEnv->state) {
     case 0:
         Sound_PlayEffect(SEQ_SE_DP_ZUPO);
-        v0->unk_00++;
+        stuckInDeepMudTaskEnv->state++;
     case 1:
-        if (LocalMapObj_IsAnimationSet(v1) == 0) {
-            if (sub_020613AC(v0->playerAvatar) == 0) {
+        if (!LocalMapObj_IsAnimationSet(playerMapObject)) {
+            if (!PlayerAvatar_IsAnimationSetOrWalkOnSpotSlow(stuckInDeepMudTaskEnv->playerAvatar)) {
                 break;
             }
         }
 
-        if (v0->unk_04 >= 5) {
+        if (stuckInDeepMudTaskEnv->stepCounter >= 5) {
             Sound_PlayEffect(SEQ_SE_DP_ZUPO2);
-            PlayerAvatar_SetInDeepSwamp(v0->playerAvatar, 1);
-            MonRideTaskEnv_Free(v0);
-            return 1;
+            PlayerAvatar_SetEscapedFromDeepMud(stuckInDeepMudTaskEnv->playerAvatar, TRUE);
+            MonRideTaskEnv_Free(stuckInDeepMudTaskEnv);
+            return TRUE;
         }
 
-        v0->unk_00++;
+        stuckInDeepMudTaskEnv->state++;
     case 2: {
-        int v2 = PlayerAvatar_GetDir(v0->playerAvatar);
-        u32 v3, v4 = gSystem.pressedKeys, v5 = gSystem.heldKeys;
-        int v6 = sub_02061308(v0->playerAvatar, v4, v5);
+        enum FaceDirection playerInitialDirection = PlayerAvatar_GetDir(stuckInDeepMudTaskEnv->playerAvatar);
+        u32 movementAction;
+        u32 pressedKeys = gSystem.pressedKeys;
+        u32 heldKeys = gSystem.heldKeys;
+        enum FaceDirection playerNewDirection = PlayerAvatar_CalcFaceDirection(stuckInDeepMudTaskEnv->playerAvatar, pressedKeys, heldKeys);
 
-        if ((v6 == -1) || (v6 == v2)) {
+        if (playerNewDirection == -1 || playerNewDirection == playerInitialDirection) {
             break;
         }
 
-        v0->unk_00 = 1;
-        v0->unk_04++;
+        stuckInDeepMudTaskEnv->state = 1;
+        stuckInDeepMudTaskEnv->stepCounter++;
 
-        {
-            u8 v7 = MapObject_GetCurrTileBehavior(v1);
+        u8 tileBehavior = MapObject_GetCurrTileBehavior(playerMapObject);
 
-            if (TileBehavior_IsDeepMudWithGrass(v7) == 1) {
-                FieldSystem *fieldSystem = FieldTask_GetFieldSystem(param0);
-                FieldBattleDTO *v9;
+        if (TileBehavior_IsDeepMudWithGrass(tileBehavior) == TRUE) {
+            FieldSystem *fieldSystem = FieldTask_GetFieldSystem(fieldTaskEnv);
+            FieldBattleDTO *fieldBattle;
 
-                if (WildEncounters_TryMudEncounter(fieldSystem, &v9) == 1) {
-                    PlayerAvatar_SetInDeepSwamp(v0->playerAvatar, 1);
-                    MonRideTaskEnv_Free(v0);
-                    Encounter_StartVsWild(fieldSystem, param0, v9);
-                    return 0;
-                }
+            if (WildEncounters_TryMudEncounter(fieldSystem, &fieldBattle) == TRUE) {
+                PlayerAvatar_SetEscapedFromDeepMud(stuckInDeepMudTaskEnv->playerAvatar, TRUE);
+                MonRideTaskEnv_Free(stuckInDeepMudTaskEnv);
+                Encounter_StartVsWild(fieldSystem, fieldTaskEnv, fieldBattle);
+                return FALSE;
             }
         }
 
-        if (v0->unk_04 < 5) {
-            v3 = 0x28;
+        if (stuckInDeepMudTaskEnv->stepCounter < 5) {
+            movementAction = MOVEMENT_ACTION_WALK_ON_SPOT_FASTER_NORTH;
         } else {
-            v3 = 0x30;
-            sub_02062EE0(v1, 1);
+            movementAction = MOVEMENT_ACTION_JUMP_ON_SPOT_FAST_NORTH;
+            MapObject_SetFlagDoNotSinkIntoTerrain(playerMapObject, TRUE);
         }
 
-        v3 = MovementAction_TurnActionTowardsDir(v6, v3);
-        PlayerAvatar_SetAnimationCode(v0->playerAvatar, v3, 1);
+        movementAction = MovementAction_TurnActionTowardsDir(playerNewDirection, movementAction);
+        PlayerAvatar_SetAnimationCode(stuckInDeepMudTaskEnv->playerAvatar, movementAction, 1);
     } break;
     }
 
-    return 0;
+    return FALSE;
 }
 
 static int ov5_021E067C(FieldSystem *fieldSystem, PlayerAvatar *playerAvatar, int param2)
@@ -1072,7 +1068,7 @@ static int SubTask_RockClimb_PlayCutIn(RockClimbTaskEnv *taskEnv)
 
 static int SubTask_RockClimb_WaitCutIn(RockClimbTaskEnv *taskEnv)
 {
-    if (CheckCutInFinished(&taskEnv->monRideTask) == TRUE) {
+    if (CheckMonRideCutInFinished(&taskEnv->monRideTask) == TRUE) {
         taskEnv->state++;
     }
 
@@ -1236,7 +1232,7 @@ static int SubTask_Waterfall_PlayAscentCutIn(WaterfallTaskEnv *taskEnv)
 
 static int SubTask_Waterfall_WaitForAscentCutIn(WaterfallTaskEnv *taskEnv)
 {
-    if (CheckCutInFinished(&taskEnv->monRideTask) == TRUE) {
+    if (CheckMonRideCutInFinished(&taskEnv->monRideTask) == TRUE) {
         Sound_PlayEffect(SEQ_SE_DP_FW463);
         taskEnv->state++;
     }
@@ -1353,7 +1349,7 @@ static int SubTask_Waterfall_PlayDescentCutIn(WaterfallTaskEnv *taskEnv)
 
 static int SubTask_Waterfall_WaitForDescentCutIn(WaterfallTaskEnv *taskEnv)
 {
-    if (CheckCutInFinished(&taskEnv->monRideTask) == TRUE) {
+    if (CheckMonRideCutInFinished(&taskEnv->monRideTask) == TRUE) {
         Sound_PlayEffect(SEQ_SE_DP_FW463);
         taskEnv->state++;
     }
@@ -1596,9 +1592,9 @@ void ov5_021E0E94(PlayerAvatar *playerAvatar)
     {
         u32 v3 = PlayerAvatar_RequestStateFlag(playerAvatar);
 
-        PlayerAvatar_SetRequestStateBit(playerAvatar, (1 << 6));
+        PlayerAvatar_SetTransitionState(playerAvatar, PLAYER_TRANSITION_POKETCH);
         PlayerAvatar_RequestChangeState(playerAvatar);
-        PlayerAvatar_SetRequestStateBit(playerAvatar, v3);
+        PlayerAvatar_SetTransitionState(playerAvatar, v3);
     }
 }
 
@@ -1629,9 +1625,9 @@ void ov5_021E0EEC(PlayerAvatar *playerAvatar)
     {
         u32 v3 = PlayerAvatar_RequestStateFlag(playerAvatar);
 
-        PlayerAvatar_SetRequestStateBit(playerAvatar, (1 << 0));
+        PlayerAvatar_SetTransitionState(playerAvatar, PLAYER_TRANSITION_WALKING);
         PlayerAvatar_RequestChangeState(playerAvatar);
-        PlayerAvatar_SetRequestStateBit(playerAvatar, v3);
+        PlayerAvatar_SetTransitionState(playerAvatar, v3);
     }
 }
 
@@ -1647,7 +1643,7 @@ static SysTask *ov5_021E0F54(FieldSystem *fieldSystem, u32 param1)
     {
         SysTask *v2;
         MapObject *v3 = Player_MapObject(playerAvatar);
-        UnkStruct_ov5_021E0FF0 *v4 = Heap_AllocFromHeapAtEnd(HEAP_ID_FIELD, (sizeof(UnkStruct_ov5_021E0FF0)));
+        UnkStruct_ov5_021E0FF0 *v4 = Heap_AllocAtEnd(HEAP_ID_FIELD1, sizeof(UnkStruct_ov5_021E0FF0));
 
         v4->unk_00 = 0;
         v4->fieldSystem = fieldSystem;
@@ -1655,7 +1651,7 @@ static SysTask *ov5_021E0F54(FieldSystem *fieldSystem, u32 param1)
         v4->unk_04 = v1;
 
         MapObject_SetPauseMovementOff(v3);
-        PlayerAvatar_SetRequestStateBit(playerAvatar, param1);
+        PlayerAvatar_SetTransitionState(playerAvatar, param1);
         PlayerAvatar_RequestChangeState(playerAvatar);
 
         v2 = SysTask_Start(ov5_021E0FF0, v4, 0xffff);
@@ -1692,7 +1688,7 @@ static void ov5_021E0FF0(SysTask *param0, void *param1)
 
 SysTask *ov5_021E1000(FieldSystem *fieldSystem)
 {
-    return ov5_021E0F54(fieldSystem, (1 << 7));
+    return ov5_021E0F54(fieldSystem, PLAYER_TRANSITION_SAVE);
 }
 
 void ov5_021E100C(SysTask *param0)
@@ -1702,7 +1698,7 @@ void ov5_021E100C(SysTask *param0)
 
 SysTask *FieldSystem_StartVsSeekerTask(FieldSystem *fieldSystem)
 {
-    return ov5_021E0F54(fieldSystem, (1 << 9));
+    return ov5_021E0F54(fieldSystem, PLAYER_TRANSITION_x0200);
 }
 
 void FieldSystem_EndVsSeekerTask(SysTask *param0)
@@ -1719,13 +1715,13 @@ static void MonRideTask_Init(FieldSystem *fieldSystem, Pokemon *partyMon, MonRid
 
 static void NewMonRideCutIn(FieldSystem *fieldSystem, MonRideTask *monRideTask)
 {
-    monRideTask->HMCutInTask = ov6_02243F88(fieldSystem, 0, monRideTask->partyMon, monRideTask->playerGender);
+    monRideTask->HMCutInTask = SysTask_HMCutIn_New(fieldSystem, 0, monRideTask->partyMon, monRideTask->playerGender);
 }
 
-static BOOL CheckCutInFinished(MonRideTask *monRideTask)
+static BOOL CheckMonRideCutInFinished(MonRideTask *monRideTask)
 {
-    if (ov6_02243FBC(monRideTask->HMCutInTask) == TRUE) {
-        ov6_02243FC8(monRideTask->HMCutInTask);
+    if (CheckHMCutInFinished(monRideTask->HMCutInTask) == TRUE) {
+        SysTask_HMCutIn_SetTaskDone(monRideTask->HMCutInTask);
         return TRUE;
     }
 
@@ -1773,7 +1769,7 @@ static MapObject *ov5_021E10D4(PlayerAvatar *playerAvatar, int param1)
 
 static void *MonRideTaskEnv_New(int size)
 {
-    void *monRideTaskEnv = Heap_AllocFromHeapAtEnd(HEAP_ID_FIELD, size);
+    void *monRideTaskEnv = Heap_AllocAtEnd(HEAP_ID_FIELD1, size);
 
     GF_ASSERT(monRideTaskEnv != NULL);
     memset(monRideTaskEnv, 0, size);
@@ -1783,7 +1779,7 @@ static void *MonRideTaskEnv_New(int size)
 
 static void MonRideTaskEnv_Free(void *taskEnv)
 {
-    Heap_FreeExplicit(HEAP_ID_FIELD, taskEnv);
+    Heap_FreeExplicit(HEAP_ID_FIELD1, taskEnv);
 }
 
 static Pokemon *GetPokemonByIndex(FieldSystem *fieldSystem, int partySlot)

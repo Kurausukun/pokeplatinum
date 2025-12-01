@@ -57,11 +57,7 @@ form_sprites_shared = files(
     '.shared/shadows.pal',
 )
 
-pokefoot_files = files(
-    '.shared/pokefoot.pal',
-    '.shared/pokefoot_anim.json',
-    '.shared/pokefoot_cell.json',
-)
+pokefoot_files = []
 
 sinnoh_pokedex = files('sinnoh_pokedex.json')
 pl_growtbl_files = files('.shared/exp_tables.csv')
@@ -87,13 +83,15 @@ endforeach
 #   - Unown forms have unique party/menu icons and sprites, but not unique base
 #     stats.
 #   - Castform forms have only unique sprites.
+form_registry_json = files('form_registry.json')
+
 form_registry = custom_target('form_registry',
     output: [
         'form_data.order',
         'form_icons.order',
         'form_sprites.order',
     ],
-    input: files('form_registry.json'),
+    input: form_registry_json,
     command: [ ordergen_forms_py, '@INPUT@', '@OUTPUT0@', '@OUTPUT1@', '@OUTPUT2@' ],
 )
 form_data_order = form_registry[0]
@@ -173,6 +171,17 @@ endforeach
 # 4. Compile assets. Compilers take registries as inputs and declare dependencies
 #    on the actual source files. The former prevents command line bloat; the
 #    latter maintains that compilation must reoccur when source files change.
+species_orders = custom_target('species_orders',
+    output: [
+        'pokefoot.order',
+    ],
+    command: [ ordergen_species_py, '@OUTPUT0@' ],
+    env: species_env,
+    depends: [ py_consts_generators ],
+)
+pokefoot_order = species_orders[0]
+
+
 datagen_species_out = custom_target('datagen_species_out',
     output: [
         'pl_personal.narc',
@@ -184,13 +193,16 @@ datagen_species_out = custom_target('datagen_species_out',
         'pms.narc',
         'tutorable_moves.h',
         'species_learnsets_by_tutor.h',
-        'species_footprints.h',
+        'species_footprint_sizes.h',
+        'species_footprint_types.h',
+        'species_egg_moves.h',
+        'species_icon_palettes.h',
     ],
     command: [
         datagen_species_exe,
         meson.current_build_dir(),
         pokemon_data_root,
-        form_data_order,
+        form_registry_json,
         files('move_tutors.json'),
     ],
     env: species_env,
@@ -198,28 +210,37 @@ datagen_species_out = custom_target('datagen_species_out',
         species_data_files,
     ],
 )
-h_headers += datagen_species_out[6]
 h_headers += datagen_species_out[7]
 h_headers += datagen_species_out[8]
+h_headers += datagen_species_out[9]
+h_headers += datagen_species_out[10]
+h_headers += datagen_species_out[11]
+h_headers += datagen_species_out[12]
 
 
 # OLD NARCs
 pl_poke_icon_narc = custom_target('pl_poke_icon.narc',
-    output: 'pl_poke_icon.narc',
+    output: [
+        'pl_poke_icon.narc',
+        'pl_poke_icon.naix.h',
+    ],
     input: [
         icons_shared,
         poke_icon_files
     ],
+    depends: [ py_consts_generators ],
     command: [
         make_pl_poke_icon_py,
         '--nitrogfx', nitrogfx_exe,
         '--narc', narc_exe,
+        '--order-file', files('species_icons.order'),
         '--shared-dir', '@CURRENT_SOURCE_DIR@/.shared',
         '--private-dir', '@PRIVATE_DIR@',
         '--output-dir', '@OUTDIR@',
-        poke_icon_files
-    ]
+        poke_icon_files,
+    ],
 )
+naix_headers += pl_poke_icon_narc[1]
 
 pl_pokegra_narc = custom_target('pl_pokegra.narc',
     output: 'pl_pokegra.narc',
@@ -233,7 +254,7 @@ pl_pokegra_narc = custom_target('pl_pokegra.narc',
         '--source-dir', '@CURRENT_SOURCE_DIR@',
         '--private-dir', '@PRIVATE_DIR@',
         '--output-dir', '@OUTDIR@',
-    ]
+    ],
 )
 
 pl_otherpoke_narc = custom_target('pl_otherpoke.narc',
@@ -245,6 +266,7 @@ pl_otherpoke_narc = custom_target('pl_otherpoke.narc',
         otherpoke_files,
         form_sprites_shared,
     ],
+    depends: [ py_consts_generators ],
     command: [
         make_pl_otherpoke_py,
         '--nitrogfx', nitrogfx_exe,
@@ -255,7 +277,7 @@ pl_otherpoke_narc = custom_target('pl_otherpoke.narc',
         '--palette-entries', '94',
         otherpoke_files,
         form_sprites_shared,
-    ]
+    ],
 )
 naix_headers += pl_otherpoke_narc[1]
 
@@ -270,7 +292,7 @@ pl_pokezukan_narc = custom_target('pl_pokezukan.narc',
         '--private-dir', '@PRIVATE_DIR@',
         '--output-dir', '@OUTDIR@',
         sinnoh_pokedex
-    ]
+    ],
 )
 
 shinzukan_narc = custom_target('shinzukan.narc',
@@ -287,7 +309,7 @@ shinzukan_narc = custom_target('shinzukan.narc',
         '--private-dir', '@PRIVATE_DIR@',
         '--output-dir', '@OUTDIR@',
         sinnoh_pokedex
-    ]
+    ],
 )
 h_headers += shinzukan_narc[1]
 
@@ -301,7 +323,8 @@ pl_growtbl_narc = custom_target('pl_growtbl.narc',
         '--private-dir', '@PRIVATE_DIR@',
         '--output-dir', '@OUTDIR@',
         pl_growtbl_files
-    ]
+    ],
+    depends: [ py_consts_generators ],
 )
 
 pokedex_data_narc = custom_target('zukan_data.narc',
@@ -336,22 +359,53 @@ pokedex_data_giratina_altered_narc = custom_target('zukan_data_gira.narc',
     depend_files: [ species_data_files ],
 )
 
+
+pokefoot_nclr = nclr_gen.process(
+    files('.shared/footprint.pal')
+)
+pokefoot_nanr_lz = nanr_lz_gen.process(
+    files('.shared/footprint_anim.json'),
+    extra_args: [
+        '-nopad',
+    ],
+)
+pokefoot_ncer_lz = ncer_lz_gen.process(
+    files('.shared/footprint_cell.json'),
+    extra_args: [
+        '-nopad',
+    ],
+)
+pokefoot_cell_key = files('.shared/footprint_cell_key.json')
+pokefoot_ncgr_lz = ncgr_lz_gen.process(
+    pokefoot_files,
+    extra_args: [
+        '-cell', pokefoot_cell_key[0].full_path(),
+        '-version101',
+        '-clobbersize',
+        '-mappingtype', '128',
+        '-nopad',
+    ],
+    preserve_path_from: pokemon_data_root,
+)
+
 pokefoot_narc = custom_target('pokefoot.narc',
     output: [
         'pokefoot.narc',
         'pokefoot.naix.h',
     ],
-    input: pokefoot_files,
-    command: [
-        make_pokefoot_py,
-        '--nitrogfx', nitrogfx_exe,
-        '--narc', narc_exe,
-        '--source-dir', '@CURRENT_SOURCE_DIR@',
-        '--private-dir', '@PRIVATE_DIR@',
-        '--output-dir', '@OUTDIR@',
+    input: [
+        pokefoot_nclr,
+        pokefoot_nanr_lz,
+        pokefoot_ncer_lz,
+        pokefoot_ncgr_lz,
     ],
-    env: species_env,
-    depends: [ py_consts_generators ],
+    command: [
+        narc_exe, 'create',
+        '--naix',
+        '--order', pokefoot_order,
+        '--output', '@OUTPUT0@',
+        '@PRIVATE_DIR@',
+    ],
 )
 naix_headers += pokefoot_narc[1]
 

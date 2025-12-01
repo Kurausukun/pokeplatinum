@@ -21,8 +21,8 @@ typedef struct FontOAM {
     UnkStruct_02012CE0_sub1 *unk_00;
     int unk_04;
     const Sprite *unk_08;
-    int unk_0C;
-    int unk_10;
+    int x;
+    int y;
 } FontOAM;
 
 typedef struct UnkStruct_02012744_t {
@@ -95,7 +95,7 @@ UnkStruct_02012744 *sub_02012744(int param0, int heapID)
     UnkStruct_02012744 *v0;
     int v1;
 
-    v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_02012744));
+    v0 = Heap_Alloc(heapID, sizeof(UnkStruct_02012744));
     GF_ASSERT(v0);
 
     for (v1 = 0; v1 < 12; v1++) {
@@ -104,7 +104,7 @@ UnkStruct_02012744 *sub_02012744(int param0, int heapID)
         GF_ASSERT(v0->unk_00[v1]);
     }
 
-    v0->unk_60 = Heap_AllocFromHeap(heapID, sizeof(FontOAM) * param0);
+    v0->unk_60 = Heap_Alloc(heapID, sizeof(FontOAM) * param0);
     GF_ASSERT(v0->unk_60);
 
     v0->unk_64 = param0;
@@ -140,16 +140,16 @@ FontOAM *sub_020127E8(const UnkStruct_020127E8 *param0)
     GF_ASSERT(v0);
 
     v0->unk_08 = param0->unk_10;
-    v0->unk_0C = param0->unk_18;
-    v0->unk_10 = param0->unk_1C;
+    v0->x = param0->unk_18;
+    v0->y = param0->unk_1C;
 
     v1.unk_0C = &v1;
     v1.unk_10 = &v1;
 
     v2 = sub_02012DE4(param0->unk_04->width, param0->unk_04->height, param0->heapID, &v1);
-    v3 = Heap_AllocFromHeapAtEnd(param0->heapID, sizeof(NNSG2dImageProxy) * v2);
+    v3 = Heap_AllocAtEnd(param0->heapID, sizeof(NNSG2dImageProxy) * v2);
 
-    v0->unk_00 = Heap_AllocFromHeap(param0->heapID, sizeof(UnkStruct_02012CE0_sub1) * v2);
+    v0->unk_00 = Heap_Alloc(param0->heapID, sizeof(UnkStruct_02012CE0_sub1) * v2);
     v0->unk_04 = v2;
 
     sub_02012E6C(param0->unk_04, &v1, v3, param0->unk_14, param0->unk_28, param0->heapID);
@@ -185,34 +185,31 @@ int sub_02012898(const Window *param0, int param1, int heapID)
     return v1;
 }
 
-void sub_020128C4(FontOAM *param0, int param1, int param2)
+void FontOAM_SetXY(FontOAM *fontOAM, int x, int y)
 {
-    int v0;
-    VecFx32 v1;
-    const VecFx32 *v2;
+    GF_ASSERT(fontOAM);
 
-    GF_ASSERT(param0);
+    fontOAM->x = x;
+    fontOAM->y = y;
 
-    param0->unk_0C = param1;
-    param0->unk_10 = param2;
+    x *= FX32_ONE;
+    y *= FX32_ONE;
 
-    param1 *= FX32_ONE;
-    param2 *= FX32_ONE;
+    if (fontOAM->unk_08) {
+        const VecFx32 *fontPos = Sprite_GetPosition(fontOAM->unk_08);
 
-    if (param0->unk_08) {
-        v2 = Sprite_GetPosition(param0->unk_08);
-
-        param1 += v2->x;
-        param2 += v2->y;
+        x += fontPos->x;
+        y += fontPos->y;
     }
 
-    v1.z = 0;
+    VecFx32 spritePos;
+    spritePos.z = 0;
 
-    for (v0 = 0; v0 < param0->unk_04; v0++) {
-        v1.x = param1 + (param0->unk_00[v0].unk_04 << FX32_SHIFT);
-        v1.y = param2 + (param0->unk_00[v0].unk_08 << FX32_SHIFT);
+    for (int v0 = 0; v0 < fontOAM->unk_04; v0++) {
+        spritePos.x = x + (fontOAM->unk_00[v0].unk_04 << FX32_SHIFT);
+        spritePos.y = y + (fontOAM->unk_00[v0].unk_08 << FX32_SHIFT);
 
-        Sprite_SetPosition(param0->unk_00[v0].unk_00, &v1);
+        Sprite_SetPosition(fontOAM->unk_00[v0].unk_00, &spritePos);
     }
 }
 
@@ -226,8 +223,8 @@ void sub_02012938(FontOAM *param0)
     GF_ASSERT(param0);
 
     if (param0->unk_08) {
-        v3 = param0->unk_0C << FX32_SHIFT;
-        v4 = param0->unk_10 << FX32_SHIFT;
+        v3 = param0->x << FX32_SHIFT;
+        v4 = param0->y << FX32_SHIFT;
         v2 = Sprite_GetPosition(param0->unk_08);
 
         v3 += v2->x;
@@ -244,14 +241,14 @@ void sub_02012938(FontOAM *param0)
     }
 }
 
-void sub_020129A4(const FontOAM *param0, int *param1, int *param2)
+void FontOAM_GetXY(const FontOAM *fontOAM, int *x, int *y)
 {
-    GF_ASSERT(param0);
-    GF_ASSERT(param1);
-    GF_ASSERT(param2);
+    GF_ASSERT(fontOAM);
+    GF_ASSERT(x);
+    GF_ASSERT(y);
 
-    *param1 = param0->unk_0C;
-    *param2 = param0->unk_10;
+    *x = fontOAM->x;
+    *y = fontOAM->y;
 }
 
 void sub_020129D0(FontOAM *param0, BOOL param1)
@@ -333,7 +330,7 @@ void sub_02012AF0(FontOAM *param0, GXOamMode param1)
 
 UnkStruct_02012B20 *sub_02012B20(const Window *param0, int heapID)
 {
-    UnkStruct_02012B20 *v0 = Heap_AllocFromHeap(heapID, sizeof(UnkStruct_02012B20));
+    UnkStruct_02012B20 *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_02012B20));
 
     v0->unk_00.unk_0C = &v0->unk_00;
     v0->unk_00.unk_10 = &v0->unk_00;
@@ -364,12 +361,12 @@ FontOAM *sub_02012B60(const UnkStruct_020127E8 *param0, const UnkStruct_02012B20
     GF_ASSERT(v0);
 
     v0->unk_08 = param0->unk_10;
-    v0->unk_0C = param0->unk_18;
-    v0->unk_10 = param0->unk_1C;
+    v0->x = param0->unk_18;
+    v0->y = param0->unk_1C;
 
-    v1 = Heap_AllocFromHeapAtEnd(param0->heapID, sizeof(NNSG2dImageProxy) * param1->unk_14);
+    v1 = Heap_AllocAtEnd(param0->heapID, sizeof(NNSG2dImageProxy) * param1->unk_14);
 
-    v0->unk_00 = Heap_AllocFromHeap(param0->heapID, sizeof(UnkStruct_02012CE0_sub1) * param1->unk_14);
+    v0->unk_00 = Heap_Alloc(param0->heapID, sizeof(UnkStruct_02012CE0_sub1) * param1->unk_14);
     v0->unk_04 = param1->unk_14;
 
     sub_02012E6C(param0->unk_04, &param1->unk_00, v1, param0->unk_14, param0->unk_28, param0->heapID);
@@ -392,7 +389,7 @@ void sub_02012BE0(FontOAM *param0, const UnkStruct_02012B20 *param1, const Windo
     Sprite *v3 = param0->unk_00[0].unk_00;
     int v4 = Sprite_GetVRamType(v3);
     v0 = sub_02012B58(param1, v4);
-    v1 = (char *)Heap_AllocFromHeapAtEnd(heapID, v0);
+    v1 = (char *)Heap_AllocAtEnd(heapID, v0);
 
     memset(v1, 0, v0);
 
@@ -410,23 +407,31 @@ void sub_02012BE0(FontOAM *param0, const UnkStruct_02012B20 *param1, const Windo
     Heap_Free(v1);
 }
 
-void sub_02012C60(const Window *param0, int param1, int param2, int param3, int param4, char *param5)
+void sub_02012C60(
+    const Window *window,
+    int width,
+    int height,
+    int x,
+    int y,
+    char *output)
 {
-    int v0;
-    int v1;
-    int v2;
+    // this function copies a rectangle of pixels from the window
+    // to the output starting at (x,y) and spanning (width,height)
+    int i;
+    int dstOffset;
+    int srcOffset;
 
-    GF_ASSERT(param0->width >= (param1 + param3));
-    GF_ASSERT(param0->height >= (param2 + param4));
+    GF_ASSERT(window->width >= (width + x));
+    GF_ASSERT(window->height >= (height + y));
 
-    for (v0 = 0; v0 < param2; v0++) {
-        v1 = v0 * param1;
-        v1 *= 32;
-        v2 = ((v0 + param4) * param0->width);
-        v2 += param3;
-        v2 *= 32;
+    for (i = 0; i < height; i++) {
+        dstOffset = i * width;
+        dstOffset *= 32;
+        srcOffset = ((i + y) * window->width);
+        srcOffset += x;
+        srcOffset *= 32;
 
-        memcpy(param5 + v1, (char *)(param0->pixels) + v2, 32 * param1);
+        memcpy(output + dstOffset, (char *)(window->pixels) + srcOffset, 32 * width);
     }
 }
 
@@ -579,7 +584,7 @@ static int sub_02012EE0(const Window *param0, const UnkStruct_02013034 *param1, 
     }
 
     v1 *= 32;
-    v0 = Heap_AllocFromHeapAtEnd(heapID, v1);
+    v0 = Heap_AllocAtEnd(heapID, v1);
 
     sub_02012C60(param0, v2, v3, param1->unk_00, param1->unk_04, v0);
     DC_FlushRange(v0, v1);
@@ -749,7 +754,7 @@ static Sprite *sub_02013100(const UnkStruct_020127E8 *param0, const UnkStruct_02
 
 static UnkStruct_02013034 *sub_02013188(int heapID)
 {
-    UnkStruct_02013034 *v0 = Heap_AllocFromHeapAtEnd(heapID, sizeof(UnkStruct_02013034));
+    UnkStruct_02013034 *v0 = Heap_AllocAtEnd(heapID, sizeof(UnkStruct_02013034));
     GF_ASSERT(v0);
 
     v0->unk_0C = NULL;

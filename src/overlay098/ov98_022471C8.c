@@ -5,13 +5,14 @@
 #include <string.h>
 
 #include "constants/graphics.h"
+#include "constants/net.h"
 
 #include "struct_decls/struct_0202B370_decl.h"
 #include "struct_defs/struct_02099F80.h"
 
 #include "overlay004/ov4_021D0D80.h"
 #include "overlay061/struct_ov61_0222C3B0.h"
-#include "overlay094/ov94_0223B140.h"
+#include "overlay094/networking.h"
 #include "overlay098/ov98_02246C20.h"
 #include "overlay098/ov98_022499C8.h"
 #include "overlay098/struct_ov98_02246E88.h"
@@ -214,8 +215,8 @@ static const ListMenuTemplate Unk_ov98_02249C0C = {
     ov98_022499A0,
     NULL,
     NULL,
-    (NELEMS(Unk_ov98_02249BEC)),
-    (NELEMS(Unk_ov98_02249BEC)),
+    NELEMS(Unk_ov98_02249BEC),
+    NELEMS(Unk_ov98_02249BEC),
     0x0,
     0x8,
     0x0,
@@ -247,8 +248,8 @@ static const ListMenuTemplate Unk_ov98_02249C2C = {
     ov98_022499B4,
     NULL,
     NULL,
-    (NELEMS(Unk_ov98_02249BDC)),
-    (NELEMS(Unk_ov98_02249BDC)),
+    NELEMS(Unk_ov98_02249BDC),
+    NELEMS(Unk_ov98_02249BDC),
     0x0,
     0x8,
     0x0,
@@ -310,13 +311,13 @@ int ov98_022471C8(ApplicationManager *appMan, int *param1)
     InitializeTouchPad(4);
 
     v0->unk_20 = StringTemplate_New(11, 64, HEAP_ID_109);
-    v0->unk_24 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0671, HEAP_ID_109);
-    v0->unk_2C = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0674, HEAP_ID_109);
-    v0->unk_30 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0695, HEAP_ID_109);
-    v0->unk_28 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SPECIES_NAME, HEAP_ID_109);
-    v0->unk_34 = MessageLoader_Init(MESSAGE_LOADER_BANK_HANDLE, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0358, HEAP_ID_109);
-    v0->unk_38 = Strbuf_Init((90 * 2), HEAP_ID_109);
-    v0->unk_40 = Strbuf_Init((16 * 8 * 2), HEAP_ID_109);
+    v0->unk_24 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_GTS, HEAP_ID_109);
+    v0->unk_2C = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0674, HEAP_ID_109);
+    v0->unk_30 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0695, HEAP_ID_109);
+    v0->unk_28 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_SPECIES_NAME, HEAP_ID_109);
+    v0->unk_34 = MessageLoader_Init(MSG_LOADER_PRELOAD_ENTIRE_BANK, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0358, HEAP_ID_109);
+    v0->unk_38 = Strbuf_Init(90 * 2, HEAP_ID_109);
+    v0->unk_40 = Strbuf_Init(16 * 8 * 2, HEAP_ID_109);
     v0->unk_3C = MessageLoader_GetNewStrbuf(v0->unk_24, 31);
 
     ov98_02247704(v0);
@@ -324,7 +325,7 @@ int ov98_022471C8(ApplicationManager *appMan, int *param1)
 
     switch (ov98_02246EA4(v0->unk_00)) {
     case 12:
-        if (!DWC_CheckInet() && (sub_02039074(v0->unk_00->saveData) == 1)) {
+        if (!DWC_CheckInet() && (WiFiList_HasValidLogin(v0->unk_00->saveData) == 1)) {
             v0->unk_08 = 12;
             sub_02038548(v0->unk_00->saveData);
             sub_02039734();
@@ -355,9 +356,9 @@ int ov98_022471C8(ApplicationManager *appMan, int *param1)
     gSystem.whichScreenIs3D = DS_SCREEN_MAIN;
 
     GXLayers_SwapDisplay();
-    RenderControlFlags_SetCanABSpeedUpPrint(1);
-    RenderControlFlags_SetAutoScrollFlags(0);
-    RenderControlFlags_SetSpeedUpOnTouch(0);
+    RenderControlFlags_SetCanABSpeedUpPrint(TRUE);
+    RenderControlFlags_SetAutoScrollFlags(AUTO_SCROLL_DISABLED);
+    RenderControlFlags_SetSpeedUpOnTouch(FALSE);
     SetVBlankCallback(ov98_022474E8, v0);
 
     return 1;
@@ -422,10 +423,10 @@ int ov98_02247440(ApplicationManager *appMan, int *param1)
     DisableHBlank();
     VramTransfer_Free();
     DisableTouchPad();
-    RenderControlFlags_SetCanABSpeedUpPrint(0);
-    RenderControlFlags_SetAutoScrollFlags(0);
-    RenderControlFlags_SetSpeedUpOnTouch(0);
-    sub_02039794();
+    RenderControlFlags_SetCanABSpeedUpPrint(FALSE);
+    RenderControlFlags_SetAutoScrollFlags(AUTO_SCROLL_DISABLED);
+    RenderControlFlags_SetSpeedUpOnTouch(FALSE);
+    NetworkIcon_Destroy();
     ApplicationManager_FreeData(appMan);
     Heap_Destroy(HEAP_ID_109);
 
@@ -485,58 +486,62 @@ static void ov98_02247510(BgConfig *param0)
 
     {
         BgTemplate v2[] = {
-            { 0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0xf800,
-                GX_BG_CHARBASE_0x00000,
-                GX_BG_EXTPLTT_01,
-                2,
-                0,
-                0,
-                0 },
-            { 0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0xf000,
-                GX_BG_CHARBASE_0x08000,
-                GX_BG_EXTPLTT_01,
-                3,
-                0,
-                0,
-                0 },
-            { 0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0xe800,
-                GX_BG_CHARBASE_0x10000,
-                GX_BG_EXTPLTT_01,
-                1,
-                0,
-                0,
-                0 },
-            { 0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0xe000,
-                GX_BG_CHARBASE_0x18000,
-                GX_BG_EXTPLTT_01,
-                0,
-                0,
-                0,
-                0 },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0xf800,
+                .charBase = GX_BG_CHARBASE_0x00000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 2,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0xf000,
+                .charBase = GX_BG_CHARBASE_0x08000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 3,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0xe800,
+                .charBase = GX_BG_CHARBASE_0x10000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 1,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0xe000,
+                .charBase = GX_BG_CHARBASE_0x18000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 0,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_MAIN_0, &v2[0], 0);
@@ -562,32 +567,34 @@ static void ov98_02247510(BgConfig *param0)
 
     {
         BgTemplate v3[] = {
-            { 0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0xf000,
-                GX_BG_CHARBASE_0x10000,
-                GX_BG_EXTPLTT_01,
-                0,
-                0,
-                0,
-                0 },
-            { 0,
-                0,
-                0x800,
-                0,
-                1,
-                GX_BG_COLORMODE_16,
-                GX_BG_SCRBASE_0xd800,
-                GX_BG_CHARBASE_0x08000,
-                GX_BG_EXTPLTT_01,
-                2,
-                0,
-                0,
-                0 },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0xf000,
+                .charBase = GX_BG_CHARBASE_0x10000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 0,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
+            {
+                .x = 0,
+                .y = 0,
+                .bufferSize = 0x800,
+                .baseTile = 0,
+                .screenSize = BG_SCREEN_SIZE_256x256,
+                .colorMode = GX_BG_COLORMODE_16,
+                .screenBase = GX_BG_SCRBASE_0xd800,
+                .charBase = GX_BG_CHARBASE_0x08000,
+                .bgExtPltt = GX_BG_EXTPLTT_01,
+                .priority = 2,
+                .areaOver = 0,
+                .mosaic = FALSE,
+            },
         };
 
         Bg_InitFromTemplate(param0, BG_LAYER_SUB_0, &v3[0], 0);
@@ -625,8 +632,8 @@ static void ov98_02247704(UnkStruct_ov98_02247704 *param0)
     Font_LoadScreenIndicatorsPalette(0, 13 * 0x20, HEAP_ID_109);
     Font_LoadScreenIndicatorsPalette(4, 13 * 0x20, HEAP_ID_109);
     LoadMessageBoxGraphics(v0, BG_LAYER_MAIN_0, 1, 10, Options_Frame(param0->unk_00->options), HEAP_ID_109);
-    LoadStandardWindowGraphics(v0, BG_LAYER_MAIN_0, (1 + (18 + 12)), 11, 0, HEAP_ID_109);
-    LoadStandardWindowGraphics(v0, BG_LAYER_MAIN_2, (1 + (18 + 12)), 11, 0, HEAP_ID_109);
+    LoadStandardWindowGraphics(v0, BG_LAYER_MAIN_0, 1 + (18 + 12), 11, 0, HEAP_ID_109);
+    LoadStandardWindowGraphics(v0, BG_LAYER_MAIN_2, 1 + (18 + 12), 11, 0, HEAP_ID_109);
     Graphics_LoadTilesToBgLayerFromOpenNARC(v1, 2, v0, 1, 0, 0, 0, HEAP_ID_109);
     Graphics_LoadTilemapToBgLayerFromOpenNARC(v1, 5, v0, 1, 0, 32 * 24 * 2, 0, HEAP_ID_109);
     Graphics_LoadTilesToBgLayerFromOpenNARC(v1, 10, v0, 5, 0, 0, 0, HEAP_ID_109);
@@ -653,14 +660,14 @@ static void ov98_02247704(UnkStruct_ov98_02247704 *param0)
 
 static void ov98_02247A24(UnkStruct_ov98_02247704 *param0)
 {
-    Window_Add(param0->unk_04, &param0->unk_68, 0, 4, 4, 23, 16, 13, (((1 + (18 + 12)) + 9) + 27 * 4));
+    Window_Add(param0->unk_04, &param0->unk_68, 0, 4, 4, 23, 16, 13, ((1 + (18 + 12)) + 9) + 27 * 4);
     Window_FillTilemap(&param0->unk_68, 0x0);
-    Window_Add(param0->unk_04, &param0->unk_58, 0, 4, 1, 24, 2, 13, ((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16));
+    Window_Add(param0->unk_04, &param0->unk_58, 0, 4, 1, 24, 2, 13, (((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16);
     Window_FillTilemap(&param0->unk_58, 0x0);
 
     ov98_022498CC(&param0->unk_58, param0->unk_3C, 0, 1, 1, TEXT_COLOR(15, 14, 0));
 
-    Window_Add(param0->unk_04, &param0->unk_48, 0, 2, 19, 27, 4, 13, ((1 + (18 + 12)) + 9));
+    Window_Add(param0->unk_04, &param0->unk_48, 0, 2, 19, 27, 4, 13, (1 + (18 + 12)) + 9);
     Window_FillTilemap(&param0->unk_48, 0x0);
 }
 
@@ -700,7 +707,7 @@ static Menu *ov98_02247B24(BgConfig *param0, int param1, int param2)
     v0.tilemapTop = param1;
     v0.baseTile = param2;
 
-    return Menu_MakeYesNoChoice(param0, &v0, (1 + (18 + 12)), 11, 109);
+    return Menu_MakeYesNoChoice(param0, &v0, 1 + (18 + 12), 11, 109);
 }
 
 static Menu *ov98_02247B58(BgConfig *param0, int param1, int param2, int param3)
@@ -711,7 +718,7 @@ static Menu *ov98_02247B58(BgConfig *param0, int param1, int param2, int param3)
     v0.tilemapTop = param1;
     v0.baseTile = param2;
 
-    return Menu_MakeYesNoChoiceWithCursorAt(param0, &v0, (1 + (18 + 12)), 11, param3, 109);
+    return Menu_MakeYesNoChoiceWithCursorAt(param0, &v0, 1 + (18 + 12), 11, param3, 109);
 }
 
 static int ov98_02247B98(UnkStruct_ov98_02247704 *param0)
@@ -738,7 +745,7 @@ static int ov98_02247B98(UnkStruct_ov98_02247704 *param0)
             v2 = Unk_ov98_02249C2C;
         }
 
-        Window_Add(param0->unk_04, &param0->unk_78, 0, v3[0], v3[1], v3[2], v3[3], 13, (((1 + (18 + 12)) + 9) + 27 * 4));
+        Window_Add(param0->unk_04, &param0->unk_78, 0, v3[0], v3[1], v3[2], v3[3], 13, ((1 + (18 + 12)) + 9) + 27 * 4);
 
         param0->unk_A0 = StringList_New(v5, HEAP_ID_109);
 
@@ -750,7 +757,7 @@ static int ov98_02247B98(UnkStruct_ov98_02247704 *param0)
         v2.choices = param0->unk_A0;
         param0->unk_A4 = ListMenu_New(&v2, 0, 0, HEAP_ID_109);
 
-        Window_DrawStandardFrame(&param0->unk_78, 1, (1 + (18 + 12)), 11);
+        Window_DrawStandardFrame(&param0->unk_78, 1, 1 + (18 + 12), 11);
         Window_EraseMessageBox(&param0->unk_48, 1);
         Window_CopyToVRAM(&param0->unk_78);
     }
@@ -810,7 +817,7 @@ static int ov98_02247D50(UnkStruct_ov98_02247704 *param0)
         param0->unk_94++;
         break;
     case 1:
-        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, (((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2));
+        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, ((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2);
         param0->unk_94++;
         break;
     case 2: {
@@ -848,7 +855,7 @@ static int ov98_02247E38(UnkStruct_ov98_02247704 *param0)
         param0->unk_94++;
         break;
     case 1:
-        param0->unk_88 = ov98_02247B58(param0->unk_04, 13, (((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2), 1);
+        param0->unk_88 = ov98_02247B58(param0->unk_04, 13, ((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2, 1);
         param0->unk_94++;
         break;
     case 2: {
@@ -1123,7 +1130,7 @@ static int ov98_02248684(UnkStruct_ov98_02247704 *param0)
         }
     } break;
     case 4:
-        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, (((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2));
+        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, ((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2);
         param0->unk_94++;
         break;
     default: {
@@ -1186,7 +1193,7 @@ static int ov98_02248804(UnkStruct_ov98_02247704 *param0)
         param0->unk_94++;
         break;
     case 2:
-        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, (((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2));
+        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, ((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2);
         param0->unk_94++;
         break;
     case 3: {
@@ -1201,7 +1208,7 @@ static int ov98_02248804(UnkStruct_ov98_02247704 *param0)
         }
     } break;
     case 4:
-        if (sub_02039074(param0->unk_00->saveData) == 0) {
+        if (WiFiList_HasValidLogin(param0->unk_00->saveData) == 0) {
             ov98_02246E88(param0->unk_00, 5, 0);
             ov98_02246E9C(param0->unk_00, 12);
             param0->unk_08 = 29;
@@ -1248,7 +1255,7 @@ static int ov98_0224897C(UnkStruct_ov98_02247704 *param0)
 
     DWC_CleanupInet();
 
-    sub_02039794();
+    NetworkIcon_Destroy();
     SleepUnlock(4);
 
     if (param0->unk_00->unk_11C == 1) {
@@ -1287,7 +1294,7 @@ static int ov98_022489DC(UnkStruct_ov98_02247704 *param0)
     case 2:
         SleepLock(4);
 
-        DWC_InitInetEx(&param0->unk_00->unk_14, 2, 1, 20);
+        DWC_InitInetEx(&param0->unk_00->unk_14, DEFAULT_DWC_DMA_NUMBER, DEFAULT_DWC_POWER_MODE, DEFAULT_DWC_SSL_PRIORITY);
         DWC_SetAuthServer(DWC_CONNECTINET_AUTH_RELEASE);
         DWC_ConnectInetAsync();
         param0->unk_08 = 13;
@@ -1316,7 +1323,7 @@ static int ov98_02248A68(UnkStruct_ov98_02247704 *param0)
             DWC_ClearError();
             DWC_CleanupInet();
 
-            sub_02039794();
+            NetworkIcon_Destroy();
             sub_0203859C();
             SleepUnlock(4);
 
@@ -1392,7 +1399,7 @@ static int ov98_02248B24(UnkStruct_ov98_02247704 *param0)
             DWC_ClearError();
             DWC_CleanupInet();
 
-            sub_02039794();
+            NetworkIcon_Destroy();
             sub_0203859C();
             SleepUnlock(4);
 
@@ -1421,7 +1428,7 @@ static int ov98_02248B24(UnkStruct_ov98_02247704 *param0)
                 break;
             case DWC_ETYPE_SHUTDOWN_ND:
             case DWC_ETYPE_FATAL:
-                sub_02038A0C();
+                NetworkError_DisplayGTSCriticalError();
                 break;
             }
 
@@ -1462,7 +1469,7 @@ static int ov98_02248C60(UnkStruct_ov98_02247704 *param0)
 {
     ov98_02246F5C(param0->unk_00);
     ov98_02246F74(param0->unk_00);
-    ov94_0223BB84(&param0->unk_00->unk_9C, &param0->unk_00->unk_100);
+    GTSNetworking_SetProfile(&param0->unk_00->unk_9C, &param0->unk_00->unk_100);
 
     param0->unk_08 = 18;
     param0->unk_E8 = 0;
@@ -1472,16 +1479,16 @@ static int ov98_02248C60(UnkStruct_ov98_02247704 *param0)
 
 static int ov98_02248C88(UnkStruct_ov98_02247704 *param0)
 {
-    if (ov94_0223B7B8()) {
-        s32 v0 = ov94_0223B7D8();
+    if (GTSNetworking_RequestComplete()) {
+        s32 v0 = GTSNetworking_GetErrorCode();
 
         param0->unk_E8 = 0;
 
         switch (v0) {
         case 0:
-            switch (param0->unk_00->unk_100.unk_00) {
+            switch (param0->unk_00->unk_100.validationError) {
             case 0:
-                switch (param0->unk_00->unk_100.unk_04) {
+                switch (param0->unk_00->unk_100.systemError) {
                 case 1:
                     param0->unk_08 = 19;
                     break;
@@ -1502,7 +1509,7 @@ static int ov98_02248C88(UnkStruct_ov98_02247704 *param0)
                     param0->unk_08 = 32;
                     break;
                 default:
-                    sub_02038A0C();
+                    NetworkError_DisplayGTSCriticalError();
                     break;
                 }
 
@@ -1519,7 +1526,7 @@ static int ov98_02248C88(UnkStruct_ov98_02247704 *param0)
                 break;
             default:
                 ov98_02247B0C(param0);
-                sub_02038A0C();
+                NetworkError_DisplayGTSCriticalError();
                 break;
             }
 
@@ -1550,14 +1557,14 @@ static int ov98_02248C88(UnkStruct_ov98_02247704 *param0)
         case -13:
         default:
             ov98_02247B0C(param0);
-            sub_02038A0C();
+            NetworkError_DisplayGTSCriticalError();
             break;
         }
     } else {
         param0->unk_E8++;
 
         if (param0->unk_E8 == (30 * 60 * 2)) {
-            sub_02038A0C();
+            NetworkError_DisplayGTSCriticalError();
         }
     }
 
@@ -1577,7 +1584,7 @@ static int ov98_02248DF4(UnkStruct_ov98_02247704 *param0)
         param0->unk_94++;
         break;
     case 1:
-        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, (((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2));
+        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, ((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2);
         param0->unk_94++;
         break;
     case 2: {
@@ -1621,7 +1628,7 @@ static int ov98_02248EE0(UnkStruct_ov98_02247704 *param0)
         param0->unk_94++;
         break;
     case 1:
-        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, (((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2));
+        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, ((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2);
         param0->unk_94++;
         break;
     case 2: {
@@ -1653,21 +1660,21 @@ static int ov98_02248F7C(UnkStruct_ov98_02247704 *param0)
         ov98_02249714(param0, param0->unk_34, 18, TEXT_SPEED_INSTANT, 0xf0f);
         ov98_02247AF0(param0);
         ov98_02246F88(param0->unk_00);
-        ov94_0223BB84(&param0->unk_00->unk_9C, &param0->unk_00->unk_100);
+        GTSNetworking_SetProfile(&param0->unk_00->unk_9C, &param0->unk_00->unk_100);
         param0->unk_94++;
         break;
     case 1:
-        if (ov94_0223B7B8()) {
-            s32 v0 = ov94_0223B7D8();
+        if (GTSNetworking_RequestComplete()) {
+            s32 v0 = GTSNetworking_GetErrorCode();
 
             param0->unk_E8 = 0;
             ov98_02247B0C(param0);
 
             switch (v0) {
             case 0:
-                switch (param0->unk_00->unk_100.unk_00) {
+                switch (param0->unk_00->unk_100.validationError) {
                 case 0:
-                    switch (param0->unk_00->unk_100.unk_04) {
+                    switch (param0->unk_00->unk_100.systemError) {
                     case 0:
                         param0->unk_94++;
                         break;
@@ -1684,7 +1691,7 @@ static int ov98_02248F7C(UnkStruct_ov98_02247704 *param0)
                         param0->unk_08 = 32;
                         break;
                     default:
-                        sub_02038A0C();
+                        NetworkError_DisplayGTSCriticalError();
                         break;
                     }
                     break;
@@ -1698,7 +1705,7 @@ static int ov98_02248F7C(UnkStruct_ov98_02247704 *param0)
                     break;
                 default:
                     GF_ASSERT(0);
-                    sub_02038A0C();
+                    NetworkError_DisplayGTSCriticalError();
                     break;
                 }
                 break;
@@ -1723,14 +1730,14 @@ static int ov98_02248F7C(UnkStruct_ov98_02247704 *param0)
                 break;
             case -13:
             default:
-                sub_02038A0C();
+                NetworkError_DisplayGTSCriticalError();
                 break;
             }
         } else {
             param0->unk_E8++;
 
             if (param0->unk_E8 == (30 * 60 * 2)) {
-                sub_02038A0C();
+                NetworkError_DisplayGTSCriticalError();
             }
         }
         break;
@@ -1848,7 +1855,7 @@ static int ov98_02249320(UnkStruct_ov98_02247704 *param0)
 
         DWC_CleanupInet();
 
-        sub_02039794();
+        NetworkIcon_Destroy();
         sub_0203859C();
         SleepUnlock(4);
 
@@ -1884,7 +1891,7 @@ static int ov98_02249320(UnkStruct_ov98_02247704 *param0)
 
 static int ov98_02249414(UnkStruct_ov98_02247704 *param0)
 {
-    int v0 = ov4_021D1F3C(-param0->unk_18, param0->unk_1C);
+    int v0 = NintendoWFC_GetErrorCode(-param0->unk_18, param0->unk_1C);
 
     ov98_02249964(param0, v0, -param0->unk_18);
 
@@ -1909,7 +1916,7 @@ static int ov98_02249464(UnkStruct_ov98_02247704 *param0)
         sub_0203859C();
     }
 
-    sub_02039794();
+    NetworkIcon_Destroy();
     ov98_02247B0C(param0);
     StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_BRIGHTNESS_OUT, FADE_TYPE_BRIGHTNESS_OUT, COLOR_BLACK, 6, 1, HEAP_ID_109);
 
@@ -1920,7 +1927,7 @@ static int ov98_02249464(UnkStruct_ov98_02247704 *param0)
 
 static int ov98_022494A0(UnkStruct_ov98_02247704 *param0)
 {
-    param0->unk_88 = ov98_02247B24(param0->unk_04, 13, (((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2));
+    param0->unk_88 = ov98_02247B24(param0->unk_04, 13, ((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2);
     param0->unk_08 = param0->unk_0C;
 
     return 0;
@@ -2012,7 +2019,7 @@ static int ov98_022495C4(UnkStruct_ov98_02247704 *param0)
 
             DWC_CleanupInet();
 
-            sub_02039794();
+            NetworkIcon_Destroy();
             SleepUnlock(4);
 
             if (param0->unk_00->unk_11C == 1) {
@@ -2070,7 +2077,7 @@ static int ov98_022496C0(UnkStruct_ov98_02247704 *param0)
 static int ov98_022496EC(UnkStruct_ov98_02247704 *param0)
 {
     if (ov98_0224977C(param0->unk_44) == 0) {
-        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, (((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2));
+        param0->unk_88 = ov98_02247B24(param0->unk_04, 13, ((((1 + (18 + 12)) + 9) + 27 * 4) + 23 * 16) + 24 * 2);
         param0->unk_08 = param0->unk_0C;
     }
 
@@ -2136,7 +2143,7 @@ static int ov98_022497F8(UnkStruct_ov98_02247704 *param0)
     switch (param0->unk_94) {
     case 0:
         if (ov98_02246FA4(v0) == sub_02030D98(v0->saveData, 3)) {
-            ov98_02249ACC(sub_02030D50(v0->saveData), v2, 108);
+            ov98_02249ACC(Email_GetEmailString(v0->saveData), v2, 108);
             for (v3 = 0; v3 < 4; v3++) {
                 StringTemplate_SetNumber(param0->unk_20, v3, v2[v3], 4, 2, 1);
             }
@@ -2182,13 +2189,13 @@ void ov98_022498CC(Window *param0, Strbuf *param1, int param2, int param3, int p
 
 static void ov98_02249900(UnkStruct_ov98_02247704 *param0, int param1)
 {
-    Strbuf *v0 = Strbuf_Init((16 * 8 * 2), HEAP_ID_109);
+    Strbuf *v0 = Strbuf_Init(16 * 8 * 2, HEAP_ID_109);
 
     MessageLoader_GetStrbuf(param0->unk_30, param1, v0);
     StringTemplate_Format(param0->unk_20, param0->unk_40, v0);
 
     Window_FillTilemap(&param0->unk_68, 15);
-    Window_DrawStandardFrame(&param0->unk_68, 1, (1 + (18 + 12)), 11);
+    Window_DrawStandardFrame(&param0->unk_68, 1, 1 + (18 + 12), 11);
 
     param0->unk_44 = Text_AddPrinterWithParams(&param0->unk_68, FONT_MESSAGE, param0->unk_40, 0, 0, TEXT_SPEED_INSTANT, NULL);
     param0->unk_44 = 0xff;
