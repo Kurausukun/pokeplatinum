@@ -107,6 +107,7 @@
 #include "savedata.h"
 #include "savedata_misc.h"
 #include "strbuf.h"
+#include "system.h"
 #include "system_data.h"
 #include "system_flags.h"
 #include "system_vars.h"
@@ -227,6 +228,7 @@ static u8 sub_0203E484(SaveData *saveData, u8 slotMachineID);
 
 static BOOL ApplicationInit_Battle(ApplicationManager *appMan, int *state)
 {
+    gSystem.singleVBlankWait = TRUE;
     return TRUE;
 }
 
@@ -241,6 +243,7 @@ static BOOL ApplicationMain_Battle(ApplicationManager *appMan, int *state)
 
 static BOOL ApplicationExit_Battle(ApplicationManager *appMan, int *state)
 {
+    gSystem.singleVBlankWait = FALSE;
     return TRUE;
 }
 

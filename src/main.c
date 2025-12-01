@@ -115,6 +115,7 @@ void NitroMain(void)
 
     gSystem.showTitleScreenIntro = TRUE;
     gSystem.frameCounter = 0;
+    gSystem.singleVBlankWait = FALSE;
 
     InitRNG();
     BrightnessController_ResetAllControllers();
@@ -137,7 +138,7 @@ void NitroMain(void)
             SysTaskManager_ExecuteTasks(gSystem.mainTaskMgr);
             SysTaskManager_ExecuteTasks(gSystem.printTaskMgr);
 
-            if (!gSystem.frameCounter) {
+            if (!(gSystem.frameCounter || gSystem.singleVBlankWait)) {
                 OS_WaitIrq(TRUE, OS_IE_V_BLANK);
                 gSystem.vblankCounter++;
             }

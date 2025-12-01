@@ -60,7 +60,8 @@ typedef struct System {
     u8 gbaCartridgeVersion;
     u8 inhibitSleep;
     u8 inhibitReset;
-    u8 padding_69[3];
+    u8 singleVBlankWait;
+    u8 padding_69[2];
     BOOL showTitleScreenIntro;
     u32 *heapCanary;
 } System;
