@@ -4616,14 +4616,7 @@ static void ov16_022626C0(SysTask *param0, void *param1)
 
         if (BattleAnimSystem_IsMoveActive(v0->unk_0C) == 0) {
             BattleAnimSystem_FreeScriptData(v0->unk_0C);
-            if (v0->unk_10.unk_02 < NUM_VALID_MOVES) {
-                v0->unk_10.unk_02++;
-                v0->unk_10.unk_50++;
-                v0->unk_6A--;
-            }
-            else {
-                v0->unk_6A++;
-            }
+            v0->unk_6A++;
         }
         break;
     }
