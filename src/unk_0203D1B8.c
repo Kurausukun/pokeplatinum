@@ -109,6 +109,7 @@
 #include "savedata_misc.h"
 #include "strbuf.h"
 #include "system.h"
+#include "string_gf.h"
 #include "system_data.h"
 #include "system_flags.h"
 #include "system_vars.h"
@@ -206,7 +207,7 @@ typedef struct {
     int unk_04;
     u16 *unk_08;
     NamingScreenArgs *unk_0C;
-    Strbuf *unk_10;
+    String *unk_10;
 } UnkStruct_0203DE98;
 
 typedef struct {
@@ -1158,11 +1159,11 @@ static BOOL sub_0203DE98(FieldTask *param0)
         break;
     case 3:
         if (v2->unk_0C->type == NAMING_SCREEN_TYPE_POKEMON) {
-            if (Strbuf_Compare(v2->unk_0C->textInputStr, v2->unk_10) == 0) {
+            if (String_Compare(v2->unk_0C->textInputStr, v2->unk_10) == 0) {
                 v2->unk_0C->returnCode = 1;
             }
         } else if (v2->unk_0C->type == NAMING_SCREEN_TYPE_GROUP) {
-            const u16 *v3 = Strbuf_GetData(v2->unk_0C->textInputStr);
+            const u16 *v3 = String_GetData(v2->unk_0C->textInputStr);
             RecordMixedRNG *v4 = SaveData_GetRecordMixedRNG(fieldSystem->saveData);
 
             if (RecordMixedRNG_DoesCollectionContainGroup(v4, v3)) {
@@ -1181,7 +1182,7 @@ static BOOL sub_0203DE98(FieldTask *param0)
         }
 
         NamingScreenArgs_Free(v2->unk_0C);
-        Strbuf_Free(v2->unk_10);
+        String_Free(v2->unk_10);
         Heap_Free(v2);
 
         return 1;
@@ -1209,7 +1210,7 @@ static void sub_0203DF68(FieldTask *param0)
     } break;
     case NAMING_SCREEN_TYPE_GROUP: {
         RecordMixedRNG *v5 = SaveData_GetRecordMixedRNG(fieldSystem->saveData);
-        RecordMixedRNG_GetEntryNameAsStrbuf(v5, 0, 0, v1->unk_0C->textInputStr);
+        RecordMixedRNG_GetEntryNameAsString(v5, 0, 0, v1->unk_0C->textInputStr);
     } break;
     case NAMING_SCREEN_TYPE_UNK6: {
         MiscSaveBlock *v6 = SaveData_MiscSaveBlock(fieldSystem->saveData);
@@ -1237,7 +1238,7 @@ void sub_0203DFE8(
     v2->unk_04 = param4;
     v2->unk_08 = param6;
     v2->unk_0C = NamingScreenArgs_Init(HEAP_ID_FIELD2, type, param2, param3, SaveData_GetOptions(fieldSystem->saveData));
-    v2->unk_10 = Strbuf_Init(12, HEAP_ID_FIELD2);
+    v2->unk_10 = String_Init(12, HEAP_ID_FIELD2);
 
     switch (type) {
     case NAMING_SCREEN_TYPE_POKEMON:
@@ -1246,15 +1247,15 @@ void sub_0203DFE8(
         v2->unk_0C->monForm = Pokemon_GetValue(v0, MON_DATA_FORM, NULL);
 
         if (param5 != NULL) {
-            Strbuf_CopyChars(v2->unk_10, param5);
+            String_CopyChars(v2->unk_10, param5);
         }
         break;
     case NAMING_SCREEN_TYPE_GROUP:
-        Strbuf_CopyChars(v2->unk_10, param5);
+        String_CopyChars(v2->unk_10, param5);
         break;
     default:
         if (param5 != NULL) {
-            Strbuf_CopyChars(v2->unk_0C->textInputStr, param5);
+            String_CopyChars(v2->unk_0C->textInputStr, param5);
         }
         break;
     }
