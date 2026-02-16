@@ -191,7 +191,7 @@ _0286:
     Message 7
     SetVar VAR_0x8004, ITEM_HM01
     SetVar VAR_0x8005, 1
-    GiveItemQuantity
+    Common_GiveItemQuantity
     Message 8
     CloseMessage
     GetPlayerMapPos VAR_0x8004, VAR_0x8005
@@ -805,7 +805,7 @@ _09EB:
     PlayFanfare SEQ_SE_DP_WALL_HIT2
     Message 0
     CloseMessage
-    CallCommonScript 0x7FA
+    Common_SetRivalBGM
     BufferRivalName 0
     BufferPlayerName 1
     Message 1
@@ -850,7 +850,7 @@ _0AB6:
     BufferRivalName 0
     Message 2
     CloseMessage
-    CallCommonScript 0x7FB
+    Common_FadeToDefaultMusic2
     ScrCmd_32E
     ScrCmd_332
     AddFreeCamera 0x143, 0x20C
@@ -1075,7 +1075,7 @@ _0CF4:
 _0D00:
     LockAll
     SetObjectEventDir 12, DIR_EAST
-    SetObjectEventMovementType 12, MOVEMENT_TYPE_LOOK_RIGHT
+    SetObjectEventMovementType 12, MOVEMENT_TYPE_LOOK_EAST
     GetPlayerMapPos VAR_0x8004, VAR_0x8005
     GoToIfEq VAR_0x8005, 0x21C, _0D64
     GoToIfEq VAR_0x8005, 0x21D, _0D7A

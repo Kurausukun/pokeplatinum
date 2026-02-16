@@ -46,11 +46,12 @@ BOOL ov23_022415B8(String *param0);
 void ov23_0224160C(void);
 BOOL Mining_IsPlayerMining(int netID);
 void ov23_02241648(int param0);
-BOOL ov23_02241670(void);
-void ov23_02241690(int param0, int param1);
+BOOL Mining_IsMiningGameTaskActive(void);
+void Mining_SetPlayerMiningStatus(int netID, int isMining);
 
 enum MiningObjectIDs {
-    MINING_SMALL_PRISM_SPHERE = 1,
+    MINING_TREASURE_NONE = 0,
+    MINING_SMALL_PRISM_SPHERE,
     MINING_SMALL_PALE_SPHERE,
     MINING_SMALL_RED_SPHERE,
     MINING_SMALL_BLUE_SPHERE,

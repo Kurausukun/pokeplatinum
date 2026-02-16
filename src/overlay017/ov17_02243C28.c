@@ -134,7 +134,7 @@ void ov17_02243C28(UnkStruct_ov17_02246F24 *param0)
     v0.unk_04 = NELEMS(Unk_ov17_022539E4);
     v0.unk_06 = param0->unk_00->unk_00.unk_113;
     v0.unk_08 = param0->unk_00->unk_00.unk_10C;
-    v0.unk_07 = param0->unk_00->unk_155;
+    v0.unk_07 = param0->unk_00->isLinkContest;
 
     ov17_0224F18C(&param0->unk_BF8, &v0);
 }
@@ -631,7 +631,7 @@ static void ov17_022444BC(SysTask *param0, void *param1)
         ov17_022439C8(v0->unk_00->unk_00, v0->unk_0D, v0->unk_0E, &v0->unk_104);
         v0->unk_0C++;
     case 10: {
-        UnkStruct_ov16_02265BBC v3;
+        MoveAnimation v3;
         BattleAnimBattlerContext battlerContext;
         int v5;
         int v6, v7, v8, v9;
@@ -645,7 +645,7 @@ static void ov17_022444BC(SysTask *param0, void *param1)
             v16 = 0;
         }
 
-        MI_CpuClear8(&v3, sizeof(UnkStruct_ov16_02265BBC));
+        MI_CpuClear8(&v3, sizeof(MoveAnimation));
         MI_CpuClear8(&battlerContext, sizeof(BattleAnimBattlerContext));
 
         v6 = Pokemon_GetValue(v0->unk_00->unk_0C.unk_00->unk_00[v0->unk_0D], MON_DATA_SPECIES, NULL);
@@ -660,23 +660,23 @@ static void ov17_022444BC(SysTask *param0, void *param1)
         v13 = Pokemon_GetValue(v0->unk_00->unk_0C.unk_00->unk_00[v16], MON_DATA_FORM, NULL);
         v15 = Pokemon_GetValue(v0->unk_00->unk_0C.unk_00->unk_00[v16], MON_DATA_PERSONALITY, NULL);
 
-        v3.unk_00 = 0;
+        v3.command = 0;
         v3.unk_01 = 0;
-        v3.unk_02 = v0->unk_104.unk_04;
-        v3.unk_04 = 1;
-        v3.unk_08 = 10;
-        v3.unk_0A = v0->unk_104.unk_07;
+        v3.move = v0->unk_104.unk_04;
+        v3.damage = 1;
+        v3.power = 10;
+        v3.effectChance = v0->unk_104.unk_07;
         v3.friendship = v0->unk_104.unk_08;
         v3.fieldConditions = 0;
-        v3.unk_14 = 0;
-        v3.unk_16 = 1;
-        v3.unk_54 = 9;
+        v3.attacker = 0;
+        v3.defender = 1;
+        v3.terrain = 9;
 
         for (v5 = 0; v5 < 4; v5++) {
-            v3.unk_18[v5] = v6;
+            v3.species[v5] = v6;
         }
 
-        v3.unk_18[1] = v10;
+        v3.species[1] = v10;
 
         battlerContext.bgConfig = v0->unk_00->unk_0C.unk_24;
         battlerContext.paletteData = v0->unk_00->unk_0C.unk_50;
@@ -911,7 +911,7 @@ static void ov17_022449B8(SysTask *param0, void *param1)
     case 10:
         v0->unk_0C++;
     default:
-        if (v0->unk_00->unk_00->unk_155 == 1) {
+        if (v0->unk_00->unk_00->isLinkContest == TRUE) {
             ov17_02242E5C(v0->unk_00, 46, NULL, NULL);
         }
 

@@ -11,14 +11,14 @@
 #include "battle_anim/struct_ov12_02235FE0_decl.h"
 
 typedef struct {
-    BattleSystem *unk_00;
+    BattleSystem *battleSys;
     BattlerData *unk_04;
     UnkStruct_ov12_02235FE0 *unk_08;
     BallRotation *unk_0C;
     UnkStruct_ov12_02223764 *unk_10;
     PokemonSpriteTemplate unk_14;
     BattleAnimSystem *unk_24;
-    UnkStruct_ov16_02265BBC unk_28;
+    MoveAnimation unk_28;
     u8 unk_80;
     u8 unk_81;
     u8 unk_82;

@@ -9,6 +9,8 @@
 
 #define PACKET_SIZE_VARIABLE 0xFFFF
 
+#define COMM_RING_BUFFER_SIZE 264
+
 BOOL CommSys_InitServer(BOOL param0, BOOL param1, int param2, BOOL param3);
 BOOL CommSys_InitClient(BOOL param0, BOOL param1, int param2);
 void CommSys_SwitchTransitionTypeToParallel(void);
@@ -26,7 +28,7 @@ void sub_020352C0(u16 param0, u16 *param1, u16 param2);
 void CommSys_RandomizePlayerMovement(void);
 void CommSys_ReversePlayerMovement(void);
 void CommSys_RevertPlayerMovementToNormal(void);
-void sub_0203572C(void);
+void CommSys_Dummy(void);
 void sub_02035938(u8 param0);
 BOOL CommSys_SendDataHuge(int cmd, const void *data, int size);
 BOOL CommSys_SendData(int cmd, const void *data, int size);
@@ -50,8 +52,8 @@ void sub_02036030(int unused0, int unused1, void *param2, void *unused3);
 void sub_02036058(int unused0, int unused1, void *param2, void *unused3);
 u16 CommSys_CurNetId(void);
 BOOL CommSys_SendDataFixedSize(int cmd, const void *data);
-BOOL Link_Message(int cmd);
-BOOL sub_020360E8(void);
+BOOL CommSys_SendMessage(int cmd);
+BOOL CommSys_IsClientConnecting(void);
 BOOL CommSys_CheckError(void);
 u16 sub_02036128(u16 param0);
 int CommType_MaxPlayers(int param0);
@@ -59,9 +61,9 @@ int CommType_MinPlayers(int param0);
 void CommSys_SetAlone(BOOL param0);
 BOOL CommSys_IsAlone(void);
 void sub_0203619C(int param0, int param1, void *param2, void *param3);
-void CommSys_Seed(MATHRandContext32 *param0);
-BOOL sub_02036254(int param0);
-BOOL sub_0203626C(int param0);
+void CommSys_Seed(MATHRandContext32 *rand);
+BOOL CommSys_IsCmdQueuedServer(int cmd);
+BOOL CommSys_IsCmdQueued(int cmd);
 BOOL sub_02036284(void);
 BOOL sub_0203629C(void);
 void CommSys_SetWifiConnected(BOOL param0);

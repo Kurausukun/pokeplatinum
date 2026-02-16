@@ -33,7 +33,7 @@ _0051:
 _0062:
     SetObjectEventPos 30, 0x28E, 0x32C
     SetObjectEventDir 30, DIR_EAST
-    SetObjectEventMovementType 30, MOVEMENT_TYPE_LOOK_RIGHT
+    SetObjectEventMovementType 30, MOVEMENT_TYPE_LOOK_EAST
     Return
 
 _0078:
@@ -78,7 +78,7 @@ _010B:
     RemoveObject 30
     SetObjectEventPos 30, 0x2AB, 0x341
     SetObjectEventDir 30, DIR_EAST
-    SetObjectEventMovementType 30, MOVEMENT_TYPE_LOOK_RIGHT
+    SetObjectEventMovementType 30, MOVEMENT_TYPE_LOOK_EAST
     ClearFlag FLAG_UNK_0x021A
     AddObject 30
     ReleaseAll
@@ -117,7 +117,7 @@ _019A:
     SetFlag FLAG_UNK_0x0104
     ClearFlag FLAG_UNK_0x01E8
     AddObject 33
-    CallCommonScript 0x807
+    Common_SetLookerBGM
     ScrCmd_315 VAR_RESULT
     CallIfEq VAR_RESULT, 2, _0261
     CallIfEq VAR_0x8004, 2, _0267
@@ -135,7 +135,7 @@ _019A:
     CallIfEq VAR_0x8004, 0, _02DF
     CallIfEq VAR_0x8004, 1, _02F3
     RemoveObject 33
-    CallCommonScript 0x808
+    Common_FadeToDefaultMusic4
     ScrCmd_315 VAR_RESULT
     CallIfEq VAR_RESULT, 2, _0261
     ClearFlag FLAG_UNK_0x0211

@@ -54,7 +54,7 @@ _00F8:
 _0100:
     SetObjectEventPos 16, 55, 0x2CC
     SetObjectEventDir 16, DIR_EAST
-    SetObjectEventMovementType 16, MOVEMENT_TYPE_LOOK_RIGHT
+    SetObjectEventMovementType 16, MOVEMENT_TYPE_LOOK_EAST
     Return
 
 _0116:
@@ -145,12 +145,12 @@ _027C:
     GoTo _028A
 
 _028A:
-    SetObjectEventMovementType CANALAVE_CITY_RIVAL_BRIDGE, MOVEMENT_TYPE_LOOK_RIGHT
+    SetObjectEventMovementType CANALAVE_CITY_RIVAL_BRIDGE, MOVEMENT_TYPE_LOOK_EAST
     ClearFlag FLAG_HIDE_CANALAVE_RIVAL
     AddObject CANALAVE_CITY_RIVAL_BRIDGE
     ApplyMovement CANALAVE_CITY_RIVAL_BRIDGE, _0340
     WaitMovement
-    CallCommonScript 0x7FA
+    Common_SetRivalBGM
     ApplyMovement CANALAVE_CITY_RIVAL_BRIDGE, _0354
     WaitMovement
     BufferRivalName 0
@@ -232,7 +232,7 @@ _0377:
     WaitMovement
     RemoveObject CANALAVE_CITY_RIVAL_BRIDGE
     SetVar VAR_CANALAVE_STATE, 3
-    SetVar VAR_UNK_0x40B2, 1
+    SetVar VAR_CANALAVE_LIBRARY_STATE, 1
     ReleaseAll
     End
 
@@ -299,8 +299,8 @@ _0473:
     WaitABXPadPress
     CloseMessage
     SetVar VAR_CANALAVE_STATE, 5
-    ClearFlag FLAG_UNK_0x0194
-    ClearFlag FLAG_UNK_0x0175
+    ClearFlag FLAG_HIDE_LAKE_VERITY_LOW_WATER_COUNTERPART
+    ClearFlag FLAG_HIDE_LAKE_VERITY_LOW_WATER_PROF_ROWAN
     ClearFlag FLAG_UNK_0x0293
     ReleaseAll
     End
@@ -674,7 +674,7 @@ _0959:
     RemoveObject 16
     SetObjectEventPos 16, 45, 0x2EE
     SetObjectEventDir 16, DIR_WEST
-    SetObjectEventMovementType 16, MOVEMENT_TYPE_LOOK_LEFT
+    SetObjectEventMovementType 16, MOVEMENT_TYPE_LOOK_WEST
     AddObject 16
     SetVar VAR_UNK_0x40F8, 4
     ReleaseAll

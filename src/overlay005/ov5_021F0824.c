@@ -3,12 +3,12 @@
 #include <nitro.h>
 #include <string.h>
 
-#include "struct_decls/struct_02029894_decl.h"
+#include "struct_defs/underground.h"
 
 #include "field/field_system.h"
 #include "overlay005/area_data.h"
 #include "overlay005/map_prop.h"
-#include "overlay023/ov23_02241F74.h"
+#include "overlay023/underground_manager.h"
 
 #include "field_comm_manager.h"
 #include "goods.h"
@@ -18,7 +18,7 @@ void ov5_021F0824(FieldSystem *fieldSystem)
 {
     int v0;
     int v1;
-    UnkStruct_02029894 *v2;
+    SecretBase *v2;
     int v3, v4;
     int v5, v6;
     int v7, v8;
@@ -31,17 +31,17 @@ void ov5_021F0824(FieldSystem *fieldSystem)
         return;
     }
 
-    v3 = ov23_02242E28();
-    v4 = ov23_02242E40();
+    v3 = UndergroundMan_GetSecretBaseXCoordinate();
+    v4 = UndergroundMan_GetSecretBaseZCoordinate();
 
     for (v0 = 0; v0 < 32; v0++) {
-        v1 = sub_020293B0(v2, v0);
+        v1 = SecretBase_GetGoodIDAtIndex(v2, v0);
         v7 = Good_GetWidth(v1);
         v8 = Good_GetDepth(v1);
 
         if (v1 != 0) {
-            v5 = sub_020293FC(v2, v0);
-            v6 = sub_0202942C(v2, v0);
+            v5 = SecretBase_GetGoodXCoordAtIndex(v2, v0);
+            v6 = SecretBase_GetGoodZCoordAtIndex(v2, v0);
 
             v9.x = v5 * (FX32_ONE * 16);
             v9.z = v6 * (FX32_ONE * 16);

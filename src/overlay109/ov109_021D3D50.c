@@ -6,7 +6,6 @@
 #include "generated/journal_online_events.h"
 #include "generated/trainer_score_events.h"
 
-#include "struct_defs/struct_02099F80.h"
 #include "struct_defs/struct_0209BF64.h"
 #include "struct_defs/struct_0209C194.h"
 
@@ -196,7 +195,7 @@ int ov109_021D3D50(ApplicationManager *appMan, int *param1)
         SetAutorepeat(4, 8);
         ov109_021D40D0();
         ov109_021D40F0(v0->unk_14);
-        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_UNK_17, FADE_TYPE_UNK_17, COLOR_BLACK, 16, 1, HEAP_ID_95);
+        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_CIRCLE_IN, FADE_TYPE_CIRCLE_IN, COLOR_BLACK, 16, 1, HEAP_ID_95);
         ov109_021D4300(v0, v1);
         SetVBlankCallback(ov109_021D40A8, v0);
         ov109_021D41F8(v0, v1);
@@ -371,7 +370,7 @@ static void ov109_021D40A8(void *param0)
 
 static void ov109_021D40D0(void)
 {
-    UnkStruct_02099F80 v0 = {
+    GXBanks v0 = {
         GX_VRAM_BG_128_A,
         GX_VRAM_BGEXTPLTT_NONE,
         GX_VRAM_SUB_BG_128_C,
@@ -1104,7 +1103,7 @@ static int ov109_021D4D9C(UnkStruct_ov109_021D5140 *param0, int param1)
 static int ov109_021D4DBC(UnkStruct_ov109_021D5140 *param0, int param1)
 {
     if (++param0->unk_3C4 > 60) {
-        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_UNK_16, FADE_TYPE_UNK_16, COLOR_BLACK, 16, 1, HEAP_ID_95);
+        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_CIRCLE_OUT, FADE_TYPE_CIRCLE_OUT, COLOR_BLACK, 16, 1, HEAP_ID_95);
         param1 = 3;
     }
 
@@ -1198,7 +1197,7 @@ static int ov109_021D4F6C(UnkStruct_ov109_021D5140 *param0, int param1)
 {
     if (CommTiming_IsSyncState(202)) {
         CommMan_SetErrorHandling(0, 0);
-        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_UNK_16, FADE_TYPE_UNK_16, COLOR_BLACK, 16, 1, HEAP_ID_95);
+        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_CIRCLE_OUT, FADE_TYPE_CIRCLE_OUT, COLOR_BLACK, 16, 1, HEAP_ID_95);
         param1 = 3;
     }
 
@@ -1289,7 +1288,7 @@ static int ov109_021D5098(UnkStruct_ov109_021D5140 *param0, int param1)
 static int ov109_021D510C(UnkStruct_ov109_021D5140 *param0, int param1)
 {
     sub_0205BEA8(12);
-    StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_UNK_16, FADE_TYPE_UNK_16, COLOR_BLACK, 16, 1, HEAP_ID_95);
+    StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_CIRCLE_OUT, FADE_TYPE_CIRCLE_OUT, COLOR_BLACK, 16, 1, HEAP_ID_95);
 
     param0->unk_08 = 1;
     param1 = 3;

@@ -506,16 +506,16 @@ static BOOL FieldTask_SafariEncounter(FieldTask *task)
     case 6:
         if (*ballCount == 0) {
             if (encounter->dto->resultMask == BATTLE_RESULT_CAPTURED_MON) {
-                ScriptManager_Start(task, 8802, NULL, NULL);
+                ScriptManager_Start(task, SCRIPT_ID(SAFARI_GAME, 2), NULL, NULL);
             } else {
-                ScriptManager_Start(task, 8809, NULL, NULL);
+                ScriptManager_Start(task, SCRIPT_ID(SAFARI_GAME, 9), NULL, NULL);
             }
         } else {
             PCBoxes *pcBoxes = SaveData_GetPCBoxes(fieldSystem->saveData);
             Party *party = SaveData_GetParty(fieldSystem->saveData);
 
             if (PCBoxes_FirstEmptyBox(pcBoxes) == MAX_PC_BOXES && Party_GetCurrentCount(party) == MAX_PARTY_SIZE) {
-                ScriptManager_Start(task, 8822, NULL, NULL);
+                ScriptManager_Start(task, SCRIPT_ID(SAFARI_GAME, 22), NULL, NULL);
             }
         }
 
@@ -652,7 +652,7 @@ void Encounter_NewVsPalParkTransfer(FieldSystem *fieldSystem, FieldBattleDTO *dt
     FieldSystem_CreateTask(fieldSystem, FieldTask_PalParkEncounter, encounter);
 }
 
-void Encounter_NewVsFirstBattle(FieldTask *task, int trainerID, int heapID, int *resultMaskPtr)
+void Encounter_NewVsFirstBattle(FieldTask *task, int trainerID, enum HeapID heapID, int *resultMaskPtr)
 {
     FieldSystem *fieldSystem = FieldTask_GetFieldSystem(task);
     FieldBattleDTO *dto = FieldBattleDTO_New(HEAP_ID_FIELD2, BATTLE_TYPE_TRAINER);
@@ -723,7 +723,7 @@ void Encounter_NewCatchingTutorial(FieldTask *task)
     FieldTask_InitCall(task, FieldTask_CatchingTutorialEncounter, encounter);
 }
 
-void Encounter_NewVsTrainer(FieldTask *taskMan, int enemyTrainer1ID, int enemyTrainer2ID, int partnerTrainerID, int heapID, int *resultMaskPtr)
+void Encounter_NewVsTrainer(FieldTask *taskMan, int enemyTrainer1ID, int enemyTrainer2ID, int partnerTrainerID, enum HeapID heapID, int *resultMaskPtr)
 {
     u32 battleType;
     FieldBattleDTO *dto;

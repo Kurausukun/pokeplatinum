@@ -1,10 +1,10 @@
 #ifndef POKEPLATINUM_STRUCT_OV16_0225D840_H
 #define POKEPLATINUM_STRUCT_OV16_0225D840_H
 
-#include "overlay013/battle_party.h"
+#include "battle_sub_menus/battle_party.h"
 
 typedef struct {
-    BattleSystem *unk_00;
+    BattleSystem *battleSys;
     BattlePartyContext *unk_04;
     u8 unk_08;
     u8 unk_09;

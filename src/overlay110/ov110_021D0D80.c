@@ -7,7 +7,6 @@
 #include "struct_decls/struct_020308A0_decl.h"
 #include "struct_defs/battle_frontier.h"
 #include "struct_defs/struct_0203E564.h"
-#include "struct_defs/struct_02099F80.h"
 
 #include "overlay110/ov110_021D2124.h"
 
@@ -122,7 +121,7 @@ int ov110_021D0D80(ApplicationManager *appMan, int *param1)
 
     ov110_021D1180(v1);
 
-    v1->unk_110 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_UNK_0016, HEAP_ID_114);
+    v1->unk_110 = MessageLoader_Init(MSG_LOADER_LOAD_ON_DEMAND, NARC_INDEX_MSGDATA__PL_MSG, TEXT_BANK_BATTLE_TOWER_RECORDS, HEAP_ID_114);
     v1->unk_114 = StringTemplate_Default(HEAP_ID_114);
     v1->unk_118 = String_Init(800, HEAP_ID_114);
     v1->unk_11C = String_Init(800, HEAP_ID_114);
@@ -261,7 +260,7 @@ static void ov110_021D1048(void *param0)
 
 static void ov110_021D1078(void)
 {
-    UnkStruct_02099F80 v0 = {
+    GXBanks v0 = {
         GX_VRAM_BG_128_A,
         GX_VRAM_BGEXTPLTT_NONE,
         GX_VRAM_SUB_BG_128_C,
@@ -659,7 +658,7 @@ static void ov110_021D1808(UnkStruct_ov110_021D0F78 *param0)
     Window_ScheduleCopyToVRAM(&param0->unk_10[2]);
 
     ov110_021D13CC(param0, &param0->unk_10[3], 31, 1);
-    frontierStage = sub_020308A0(param0->saveData, 11, &v4);
+    frontierStage = sub_020308A0(param0->saveData, HEAP_ID_FIELD2, &v4);
 
     if (v4 != 1) {
         v3 = 0;

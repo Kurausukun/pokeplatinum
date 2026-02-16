@@ -9,7 +9,7 @@
     ScriptEntryEnd
 
 _0012:
-    SetFlag FLAG_UNK_0x09C2
+    SetFlag FLAG_FIRST_ARRIVAL_OREBURGH_MINE
     SetFlag FLAG_UNK_0x02C8
     CallIfEq VAR_ARCEUS_EVENT_STATE, 1, _0029
     End
@@ -51,7 +51,7 @@ _0073:
     SetVar VAR_0x8004, ITEM_FLAME_PLATE
     SetVar VAR_0x8005, 1
     GoToIfCannotFitItem VAR_0x8004, VAR_0x8005, VAR_RESULT, _0114
-    GiveItemQuantity
+    Common_GiveItemQuantity
     Message 5
     CloseMessage
     GetPlayerMapPos VAR_0x8004, VAR_0x8005

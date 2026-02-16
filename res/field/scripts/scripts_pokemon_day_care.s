@@ -12,7 +12,7 @@ _000E:
     End
 
 _001B:
-    ClearFlag FLAG_UNK_0x01D1
+    ClearFlag FLAG_HIDE_DAY_CARE_GYM_GUIDE
     Return
 
 _0021:
@@ -23,7 +23,7 @@ _0021:
     GoToIfEq VAR_RESULT, 1, _0051
     Message 0
     SetVar VAR_0x8004, POKETCH_APPID_DAYCARECHECKER
-    GivePoketchApp
+    Common_GivePoketchApp
     WaitABXPadPress
     CloseMessage
     ReleaseAll

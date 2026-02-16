@@ -9,7 +9,7 @@
     ScriptEntryEnd
 
 _0012:
-    SetFlag FLAG_UNK_0x09D7
+    SetFlag FLAG_FIRST_ARRIVAL_WAYWARD_CAVE
     GoToIfUnset FLAG_TRAVELED_WITH_MIRA, _0023
     End
 
@@ -37,7 +37,7 @@ _002B:
     CloseMessage
     SetVar VAR_PARTNER_TRAINER_ID, TRAINER_MIRA_WAYWARD_CAVE
     SetHasPartner
-    ScrCmd_06D 4, 48
+    SetMovementType 4, 48
     ReleaseAll
     End
 
@@ -81,7 +81,7 @@ _00E0:
 _00E2:
     LockAll
     ClearHasPartner
-    ScrCmd_06D 4, 16
+    SetMovementType 4, 16
     GetPlayerDir VAR_RESULT
     GoToIfEq VAR_RESULT, 2, _0103
     GoTo _011B

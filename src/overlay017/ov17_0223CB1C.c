@@ -3,8 +3,6 @@
 #include <nitro.h>
 #include <string.h>
 
-#include "struct_defs/struct_02099F80.h"
-
 #include "overlay011/particle_helper.h"
 #include "overlay017/ov17_0223F118.h"
 #include "overlay017/ov17_022476F8.h"
@@ -215,7 +213,7 @@ int ov17_0223CB1C(ApplicationManager *appMan, int *param1)
     GXLayers_EngineBToggleLayers(GX_PLANEMASK_OBJ, 1);
     Sound_SetScene(SOUND_SCENE_NONE);
     Sound_SetSceneAndPlayBGM(SOUND_SCENE_CONTEST, SEQ_CONTEST_DRESSING_ROOM, 1);
-    sub_020959F4(v0->unk_00->unk_155);
+    SetLockTextWithAutoScroll(v0->unk_00->isLinkContest);
     SetVBlankCallback(ov17_0223D0C8, v0);
     Sound_PlayEffect(SEQ_SE_DP_DOOR_OPEN);
 
@@ -255,7 +253,7 @@ int ov17_0223CDDC(ApplicationManager *appMan, int *param1)
             } else if ((v1 == 3) && (v0->unk_F14 == 1)) {
                 *param1 = 2;
                 MI_CpuClear8(&v0->unk_F0C, sizeof(UnkStruct_ov17_0223D60C));
-                StartScreenFade(FADE_SUB_THEN_MAIN, FADE_TYPE_UNK_16, FADE_TYPE_UNK_36, COLOR_BLACK, 6, 1, HEAP_ID_22);
+                StartScreenFade(FADE_SUB_THEN_MAIN, FADE_TYPE_CIRCLE_OUT, FADE_TYPE_UNK_36, COLOR_BLACK, 6, 1, HEAP_ID_22);
                 break;
             }
         }
@@ -266,7 +264,7 @@ int ov17_0223CDDC(ApplicationManager *appMan, int *param1)
         if ((v0->unk_F14 == 1) && (ov17_0224F3D0(&v0->unk_4F8) == 0) && (sub_02094EDC(v0->unk_00) == 0)) {
             *param1 = 2;
             MI_CpuClear8(&v0->unk_F0C, sizeof(UnkStruct_ov17_0223D60C));
-            StartScreenFade(FADE_SUB_THEN_MAIN, FADE_TYPE_UNK_16, FADE_TYPE_UNK_36, COLOR_BLACK, 6, 1, HEAP_ID_22);
+            StartScreenFade(FADE_SUB_THEN_MAIN, FADE_TYPE_CIRCLE_OUT, FADE_TYPE_UNK_36, COLOR_BLACK, 6, 1, HEAP_ID_22);
         }
         break;
     case 2:
@@ -337,7 +335,7 @@ int ov17_0223CF8C(ApplicationManager *appMan, int *param1)
     SetVBlankCallback(NULL, NULL);
     DisableHBlank();
     Heap_Destroy(HEAP_ID_22);
-    sub_02095A24();
+    LockTextSpeed();
     NetworkIcon_Destroy();
     Overlay_UnloadByID(FS_OVERLAY_ID(overlay11));
     Overlay_UnloadByID(FS_OVERLAY_ID(battle_anim));
@@ -407,7 +405,7 @@ static void ov17_0223D1B8(BgConfig *param0)
     GXLayers_DisableEngineALayers();
 
     {
-        UnkStruct_02099F80 v0 = {
+        GXBanks v0 = {
             GX_VRAM_BG_128_C,
             GX_VRAM_BGEXTPLTT_NONE,
             GX_VRAM_SUB_BG_32_H,

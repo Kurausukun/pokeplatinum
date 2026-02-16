@@ -51,7 +51,7 @@ static void sub_0205C7BC(UnkStruct_0205C680 *param0, MapObject *param1);
 static void sub_0205C7E4(MapObjectManager *param0, int param1, int param2);
 static void sub_0205C444(UnkStruct_0205C680 param0[], int param1, int param2);
 void sub_0205C970(UnkStruct_0205C95C *param0);
-UnkStruct_0205C95C *sub_0205C95C(int heapID);
+UnkStruct_0205C95C *sub_0205C95C(enum HeapID heapID);
 static void sub_0205C944(UnkStruct_0205C95C *param0);
 static void sub_0205C924(UnkStruct_0205C924 *param0);
 static void sub_0205C900(UnkStruct_0205C95C *param0);
@@ -282,7 +282,7 @@ static void sub_0205C51C(UnkStruct_0205C22C *param0, MapObjectManager *param1)
                 sub_02062DB4(v0, 0);
 
                 if ((param0->unk_0C[v1].unk_00 == 1) && (param0->unk_0C[v1].unk_09 == 0)) {
-                    MapObject_SetMoveCode(v0, MOVEMENT_TYPE_WANDER_AROUND);
+                    MapObject_SwitchMovementType(v0, MOVEMENT_TYPE_WANDER_AROUND);
                     MapObject_SetMovementRangeX(v0, 1);
                     MapObject_SetMovementRangeZ(v0, 1);
                     param0->unk_0C[v1].unk_09 = 1;
@@ -394,7 +394,7 @@ static void sub_0205C788(UnkStruct_0205C680 *param0, MapObject *param1)
 {
     LocalMapObj_SetAnimationCode(param1, MOVEMENT_ACTION_WARP_OUT);
     sub_02062DB4(param1, 1);
-    MapObject_SetMoveCode(param1, MOVEMENT_TYPE_NONE);
+    MapObject_SwitchMovementType(param1, MOVEMENT_TYPE_NONE);
     sub_0205C680(param0, 1);
 
     param0->unk_04 = 0;
@@ -532,7 +532,7 @@ static void sub_0205C944(UnkStruct_0205C95C *param0)
     }
 }
 
-UnkStruct_0205C95C *sub_0205C95C(int heapID)
+UnkStruct_0205C95C *sub_0205C95C(enum HeapID heapID)
 {
     UnkStruct_0205C95C *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_0205C95C));
 

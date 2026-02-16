@@ -6,7 +6,7 @@ _000:
 
 _005:
     // {0}’s {1} is disabled!
-    PrintMessage pl_msg_00000368_00609, TAG_NICKNAME_MOVE, BTLSCR_ATTACKER, BTLSCR_ATTACKER
+    PrintMessage BattleStrings_Text_PokemonsMoveIsDisabled_Ally, TAG_NICKNAME_MOVE, BTLSCR_ATTACKER, BTLSCR_ATTACKER
     Wait 
     WaitButtonABTime 30
     UnlockMoveChoice BTLSCR_ATTACKER

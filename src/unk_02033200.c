@@ -371,13 +371,13 @@ BOOL sub_02033768(void)
     return 0;
 }
 
-void sub_02033794(BOOL param0)
+void CommServerClient_SetSecretBaseClosedState(BOOL isClosed)
 {
     if (!sCommServerClient) {
         return;
     }
 
-    if (param0) {
+    if (isClosed) {
         sCommServerClient->unk_1516 = 2;
     } else {
         sCommServerClient->unk_1516 = 0;
@@ -781,10 +781,10 @@ static int sub_02033DDC(void)
 BOOL CommServerClient_IsInClosedSecretBase(void)
 {
     if (sCommServerClient && (sCommServerClient->unk_1516 == 3)) {
-        return 1;
+        return TRUE;
     }
 
-    return 0;
+    return FALSE;
 }
 
 BOOL CommServerClient_IsInitialized(void)

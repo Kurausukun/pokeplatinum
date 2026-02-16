@@ -8,7 +8,7 @@
     ScriptEntryEnd
 
 _000E:
-    SetFlag FLAG_UNK_0x09DA
+    SetFlag FLAG_FIRST_ARRIVAL_IRON_ISLAND_EXTERIOR
     End
 
 _0014:
@@ -96,7 +96,7 @@ _00FC:
     Message 0
     SetVar VAR_0x8004, ITEM_HM04
     SetVar VAR_0x8005, 1
-    GiveItemQuantity
+    Common_GiveItemQuantity
     CheckBadgeAcquired BADGE_ID_MINE, VAR_RESULT
     GoToIfEq VAR_RESULT, 0, _0140
     GoTo _0135

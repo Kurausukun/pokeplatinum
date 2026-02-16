@@ -9,7 +9,6 @@
 #include "struct_defs/struct_0207DE04.h"
 
 #include "field/field_system.h"
-#include "overlay018/ov18_0221F800.h"
 #include "overlay065/ov65_0222DCE0.h"
 #include "overlay065/ov65_0223648C.h"
 #include "overlay066/struct_ov66_02231134.h"
@@ -19,6 +18,7 @@
 #include "overlay116/ov116_022604C4.h"
 #include "overlay117/ov117_02260440.h"
 #include "overlay117/struct_ov117_02260440.h"
+#include "wfc_settings/wfc_settings.h"
 
 #include "communication_system.h"
 #include "encounter.h"
@@ -30,10 +30,10 @@
 #include "system_flags.h"
 #include "unk_02038FFC.h"
 #include "unk_0203D1B8.h"
-#include "unk_02099550.h"
 #include "unk_02099604.h"
 #include "unk_0209BA18.h"
 #include "vars_flags.h"
+#include "wifi_overlays.h"
 
 FS_EXTERN_OVERLAY(overlay65);
 FS_EXTERN_OVERLAY(overlay114);
@@ -51,15 +51,14 @@ typedef struct {
     u32 unk_14;
 } UnkStruct_0207DE40;
 
-void sub_02099570(void);
 static BOOL sub_0207DA28(FieldTask *param0);
-static void sub_0207DE04(UnkStruct_0207DE40 *param0, FieldSystem *fieldSystem, u32 heapID, u32 param3);
+static void sub_0207DE04(UnkStruct_0207DE40 *param0, FieldSystem *fieldSystem, enum HeapID heapID, u32 param3);
 static u32 sub_0207DE40(UnkStruct_0207DE40 *param0);
-static UnkStruct_ov115_02260440 *sub_0207DE90(FieldSystem *fieldSystem, u32 param1, u32 param2);
+static UnkStruct_ov115_02260440 *sub_0207DE90(FieldSystem *fieldSystem, enum HeapID heapID, u32 param2);
 static void sub_0207DED8(UnkStruct_ov115_02260440 *param0);
-static UnkStruct_ov66_02231134 *sub_0207DEEC(FieldSystem *fieldSystem, u32 param1, u32 param2);
+static UnkStruct_ov66_02231134 *sub_0207DEEC(FieldSystem *fieldSystem, enum HeapID heapID, u32 param2);
 static void sub_0207DF2C(UnkStruct_ov66_02231134 *param0);
-static UnkStruct_ov117_02260440 *sub_0207DF40(FieldSystem *fieldSystem, u32 param1, u32 param2);
+static UnkStruct_ov117_02260440 *sub_0207DF40(FieldSystem *fieldSystem, enum HeapID heapID, u32 param2);
 static void sub_0207DF88(UnkStruct_ov115_02260440 *param0);
 static void sub_0207DF9C(FieldSystem *fieldSystem);
 
@@ -189,8 +188,8 @@ static BOOL sub_0207DA28(FieldTask *task)
         break;
     case 8:
         Heap_Create(HEAP_ID_APPLICATION, HEAP_ID_54, DWC_UTILITY_WORK_SIZE + 0x100);
-        sub_02099570();
-        ov18_0221F800(HEAP_ID_54);
+        Overlay_LoadWFCSettingsOverlay();
+        WFCSettings_StartApplication(HEAP_ID_54);
         OS_ResetSystem(0);
         break;
     case 9:
@@ -325,7 +324,7 @@ void sub_0207DDE0(FieldTask *param0, u16 *param1)
     FieldTask_InitCall(param0, sub_0207DA28, v0);
 }
 
-static void sub_0207DE04(UnkStruct_0207DE40 *param0, FieldSystem *fieldSystem, u32 heapID, u32 param3)
+static void sub_0207DE04(UnkStruct_0207DE40 *param0, FieldSystem *fieldSystem, enum HeapID heapID, u32 param3)
 {
     UnkStruct_0207DE04 *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_0207DE04));
 
@@ -370,7 +369,7 @@ static u32 sub_0207DE40(UnkStruct_0207DE40 *param0)
     return param0->unk_04;
 }
 
-static UnkStruct_ov115_02260440 *sub_0207DE90(FieldSystem *fieldSystem, u32 heapID, u32 param2)
+static UnkStruct_ov115_02260440 *sub_0207DE90(FieldSystem *fieldSystem, enum HeapID heapID, u32 param2)
 {
     UnkStruct_ov115_02260440 *v0;
 
@@ -406,7 +405,7 @@ static void sub_0207DED8(UnkStruct_ov115_02260440 *param0)
     Overlay_UnloadByID(FS_OVERLAY_ID(overlay114));
 }
 
-static UnkStruct_ov66_02231134 *sub_0207DEEC(FieldSystem *fieldSystem, u32 heapID, u32 param2)
+static UnkStruct_ov66_02231134 *sub_0207DEEC(FieldSystem *fieldSystem, enum HeapID heapID, u32 param2)
 {
     UnkStruct_ov66_02231134 *v0;
 
@@ -440,7 +439,7 @@ static void sub_0207DF2C(UnkStruct_ov66_02231134 *param0)
     Overlay_UnloadByID(FS_OVERLAY_ID(overlay114));
 }
 
-static UnkStruct_ov117_02260440 *sub_0207DF40(FieldSystem *fieldSystem, u32 heapID, u32 param2)
+static UnkStruct_ov117_02260440 *sub_0207DF40(FieldSystem *fieldSystem, enum HeapID heapID, u32 param2)
 {
     UnkStruct_ov117_02260440 *v0;
 

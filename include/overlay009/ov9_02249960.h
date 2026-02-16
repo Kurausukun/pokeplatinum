@@ -9,12 +9,14 @@
 
 #include "field_task.h"
 
+#define GHOST_PROP_GROUP_MAX_COUNT 24
+
 #define DIST_WORLD_PERSISTED_DATA_CURRENT_FLOATING_PLATFORM_SIZE 4
 #define DIST_WORLD_PERSISTED_DATA_CURRENT_FLOATING_PLATFORM_MAX  (1 << DIST_WORLD_PERSISTED_DATA_CURRENT_FLOATING_PLATFORM_SIZE)
 
 typedef struct DistWorldPersistedData {
     u32 valid : 1;
-    u32 unk_00_1 : 24;
+    u32 hiddenGhostPropGroups : GHOST_PROP_GROUP_MAX_COUNT;
     u32 currentFloatingPlatformIndex : DIST_WORLD_PERSISTED_DATA_CURRENT_FLOATING_PLATFORM_SIZE;
     u32 padding : 3;
     u16 cameraAngleX;
@@ -39,8 +41,8 @@ BOOL ov9_0224A71C(FieldSystem *fieldSystem);
 BOOL ov9_0224A800(FieldSystem *fieldSystem, int param1);
 void ov9_0224CA50(FieldSystem *fieldSystem);
 void ov9_0224CA5C(FieldSystem *fieldSystem);
-void ov9_0224E884(FieldSystem *fieldSystem, u16 param1);
-void ov9_0224E8A8(FieldSystem *fieldSystem);
+void DistWorld_StartGiratinaShadowEvent(FieldSystem *fieldSystem, u16 eventIndex);
+void DistWorld_FinishGiratinaShadowEvent(FieldSystem *fieldSystem);
 void ov9_0224F158(FieldSystem *fieldSystem, u16 param1);
 void ov9_0224F16C(FieldSystem *fieldSystem, u16 param1);
 BOOL ov9_0224F240(const MapObject *param0, int param1);

@@ -47,7 +47,7 @@ _0082:
 
 _00BA:
     SetObjectEventPos 6, 0x2B8, 0x254
-    SetObjectEventMovementType 6, MOVEMENT_TYPE_LOOK_RIGHT
+    SetObjectEventMovementType 6, MOVEMENT_TYPE_LOOK_EAST
     SetObjectEventDir 6, DIR_EAST
     Return
 
@@ -69,7 +69,7 @@ _00F6:
     LockAll
     ApplyMovement 6, _0444
     WaitMovement
-    CallCommonScript 0x7F8
+    Common_SetCounterpartBGM
     GetPlayerMapPos VAR_0x8004, VAR_0x8005
     CallIfEq VAR_0x8004, 0x2A9, _02E1
     CallIfEq VAR_0x8004, 0x2AA, _02ED
@@ -79,7 +79,7 @@ _00F6:
     CallIfEq VAR_0x8004, GENDER_MALE, _0297
     CallIfEq VAR_0x8004, GENDER_FEMALE, _029F
     CloseMessage
-    CallCommonScript 0x7F9
+    Common_FadeToDefaultMusic
     LoadDoorAnimation 21, 19, 12, 3, ANIMATION_TAG_DOOR_1
     PlayDoorOpenAnimation ANIMATION_TAG_DOOR_1
     WaitForAnimation ANIMATION_TAG_DOOR_1
@@ -537,7 +537,7 @@ _0656:
     ClearFlag FLAG_UNK_0x028A
     SetObjectEventPos 26, 0x2B4, 0x25E
     AddObject 26
-    CallCommonScript 0x807
+    Common_SetLookerBGM
     ApplyMovement 26, _0A7C
     WaitMovement
     Message 29
@@ -627,20 +627,20 @@ VeilstoneCity_SetPlayerCounterpartPartnerTeam:
 
 VeilstoneCity_SetDawnPartnerTeam:
     GetPlayerStarterSpecies VAR_RESULT
-    SetVar VAR_0x8004, TRAINER_DAWN_VEILSTONE_CITY_PIPLUP
-    GoToIfEq VAR_RESULT, SPECIES_CHIMCHAR, _099D
-    SetVar VAR_0x8004, TRAINER_DAWN_VEILSTONE_CITY_TURTWIG
-    GoToIfEq VAR_RESULT, SPECIES_PIPLUP, _099D
     SetVar VAR_0x8004, TRAINER_DAWN_VEILSTONE_CITY_CHIMCHAR
+    GoToIfEq VAR_RESULT, SPECIES_CHIMCHAR, _099D
+    SetVar VAR_0x8004, TRAINER_DAWN_VEILSTONE_CITY_PIPLUP
+    GoToIfEq VAR_RESULT, SPECIES_PIPLUP, _099D
+    SetVar VAR_0x8004, TRAINER_DAWN_VEILSTONE_CITY_TURTWIG
     Return
 
 VeilstoneCity_SetLucasPartnerTeam:
     GetPlayerStarterSpecies VAR_RESULT
-    SetVar VAR_0x8004, TRAINER_LUCAS_VEILSTONE_CITY_PIPLUP
-    GoToIfEq VAR_RESULT, SPECIES_CHIMCHAR, _099D
-    SetVar VAR_0x8004, TRAINER_LUCAS_VEILSTONE_CITY_TURTWIG
-    GoToIfEq VAR_RESULT, SPECIES_PIPLUP, _099D
     SetVar VAR_0x8004, TRAINER_LUCAS_VEILSTONE_CITY_CHIMCHAR
+    GoToIfEq VAR_RESULT, SPECIES_CHIMCHAR, _099D
+    SetVar VAR_0x8004, TRAINER_LUCAS_VEILSTONE_CITY_PIPLUP
+    GoToIfEq VAR_RESULT, SPECIES_PIPLUP, _099D
+    SetVar VAR_0x8004, TRAINER_LUCAS_VEILSTONE_CITY_TURTWIG
     Return
 
 _099D:
@@ -996,7 +996,7 @@ _0C77:
     SetVar VAR_0x8004, ITEM_TM63
     SetVar VAR_0x8005, 1
     GoToIfCannotFitItem VAR_0x8004, VAR_0x8005, VAR_RESULT, _0CC7
-    GiveItemQuantity
+    Common_GiveItemQuantity
     SetFlag FLAG_UNK_0x00CC
     GoTo _0CBC
 
@@ -1008,7 +1008,7 @@ _0CBC:
     End
 
 _0CC7:
-    MessageBagIsFull
+    Common_MessageBagIsFull
     CloseMessage
     ReleaseAll
     End
@@ -1134,7 +1134,7 @@ _0E34:
     ApplyMovement LOCALID_PLAYER, _0F48
     ApplyMovement 23, _0F24
     WaitMovement
-    CallCommonScript 0x807
+    Common_SetLookerBGM
     ApplyMovement 26, _0F80
     WaitMovement
     GoTo _0ECC
@@ -1143,7 +1143,7 @@ _0E34:
 _0E5C:
     ApplyMovement 23, _0F24
     WaitMovement
-    CallCommonScript 0x807
+    Common_SetLookerBGM
     ApplyMovement 26, _0F70
     WaitMovement
     GoTo _0ECC
@@ -1153,7 +1153,7 @@ _0E7C:
     ApplyMovement LOCALID_PLAYER, _0F58
     ApplyMovement 23, _0F24
     WaitMovement
-    CallCommonScript 0x807
+    Common_SetLookerBGM
     ApplyMovement 26, _0F90
     WaitMovement
     GoTo _0ECC
@@ -1163,7 +1163,7 @@ _0EA4:
     ApplyMovement LOCALID_PLAYER, _0F64
     ApplyMovement 23, _0F38
     WaitMovement
-    CallCommonScript 0x807
+    Common_SetLookerBGM
     ApplyMovement 26, _0FA0
     WaitMovement
     GoTo _0ECC
@@ -1186,7 +1186,7 @@ _0EF4:
     SetFlag FLAG_UNK_0x009B
     Message 39
     CloseMessage
-    CallCommonScript 0x808
+    Common_FadeToDefaultMusic4
     ReleaseAll
     End
 
@@ -1194,7 +1194,7 @@ _0F0B:
     Message 40
     WaitABXPadPress
     CloseMessage
-    CallCommonScript 0x808
+    Common_FadeToDefaultMusic4
     ReleaseAll
     End
 
@@ -1273,7 +1273,7 @@ _0FB0:
     WaitMovement
     BufferPlayerName 0
     Message 41
-    CallCommonScript 0x807
+    Common_SetLookerBGM
     GoToIfSet FLAG_UNK_0x009B, _0EF4
     GoTo _0ED8
     End

@@ -18,7 +18,7 @@ _001C:
     End
 
 _0029:
-    SetFlag FLAG_UNK_0x0250
+    SetFlag FLAG_HIDE_TURNBACK_CAVE_GIRATINA_ROOM_GIRATINA
     RemoveObject 0
     ClearFlag FLAG_MAP_LOCAL
     End
@@ -41,8 +41,8 @@ _0037:
     End
 
 _0084:
-    SetFlag FLAG_UNK_0x0121
-    SetFlag FLAG_UNK_0x0250
+    SetFlag FLAG_CAUGHT_GIRATINA
+    SetFlag FLAG_HIDE_TURNBACK_CAVE_GIRATINA_ROOM_GIRATINA
     ReleaseAll
     End
 
@@ -54,7 +54,7 @@ _0090:
     End
 
 _009B:
-    ClearFlag FLAG_UNK_0x0250
+    ClearFlag FLAG_HIDE_TURNBACK_CAVE_GIRATINA_ROOM_GIRATINA
     BlackOutFromBattle
     ReleaseAll
     End
@@ -68,7 +68,7 @@ _00A5:
 _00CB:
     SetVar VAR_0x8005, 1
     GoToIfCannotFitItem VAR_0x8004, VAR_0x8005, VAR_RESULT, _010C
-    CallCommonScript 0x7E0
+    Common_GiveItemQuantityNoLineFeed
     CloseMessage
     RemoveObject 1
     ReleaseAll
@@ -83,7 +83,7 @@ _0100:
     GoTo _00CB
 
 _010C:
-    MessageBagIsFull
+    Common_MessageBagIsFull
     CloseMessage
     ReleaseAll
     End

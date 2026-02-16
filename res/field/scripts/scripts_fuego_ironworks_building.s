@@ -7,7 +7,7 @@
     ScriptEntryEnd
 
 _000A:
-    SetFlag FLAG_UNK_0x09C5
+    SetFlag FLAG_FIRST_ARRIVAL_FUEGO_IRONWORKS
     End
 
 _0010:
@@ -21,7 +21,7 @@ _0010:
     SetVar VAR_0x8005, 1
     GoToIfCannotFitItem VAR_0x8004, VAR_0x8005, VAR_RESULT, _01F3
     SetFlag FLAG_UNK_0x0138
-    GiveItemQuantity
+    Common_GiveItemQuantity
     GoTo _0062
     End
 
@@ -117,7 +117,7 @@ _01E5:
     End
 
 _01F3:
-    MessageBagIsFull
+    Common_MessageBagIsFull
     CloseMessage
     ReleaseAll
     End

@@ -10,11 +10,11 @@
 #include "pokemon_sprite.h"
 
 typedef struct {
-    BattleSystem *unk_00;
+    BattleSystem *battleSys;
     BattlerData *unk_04;
     PokemonSprite *unk_08;
     BattleAnimSystem *unk_0C;
-    UnkStruct_ov16_02265BBC unk_10;
+    MoveAnimation unk_10;
     u8 unk_68;
     u8 unk_69;
     u8 unk_6A;

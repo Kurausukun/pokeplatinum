@@ -4,6 +4,7 @@
 #include <nitro/code16.h>
 #include <string.h>
 
+#include "constants/accessories.h"
 #include "constants/battle.h"
 #include "constants/daycare.h"
 #include "constants/field/dynamic_map_features.h"
@@ -14,7 +15,6 @@
 #include "constants/scrcmd.h"
 #include "constants/species.h"
 #include "constants/string.h"
-#include "generated/accessories.h"
 #include "generated/comm_club_ret_codes.h"
 #include "generated/first_arrival_to_zones.h"
 #include "generated/journal_location_events.h"
@@ -27,10 +27,6 @@
 #include "struct_decls/pokedexdata_decl.h"
 #include "struct_decls/struct_02014EC4_decl.h"
 #include "struct_decls/struct_0202440C_decl.h"
-#include "struct_decls/struct_02029C68_decl.h"
-#include "struct_decls/struct_02029C88_decl.h"
-#include "struct_decls/struct_02029D04_decl.h"
-#include "struct_decls/struct_0202A750_decl.h"
 #include "struct_decls/struct_0203A790_decl.h"
 #include "struct_decls/struct_0205C22C_decl.h"
 #include "struct_decls/struct_0205E884_decl.h"
@@ -39,9 +35,12 @@
 #include "struct_defs/battle_tower.h"
 #include "struct_defs/choose_starter_data.h"
 #include "struct_defs/daycare.h"
+#include "struct_defs/dress_up_photo.h"
+#include "struct_defs/image_clips.h"
 #include "struct_defs/mail.h"
 #include "struct_defs/seal_case.h"
 #include "struct_defs/special_encounter.h"
+#include "struct_defs/struct_02029C88.h"
 #include "struct_defs/struct_0203E608.h"
 #include "struct_defs/struct_02041DC8.h"
 #include "struct_defs/underground.h"
@@ -91,7 +90,7 @@
 #include "overlay007/shop_menu.h"
 #include "overlay008/ov8_02249960.h"
 #include "overlay009/ov9_02249960.h"
-#include "overlay023/ov23_022521F0.h"
+#include "overlay023/underground_vendors.h"
 #include "overlay090/struct_ov90_021D0D80.h"
 #include "overlay098/struct_ov98_02247168.h"
 #include "overlay104/struct_ov104_02230BE4.h"
@@ -100,6 +99,7 @@
 #include "bag.h"
 #include "bg_window.h"
 #include "camera.h"
+#include "clear_game.h"
 #include "comm_player_manager.h"
 #include "communication_system.h"
 #include "daycare_save.h"
@@ -203,7 +203,6 @@
 #include "unk_0205003C.h"
 #include "unk_02050568.h"
 #include "unk_020528D0.h"
-#include "unk_02052C6C.h"
 #include "unk_020553DC.h"
 #include "unk_020559DC.h"
 #include "unk_0205749C.h"
@@ -264,7 +263,7 @@ static BOOL ScrCmd_CallCommonScript(ScriptContext *ctx);
 static BOOL ScriptContext_WaitSubContext(ScriptContext *ctx);
 static BOOL ScrCmd_ReturnCommonScript(ScriptContext *ctx);
 static BOOL ScrCmd_GoTo(ScriptContext *ctx);
-static MapObject *sub_02040ED4(FieldSystem *fieldSystem, int param1);
+static MapObject *GetLocalMapObjByIndex(FieldSystem *fieldSystem, int localID);
 static BOOL ScrCmd_Unused_017(ScriptContext *ctx);
 static BOOL ScrCmd_Unused_018(ScriptContext *ctx);
 static BOOL ScrCmd_Unused_019(ScriptContext *ctx);
@@ -353,8 +352,8 @@ static BOOL ScrCmd_GetPlayerMapPos(ScriptContext *ctx);
 static BOOL ScrCmd_Unused_06A(ScriptContext *ctx);
 static BOOL ScrCmd_GetPlayerDir(ScriptContext *ctx);
 static BOOL ScrCmd_MoveCamera(ScriptContext *ctx);
-static BOOL ScrCmd_06C(ScriptContext *ctx);
-static BOOL ScrCmd_06D(ScriptContext *ctx);
+static BOOL ScrCmd_SetObjectFlagIsPersistent(ScriptContext *ctx);
+static BOOL ScrCmd_SetMovementType(ScriptContext *ctx);
 static BOOL ScrCmd_GetMovementType(ScriptContext *ctx);
 static BOOL ScrCmd_Unused_06E(ScriptContext *ctx);
 static BOOL ScrCmd_093(ScriptContext *ctx);
@@ -384,7 +383,7 @@ static BOOL ScrCmd_0A7(ScriptContext *ctx);
 static BOOL ScrCmd_0A8(ScriptContext *ctx);
 static BOOL ScrCmd_12E(ScriptContext *ctx);
 static BOOL ScrCmd_12F(ScriptContext *ctx);
-static BOOL ScrCmd_130(ScriptContext *ctx);
+static BOOL ScrCmd_SetDressUpPhotoTitle(ScriptContext *ctx);
 static BOOL ScrCmd_OpenSealCapsuleEditor(ScriptContext *ctx);
 static BOOL ScrCmd_OpenRegionMap(ScriptContext *ctx);
 static BOOL ScrCmd_1D7(ScriptContext *ctx);
@@ -395,7 +394,7 @@ static BOOL ScrCmd_0AC(ScriptContext *ctx);
 static BOOL ScrCmd_0AD(ScriptContext *ctx);
 static BOOL ScrCmd_0AE(ScriptContext *ctx);
 static BOOL ScrCmd_0AF(ScriptContext *ctx);
-static BOOL ScrCmd_0B0(ScriptContext *ctx);
+static BOOL ScrCmd_ClearGame(ScriptContext *ctx);
 static BOOL ScrCmd_0B1(ScriptContext *ctx);
 static BOOL ScrCmd_336(ScriptContext *ctx);
 static BOOL ScrCmd_TryStartGTSApp(ScriptContext *ctx);
@@ -403,7 +402,7 @@ static BOOL ScrCmd_0B3(ScriptContext *ctx);
 static BOOL ScrCmd_StartChooseStarterScene(ScriptContext *ctx);
 static BOOL ScrCmd_SaveChosenStarter(ScriptContext *ctx);
 static BOOL ScrCmd_Unused_0BA(ScriptContext *ctx);
-static BOOL ScrCmd_0BB(ScriptContext *ctx);
+static BOOL ScrCmd_OpenPokemonNamingScreen(ScriptContext *ctx);
 static BOOL ScrCmd_271(ScriptContext *ctx);
 static BOOL ScrCmd_FadeScreen(ScriptContext *ctx);
 static BOOL ScrCmd_WaitFadeScreen(ScriptContext *ctx);
@@ -568,7 +567,7 @@ static BOOL ScrCmd_Unused_1CE(ScriptContext *ctx);
 static BOOL ScrCmd_AddAccessory(ScriptContext *ctx);
 static BOOL ScrCmd_CanFitAccessory(ScriptContext *ctx);
 static BOOL ScrCmd_Unused_1D4(ScriptContext *ctx);
-static BOOL ScrCmd_ObtainContestBackdrop(ScriptContext *ctx);
+static BOOL ScrCmd_AddContestBackdrop(ScriptContext *ctx);
 static BOOL ScrCmd_CheckBackdrop(ScriptContext *ctx);
 static BOOL ScrCmd_OpenPartyMenuForUnionRoomBattle(ScriptContext *ctx);
 static BOOL ScrCmd_OpenPartyMenuForContest(ScriptContext *ctx);
@@ -657,7 +656,7 @@ static BOOL ScrCmd_SetHiddenLocation(ScriptContext *ctx);
 static BOOL ScrCmd_BufferContestBackdropName(ScriptContext *ctx);
 static BOOL ScrCmd_CheckBonusRoundStreak(ScriptContext *ctx);
 static BOOL ScrCmd_GetDailyRandomLevel(ScriptContext *ctx);
-static BOOL ScrCmd_Unused_279(ScriptContext *ctx);
+static BOOL ScrCmd_RemoveAccessory(ScriptContext *ctx);
 static BOOL ScrCmd_27A(ScriptContext *ctx);
 static BOOL ScrCmd_InitDailyRandomLevel(ScriptContext *ctx);
 static BOOL ScrCmd_27D(ScriptContext *ctx);
@@ -677,7 +676,7 @@ static BOOL ScrCmd_DrawPokemonPreviewFromPartySlot(ScriptContext *ctx);
 static BOOL ScrCmd_28D(ScriptContext *ctx);
 static BOOL ScrCmd_28E(ScriptContext *ctx);
 static BOOL sub_02041FF8(ScriptContext *ctx);
-static BOOL ScrCmd_28F(ScriptContext *ctx);
+static BOOL ScrCmd_GetLeagueVictories(ScriptContext *ctx);
 static BOOL ScrCmd_292(ScriptContext *ctx);
 static BOOL ScrCmd_OpenPartyMenuForDaycare(ScriptContext *ctx);
 static BOOL ScrCmd_291(ScriptContext *ctx);
@@ -738,8 +737,8 @@ static BOOL ScrCmd_CheckHeapMemory(ScriptContext *ctx);
 static BOOL ScrCmd_StartGiratinaOriginBattle(ScriptContext *ctx);
 static BOOL ScrCmd_WriteSpeciesSeen(ScriptContext *ctx);
 static BOOL ScrCmd_320(ScriptContext *ctx);
-static BOOL ScrCmd_321(ScriptContext *ctx);
-static BOOL ScrCmd_322(ScriptContext *ctx);
+static BOOL ScrCmd_StartDistortionWorldGiratinaShadowEvent(ScriptContext *ctx);
+static BOOL ScrCmd_FinishDistortionWorldGiratinaShadowEvent(ScriptContext *ctx);
 static BOOL ScrCmd_323(ScriptContext *ctx);
 static BOOL ScrCmd_SetPartyGiratinaForm(ScriptContext *ctx);
 static BOOL ScrCmd_CheckPartyHasFatefulEncounterRegigigas(ScriptContext *ctx);
@@ -877,8 +876,8 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_GetPlayerMapPos,
     ScrCmd_Unused_06A,
     ScrCmd_MoveCamera,
-    ScrCmd_06C,
-    ScrCmd_06D,
+    ScrCmd_SetObjectFlagIsPersistent,
+    ScrCmd_SetMovementType,
     ScrCmd_Unused_06E,
     ScrCmd_GiveMoney,
     ScrCmd_RemoveMoney,
@@ -891,7 +890,7 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_UpdateCoinDisplay,
     ScrCmd_GetCoinsAmount,
     ScrCmd_AddCoins,
-    ScrCmd_SubstractCoinsFromValue,
+    ScrCmd_SubtractCoinsFromValue,
     ScrCmd_AddItem,
     ScrCmd_RemoveItem,
     ScrCmd_CanFitItem,
@@ -945,7 +944,7 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_0AD,
     ScrCmd_0AE,
     ScrCmd_0AF,
-    ScrCmd_0B0,
+    ScrCmd_ClearGame,
     ScrCmd_0B1,
     ScrCmd_TryStartGTSApp,
     ScrCmd_0B3,
@@ -956,7 +955,7 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_0B8,
     ScrCmd_GetApproachingTrainerID,
     ScrCmd_Unused_0BA,
-    ScrCmd_0BB,
+    ScrCmd_OpenPokemonNamingScreen,
     ScrCmd_FadeScreen,
     ScrCmd_WaitFadeScreen,
     ScrCmd_Warp,
@@ -1047,8 +1046,8 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_113,
     ScrCmd_114,
     ScrCmd_115,
-    ScrCmd_116,
-    ScrCmd_117,
+    ScrCmd_ShowLinkContestRecords,
+    ScrCmd_LockAutoScrollForLinkContests,
     ScrCmd_118,
     ScrCmd_CheckPartyPokerus,
     ScrCmd_GetPartyMonGender_Unused,
@@ -1073,7 +1072,7 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_TrySaveGame,
     ScrCmd_12E,
     ScrCmd_12F,
-    ScrCmd_130,
+    ScrCmd_SetDressUpPhotoTitle,
     ScrCmd_131,
     ScrCmd_132,
     ScrCmd_RegisterPoketchApp,
@@ -1238,7 +1237,7 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_AddAccessory,
     ScrCmd_CanFitAccessory,
     ScrCmd_Unused_1D4,
-    ScrCmd_ObtainContestBackdrop,
+    ScrCmd_AddContestBackdrop,
     ScrCmd_CheckBackdrop,
     ScrCmd_1D7,
     ScrCmd_1D8,
@@ -1399,10 +1398,10 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_BufferContestBackdropName,
     ScrCmd_HasCoinsFromValue,
     ScrCmd_CheckBonusRoundStreak,
-    ScrCmd_CanAddCoins,
+    ScrCmd_CheckCanAddCoins,
     ScrCmd_GetDailyRandomLevel,
     ScrCmd_GetPartyMonLevel,
-    ScrCmd_Unused_279,
+    ScrCmd_RemoveAccessory,
     ScrCmd_27A,
     ScrCmd_InitDailyRandomLevel,
     ScrCmd_27C,
@@ -1424,7 +1423,7 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_DrawPokemonPreviewFromPartySlot,
     ScrCmd_28D,
     ScrCmd_28E,
-    ScrCmd_28F,
+    ScrCmd_GetLeagueVictories,
     ScrCmd_OpenPartyMenuForDaycare,
     ScrCmd_291,
     ScrCmd_292,
@@ -1449,7 +1448,7 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_OpenPartyMenuForTrade,
     ScrCmd_GetGameCornerPrizeData,
     ScrCmd_CheckItemIsPlate,
-    ScrCmd_SubstractCoinsFromVar,
+    ScrCmd_SubtractCoinsFromVar,
     ScrCmd_HasCoinsFromVar,
     ScrCmd_2AA,
     ScrCmd_2AB,
@@ -1505,7 +1504,7 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_FindPartySlotWithSpecies,
     ScrCmd_2DE,
     ScrCmd_CalcAmitySquareBerryAndAccessoryManOptionID,
-    ScrCmd_CheckAmitySquareManGiftIsAccesory,
+    ScrCmd_CheckAmitySquareManGiftIsAccessory,
     ScrCmd_GetAmitySquareBerryOrAccessoryIDFromMan,
     ScrCmd_2E2,
     ScrCmd_2E3,
@@ -1570,8 +1569,8 @@ const ScrCmdFunc Unk_020EAC58[] = {
     ScrCmd_TryRevertPokemonForm,
     ScrCmd_ResetDistortionWorldPersistedCameraAngles,
     ScrCmd_320,
-    ScrCmd_321,
-    ScrCmd_322,
+    ScrCmd_StartDistortionWorldGiratinaShadowEvent,
+    ScrCmd_FinishDistortionWorldGiratinaShadowEvent,
     ScrCmd_323,
     ScrCmd_324,
     ScrCmd_325,
@@ -2876,7 +2875,7 @@ static BOOL ScrCmd_ApplyMovement(ScriptContext *ctx)
 {
     u16 localID = ScriptContext_GetVar(ctx);
     u32 movementOffset = ScriptContext_ReadWord(ctx);
-    MapObject *object = sub_02040ED4(ctx->fieldSystem, localID);
+    MapObject *object = GetLocalMapObjByIndex(ctx->fieldSystem, localID);
     if (object == NULL) {
         GF_ASSERT(FALSE);
         return FALSE;
@@ -2895,7 +2894,7 @@ static BOOL ScrCmd_Unused_2A1(ScriptContext *ctx)
     u16 v6 = ScriptContext_GetVar(ctx);
     u16 v7 = ScriptContext_GetVar(ctx);
 
-    MapObject *v4 = sub_02040ED4(ctx->fieldSystem, v5);
+    MapObject *v4 = GetLocalMapObjByIndex(ctx->fieldSystem, v5);
 
     if (v4 == NULL) {
         GF_ASSERT(FALSE);
@@ -2938,20 +2937,20 @@ static BOOL ScrCmd_Unused_2A1(ScriptContext *ctx)
     return FALSE;
 }
 
-static MapObject *sub_02040ED4(FieldSystem *fieldSystem, int param1)
+static MapObject *GetLocalMapObjByIndex(FieldSystem *fieldSystem, int localID)
 {
-    MapObject *v1;
+    MapObject *object;
 
-    if (param1 == 0xf2) {
-        v1 = sub_02062570(fieldSystem->mapObjMan, 0x30);
-    } else if (param1 == 0xf1) {
-        MapObject **v0 = FieldSystem_GetScriptMemberPtr(fieldSystem, SCRIPT_MANAGER_CAMERA_OBJECT);
-        v1 = *v0;
+    if (localID == LOCALID_FOLLOWER) {
+        object = MapObjMan_GetLocalMapObjByMovementType(fieldSystem->mapObjMan, MOVEMENT_TYPE_FOLLOW_PLAYER);
+    } else if (localID == LOCALID_CAMERA) {
+        MapObject **cameraObject = FieldSystem_GetScriptMemberPtr(fieldSystem, SCRIPT_MANAGER_CAMERA_OBJECT);
+        object = *cameraObject;
     } else {
-        v1 = MapObjMan_LocalMapObjByIndex(fieldSystem->mapObjMan, param1);
+        object = MapObjMan_LocalMapObjByIndex(fieldSystem->mapObjMan, localID);
     }
 
-    return v1;
+    return object;
 }
 
 static BOOL ScrCmd_WaitMovement(ScriptContext *ctx)
@@ -3026,7 +3025,7 @@ static BOOL ScrCmd_LockAll(ScriptContext *ctx)
         MapObjectManager *mapObjMan = fieldSystem->mapObjMan;
         MapObjectMan_PauseAllMovement(mapObjMan);
 
-        MapObject *object = sub_02062570(fieldSystem->mapObjMan, 0x30);
+        MapObject *object = MapObjMan_GetLocalMapObjByMovementType(fieldSystem->mapObjMan, MOVEMENT_TYPE_FOLLOW_PLAYER);
 
         if (object
             && SystemFlag_CheckHasPartner(SaveData_GetVarsFlags(fieldSystem->saveData)) == TRUE
@@ -3082,7 +3081,7 @@ static BOOL sub_02041004(ScriptContext *ctx)
     }
 
     if (inline_020410F4_1(1 << 1)) {
-        MapObject *v3 = sub_02062570(fieldSystem->mapObjMan, 0x30);
+        MapObject *v3 = MapObjMan_GetLocalMapObjByMovementType(fieldSystem->mapObjMan, MOVEMENT_TYPE_FOLLOW_PLAYER);
 
         if (!MapObject_IsMoving(v3)) {
             MapObject_SetPauseMovementOn(v3);
@@ -3109,7 +3108,7 @@ static BOOL sub_02041004(ScriptContext *ctx)
 static BOOL sub_020410CC(ScriptContext *ctx)
 {
     FieldSystem *fieldSystem = ctx->fieldSystem;
-    MapObject *v1 = sub_02062570(fieldSystem->mapObjMan, 0x30);
+    MapObject *v1 = MapObjMan_GetLocalMapObjByMovementType(fieldSystem->mapObjMan, MOVEMENT_TYPE_FOLLOW_PLAYER);
 
     if (!MapObject_IsMoving(v1)) {
         MapObject_SetPauseMovementOn(v1);
@@ -3124,7 +3123,7 @@ static BOOL ScrCmd_LockLastTalked(ScriptContext *ctx)
     FieldSystem *fieldSystem = ctx->fieldSystem;
     MapObject **v1 = FieldSystem_GetScriptMemberPtr(fieldSystem, SCRIPT_MANAGER_TARGET_OBJECT);
     MapObject *player = Player_MapObject(fieldSystem->playerAvatar);
-    MapObject *v3 = sub_02062570(fieldSystem->mapObjMan, 0x30);
+    MapObject *v3 = MapObjMan_GetLocalMapObjByMovementType(fieldSystem->mapObjMan, MOVEMENT_TYPE_FOLLOW_PLAYER);
     MapObject *v4 = sub_02069EB8(*v1);
     MapObjectManager *mapObjMan = fieldSystem->mapObjMan;
 
@@ -3339,27 +3338,27 @@ static BOOL ScrCmd_MoveCamera(ScriptContext *ctx)
     pos.y = FX32_CONST(y);
     pos.z = FX32_CONST(z);
 
-    sub_020630AC(Player_MapObject(ctx->fieldSystem->playerAvatar), &pos);
+    MapObject_SetSpritePosOffset(Player_MapObject(ctx->fieldSystem->playerAvatar), &pos);
     Camera_Move(&pos, ctx->fieldSystem->camera);
 
     return FALSE;
 }
 
-static BOOL ScrCmd_06C(ScriptContext *ctx)
+static BOOL ScrCmd_SetObjectFlagIsPersistent(ScriptContext *ctx)
 {
     MapObject *mapObj = MapObjMan_LocalMapObjByIndex(ctx->fieldSystem->mapObjMan, ScriptContext_GetVar(ctx));
-    u8 v1 = ScriptContext_ReadByte(ctx);
+    u8 flag = ScriptContext_ReadByte(ctx);
 
-    sub_02062E5C(mapObj, v1);
+    MapObject_SetFlagIsPersistent(mapObj, flag);
     return FALSE;
 }
 
-static BOOL ScrCmd_06D(ScriptContext *ctx)
+static BOOL ScrCmd_SetMovementType(ScriptContext *ctx)
 {
     MapObject *mapObj = MapObjMan_LocalMapObjByIndex(ctx->fieldSystem->mapObjMan, ScriptContext_GetVar(ctx));
-    u16 v1 = ScriptContext_ReadHalfWord(ctx);
+    u16 movementType = ScriptContext_ReadHalfWord(ctx);
 
-    MapObject_SetMoveCode(mapObj, v1);
+    MapObject_SwitchMovementType(mapObj, movementType);
     return FALSE;
 }
 
@@ -3379,7 +3378,7 @@ static BOOL ScrCmd_GetMovementType(ScriptContext *ctx)
 
 static BOOL ScrCmd_Unused_06E(ScriptContext *ctx)
 {
-    MapObject *mapObj = sub_02062570(ctx->fieldSystem->mapObjMan, 0x30);
+    MapObject *mapObj = MapObjMan_GetLocalMapObjByMovementType(ctx->fieldSystem->mapObjMan, MOVEMENT_TYPE_FOLLOW_PLAYER);
 
     sub_020633C8(mapObj, 0xfe);
     return FALSE;
@@ -3780,14 +3779,14 @@ static BOOL ScrCmd_WaitForTransition(ScriptContext *ctx)
 
 static BOOL sub_02041D98(FieldSystem *fieldSystem, int param1, int param2)
 {
-    UnkStruct_0202A750 *v0 = sub_0202A750(fieldSystem->saveData);
+    ImageClips *imageClips = SaveData_GetImageClips(fieldSystem->saveData);
 
     if (param1 == 0) {
-        if (!sub_02029D10(v0, param2)) {
+        if (!ImageClips_DressUpPhotoHasData(imageClips, param2)) {
             return FALSE;
         }
     } else {
-        if (!sub_02029D2C(v0, param2)) {
+        if (!sub_02029D2C(imageClips, param2)) {
             return FALSE;
         }
     }
@@ -3795,9 +3794,9 @@ static BOOL sub_02041D98(FieldSystem *fieldSystem, int param1, int param2)
     return TRUE;
 }
 
-static UnkStruct_02041DC8 *sub_02041DC8(int heapID, FieldSystem *fieldSystem, int param2, int param3)
+static UnkStruct_02041DC8 *sub_02041DC8(enum HeapID heapID, FieldSystem *fieldSystem, int param2, int param3)
 {
-    UnkStruct_0202A750 *v3 = sub_0202A750(fieldSystem->saveData);
+    ImageClips *imageClips = SaveData_GetImageClips(fieldSystem->saveData);
 
     if (!sub_02041D98(fieldSystem, param2, param3)) {
         return NULL;
@@ -3806,7 +3805,7 @@ static UnkStruct_02041DC8 *sub_02041DC8(int heapID, FieldSystem *fieldSystem, in
     UnkStruct_02041DC8 *v0 = Heap_Alloc(heapID, sizeof(UnkStruct_02041DC8));
     memset(v0, 0, sizeof(UnkStruct_02041DC8));
 
-    v0->unk_00 = v3;
+    v0->imageClips = imageClips;
     v0->unk_08 = param2;
     v0->unk_04 = param3;
 
@@ -3863,11 +3862,11 @@ static BOOL ScrCmd_DrawPokemonPreviewFromPartySlot(ScriptContext *ctx)
     void **v1 = FieldSystem_GetScriptMemberPtr(ctx->fieldSystem, SCRIPT_MANAGER_DATA_PTR);
     u16 partySlot = ScriptContext_GetVar(ctx);
 
-    Pokemon *pokemon = Party_GetPokemonBySlotIndex(SaveData_GetParty(ctx->fieldSystem->saveData), partySlot);
+    Pokemon *mon = Party_GetPokemonBySlotIndex(SaveData_GetParty(ctx->fieldSystem->saveData), partySlot);
     LoadStandardWindowGraphics(ctx->fieldSystem->bgConfig, BG_LAYER_MAIN_3, 1024 - (18 + 12) - 9, 11, 0, HEAP_ID_FIELD1);
 
-    *v1 = DrawPokemonPreviewFromStruct(ctx->fieldSystem->bgConfig, BG_LAYER_MAIN_3, 10, 5, 11, 1024 - (18 + 12) - 9, pokemon, HEAP_ID_FIELD1);
-    FieldSystem_WriteSpeciesSeen(ctx->fieldSystem, Pokemon_GetValue(pokemon, MON_DATA_SPECIES, NULL));
+    *v1 = DrawPokemonPreviewFromStruct(ctx->fieldSystem->bgConfig, BG_LAYER_MAIN_3, 10, 5, 11, 1024 - (18 + 12) - 9, mon, HEAP_ID_FIELD1);
+    FieldSystem_WriteSpeciesSeen(ctx->fieldSystem, Pokemon_GetValue(mon, MON_DATA_SPECIES, NULL));
 
     return FALSE;
 }
@@ -4039,13 +4038,13 @@ static BOOL ScrCmd_12F(ScriptContext *ctx)
     return TRUE;
 }
 
-static BOOL ScrCmd_130(ScriptContext *ctx)
+static BOOL ScrCmd_SetDressUpPhotoTitle(ScriptContext *ctx)
 {
-    u16 v0 = ScriptContext_GetVar(ctx);
-    UnkStruct_0202A750 *v1 = sub_0202A750(ctx->fieldSystem->saveData);
-    UnkStruct_02029C68 *v2 = sub_02029CA8(v1, 0);
+    u16 word = ScriptContext_GetVar(ctx);
+    ImageClips *imageClips = SaveData_GetImageClips(ctx->fieldSystem->saveData);
+    DressUpPhoto *photo = ImageClips_GetDressUpPhoto(imageClips, 0);
 
-    sub_0202A0A0(v2, v0);
+    DressUpPhoto_SetTitle(photo, word);
 
     return TRUE;
 }
@@ -4182,9 +4181,9 @@ static BOOL ScrCmd_0AF(ScriptContext *ctx)
     return TRUE;
 }
 
-static BOOL ScrCmd_0B0(ScriptContext *ctx)
+static BOOL ScrCmd_ClearGame(ScriptContext *ctx)
 {
-    sub_02052E58(ctx->fieldSystem->task);
+    ClearGame(ctx->fieldSystem->task);
     return TRUE;
 }
 
@@ -4307,16 +4306,16 @@ static BOOL ScrCmd_Unused_0BA(ScriptContext *ctx)
     return TRUE;
 }
 
-static BOOL ScrCmd_0BB(ScriptContext *ctx)
+static BOOL ScrCmd_OpenPokemonNamingScreen(ScriptContext *ctx)
 {
-    u16 v0[10 * 2];
+    u16 nickname[MON_NAME_LEN * 2];
     FieldSystem *fieldSystem = ctx->fieldSystem;
-    u16 v3 = ScriptContext_GetVar(ctx);
+    u16 slot = ScriptContext_GetVar(ctx);
 
-    Pokemon *v1 = Party_GetPokemonBySlotIndex(SaveData_GetParty(fieldSystem->saveData), v3);
+    Pokemon *mon = Party_GetPokemonBySlotIndex(SaveData_GetParty(fieldSystem->saveData), slot);
 
-    Pokemon_GetValue(v1, MON_DATA_NICKNAME, v0);
-    sub_0203DFE8(ctx->task, NAMING_SCREEN_TYPE_POKEMON, Pokemon_GetValue(v1, MON_DATA_SPECIES, NULL), MON_NAME_LEN, v3, v0, ScriptContext_GetVarPointer(ctx));
+    Pokemon_GetValue(mon, MON_DATA_NICKNAME, nickname);
+    sub_0203DFE8(ctx->task, NAMING_SCREEN_TYPE_POKEMON, Pokemon_GetValue(mon, MON_DATA_SPECIES, NULL), MON_NAME_LEN, slot, nickname, ScriptContext_GetVarPointer(ctx));
 
     return TRUE;
 }
@@ -5664,7 +5663,7 @@ static BOOL ScrCmd_19E(ScriptContext *ctx)
     u16 v3 = ScriptContext_ReadHalfWord(ctx);
 
     ctx->data[0] = v3;
-    *v0 = ov23_02252C98(v2, ctx->fieldSystem, MapObject_GetLocalID(*v1));
+    *v0 = UndergroundVendors_ReturnNull(v2, ctx->fieldSystem, MapObject_GetLocalID(*v1));
 
     ScriptContext_Pause(ctx, sub_020441C8);
     return TRUE;
@@ -5675,9 +5674,9 @@ static BOOL sub_020441C8(ScriptContext *ctx)
     void **v0 = FieldSystem_GetScriptMemberPtr(ctx->fieldSystem, SCRIPT_MANAGER_DATA_PTR);
     u16 *v1 = FieldSystem_GetVarPointer(ctx->fieldSystem, ctx->data[0]);
 
-    *v1 = ov23_02252C70(*v0);
+    *v1 = UndergroundVendors_ReturnFFFE(*v0);
 
-    if ((*v1) == 0xfffe) {
+    if (*v1 == 0xFFFE) {
         return FALSE;
     }
 
@@ -5688,7 +5687,7 @@ static BOOL ScrCmd_19F(ScriptContext *ctx)
 {
     u8 *v0 = FieldSystem_GetScriptMemberPtr(ctx->fieldSystem, SCRIPT_MANAGER_MESSAGE_ID);
 
-    *v0 = ov23_02252C9C(ScriptContext_GetVar(ctx));
+    *v0 = UndergroundVendors_PrintNPCMessage(ScriptContext_GetVar(ctx));
     ScriptContext_Pause(ctx, sub_02044240);
 
     return TRUE;
@@ -5702,7 +5701,7 @@ static BOOL sub_02044240(ScriptContext *ctx)
 
 static BOOL ScrCmd_1A0(ScriptContext *ctx)
 {
-    ov23_02252CD4();
+    UndergroundVendors_EraseMessageBoxWindow();
     return FALSE;
 }
 
@@ -5711,7 +5710,7 @@ static BOOL ScrCmd_Unused_1A1(ScriptContext *ctx)
     u8 v0 = ScriptContext_ReadByte(ctx);
     u16 v1 = ScriptContext_GetVar(ctx);
 
-    ov23_02252CE0(v0, v1);
+    UndergroundVendors_SetTreasureNameForPrinter(v0, v1);
     return FALSE;
 }
 
@@ -5720,7 +5719,7 @@ static BOOL ScrCmd_Unused_1A2(ScriptContext *ctx)
     u8 v0 = ScriptContext_ReadByte(ctx);
     u16 v1 = ScriptContext_GetVar(ctx);
 
-    ov23_02252CF4(v0, v1);
+    UndergroundVendors_SetTrapNameForPrinter(v0, v1);
     return FALSE;
 }
 
@@ -5929,10 +5928,10 @@ static BOOL ScrCmd_AddAccessory(ScriptContext *ctx)
     u16 accessoryID = ScriptContext_GetVar(ctx);
     u16 amount = ScriptContext_GetVar(ctx);
 
-    UnkStruct_0202A750 *v0 = sub_0202A750(ctx->fieldSystem->saveData);
-    UnkStruct_02029D04 *v1 = sub_02029D04(v0);
+    ImageClips *imageClips = SaveData_GetImageClips(ctx->fieldSystem->saveData);
+    FashionCase *fashionCase = ImageClips_GetFashionCase(imageClips);
 
-    sub_02029E2C(v1, accessoryID, amount);
+    FashionCase_AddAccessory(fashionCase, accessoryID, amount);
     return FALSE;
 }
 
@@ -5942,9 +5941,9 @@ static BOOL ScrCmd_CanFitAccessory(ScriptContext *ctx)
     u16 count = ScriptContext_GetVar(ctx);
     u16 *destVar = ScriptContext_GetVarPointer(ctx);
 
-    UnkStruct_0202A750 *v0 = sub_0202A750(ctx->fieldSystem->saveData);
-    UnkStruct_02029D04 *v1 = sub_02029D04(v0);
-    *destVar = sub_02029D50(v1, accessory, count);
+    ImageClips *imageClips = SaveData_GetImageClips(ctx->fieldSystem->saveData);
+    FashionCase *fashionCase = ImageClips_GetFashionCase(imageClips);
+    *destVar = FashionCase_CanFitAccessoryCount(fashionCase, accessory, count);
 
     return FALSE;
 }
@@ -5955,10 +5954,10 @@ static BOOL ScrCmd_Unused_1D4(ScriptContext *ctx)
     u16 v3 = ScriptContext_GetVar(ctx);
     u16 *v4 = ScriptContext_GetVarPointer(ctx);
 
-    UnkStruct_0202A750 *v0 = sub_0202A750(ctx->fieldSystem->saveData);
-    UnkStruct_02029D04 *v1 = sub_02029D04(v0);
+    ImageClips *imageClips = SaveData_GetImageClips(ctx->fieldSystem->saveData);
+    FashionCase *fashionCase = ImageClips_GetFashionCase(imageClips);
 
-    if (v3 <= sub_02029D94(v1, v2)) {
+    if (v3 <= FashionCase_GetAccessoryCount(fashionCase, v2)) {
         *v4 = 1;
     } else {
         *v4 = 0;
@@ -5967,14 +5966,14 @@ static BOOL ScrCmd_Unused_1D4(ScriptContext *ctx)
     return FALSE;
 }
 
-static BOOL ScrCmd_ObtainContestBackdrop(ScriptContext *ctx)
+static BOOL ScrCmd_AddContestBackdrop(ScriptContext *ctx)
 {
-    u16 v2 = ScriptContext_GetVar(ctx);
+    u16 backdropID = ScriptContext_GetVar(ctx);
 
-    UnkStruct_0202A750 *v0 = sub_0202A750(ctx->fieldSystem->saveData);
-    UnkStruct_02029D04 *v1 = sub_02029D04(v0);
+    ImageClips *imageClips = SaveData_GetImageClips(ctx->fieldSystem->saveData);
+    FashionCase *fashionCase = ImageClips_GetFashionCase(imageClips);
 
-    sub_02029EFC(v1, v2);
+    FashionCase_AddBackdrop(fashionCase, backdropID);
     return FALSE;
 }
 
@@ -5983,9 +5982,9 @@ static BOOL ScrCmd_CheckBackdrop(ScriptContext *ctx)
     u16 backdrop = ScriptContext_GetVar(ctx);
     u16 *destVar = ScriptContext_GetVarPointer(ctx);
 
-    UnkStruct_0202A750 *v0 = sub_0202A750(ctx->fieldSystem->saveData);
-    UnkStruct_02029D04 *v1 = sub_02029D04(v0);
-    *destVar = sub_02029D80(v1, backdrop);
+    ImageClips *imageClips = SaveData_GetImageClips(ctx->fieldSystem->saveData);
+    FashionCase *fashionCase = ImageClips_GetFashionCase(imageClips);
+    *destVar = FashionCase_HasBackdrop(fashionCase, backdrop);
 
     return FALSE;
 }
@@ -6456,7 +6455,7 @@ static BOOL ScrCmd_GetCapturedFlagCount(ScriptContext *ctx)
     UndergroundRecord *undergroundRecord;
     u16 *destFlagCount = ScriptContext_GetVarPointer(ctx);
 
-    undergroundRecord = SaveData_UndergroundRecord(saveData);
+    undergroundRecord = SaveData_GetUndergroundRecord(saveData);
     *destFlagCount = UndergroundRecord_GetCapturedFlagCount(undergroundRecord);
 
     return FALSE;
@@ -6493,12 +6492,12 @@ static BOOL ScrCmd_PlayPCShutDownAnimation(ScriptContext *ctx)
 static void FieldSystem_WriteSpeciesSeen(FieldSystem *fieldSystem, u16 species)
 {
     Pokedex *pokedex = SaveData_GetPokedex(fieldSystem->saveData);
-    Pokemon *pokemon = Pokemon_New(HEAP_ID_FIELD3);
+    Pokemon *mon = Pokemon_New(HEAP_ID_FIELD3);
 
-    Pokemon_Init(pokemon);
-    Pokemon_InitWith(pokemon, species, 50, INIT_IVS_RANDOM, FALSE, 0, OTID_NOT_SET, 0);
-    Pokedex_Encounter(pokedex, pokemon);
-    Heap_Free(pokemon);
+    Pokemon_Init(mon);
+    Pokemon_InitWith(mon, species, 50, INIT_IVS_RANDOM, FALSE, 0, OTID_NOT_SET, 0);
+    Pokedex_Encounter(pokedex, mon);
+    Heap_Free(mon);
 
     return;
 }
@@ -6737,13 +6736,13 @@ static BOOL ScrCmd_TryGetRandomMassageGirlAccessory(ScriptContext *ctx)
     int i;
     u16 *destAccessoryID = ScriptContext_GetVarPointer(ctx);
 
-    UnkStruct_0202A750 *v0 = sub_0202A750(ctx->fieldSystem->saveData);
-    UnkStruct_02029D04 *v1 = sub_02029D04(v0);
+    ImageClips *imageClips = SaveData_GetImageClips(ctx->fieldSystem->saveData);
+    FashionCase *fashionCase = ImageClips_GetFashionCase(imageClips);
 
     int unobtainedAccessoryCount = 0;
 
     for (i = 0; i < NUM_MASSAGE_GIRL_ACCESSORIES; i++) {
-        if (sub_02029D50(v1, ACCESSORY_PRETTY_DEWDROP + i, 1) == TRUE) {
+        if (FashionCase_CanFitAccessoryCount(fashionCase, ACCESSORY_PRETTY_DEWDROP + i, 1) == TRUE) {
             hasAccessory[i] = TRUE;
             unobtainedAccessoryCount++;
         }
@@ -6833,15 +6832,15 @@ static BOOL ScrCmd_GetDailyRandomLevel(ScriptContext *ctx)
     return FALSE;
 }
 
-static BOOL ScrCmd_Unused_279(ScriptContext *ctx)
+static BOOL ScrCmd_RemoveAccessory(ScriptContext *ctx)
 {
-    u16 v2 = ScriptContext_GetVar(ctx);
-    u16 v3 = ScriptContext_GetVar(ctx);
+    u16 accessoryID = ScriptContext_GetVar(ctx);
+    u16 amount = ScriptContext_GetVar(ctx);
 
-    UnkStruct_0202A750 *v0 = sub_0202A750(ctx->fieldSystem->saveData);
-    UnkStruct_02029D04 *v1 = sub_02029D04(v0);
+    ImageClips *imageClips = SaveData_GetImageClips(ctx->fieldSystem->saveData);
+    FashionCase *fashionCase = ImageClips_GetFashionCase(imageClips);
 
-    sub_02029EA0(v1, v2, v3);
+    FashionCase_RemoveAccessory(fashionCase, accessoryID, amount);
     return FALSE;
 }
 
@@ -7110,28 +7109,28 @@ static BOOL ScrCmd_CheckDistributionEvent(ScriptContext *ctx)
     return FALSE;
 }
 
-static BOOL ScrCmd_28F(ScriptContext *ctx)
+static BOOL ScrCmd_GetLeagueVictories(ScriptContext *ctx)
 {
-    int v0;
-    u16 *v2 = ScriptContext_GetVarPointer(ctx);
+    int resultCode;
+    u16 *destVar = ScriptContext_GetVarPointer(ctx);
 
-    const HallOfFame *v1 = SaveData_HallOfFame(ctx->fieldSystem->saveData, 32, &v0);
+    const HallOfFame *hallOfFame = SaveData_HallOfFame(ctx->fieldSystem->saveData, 32, &resultCode);
 
-    if (v0 == 0) {
-        *v2 = 0;
-        Heap_Free((void *)v1);
+    if (resultCode == LOAD_RESULT_EMPTY) {
+        *destVar = 0;
+        Heap_Free((void *)hallOfFame);
         return TRUE;
-    } else if (v0 == 1) {
-        *v2 = HallOfFame_GetEntryNum(v1, 0);
-        Heap_Free((void *)v1);
+    } else if (resultCode == LOAD_RESULT_OK) {
+        *destVar = HallOfFame_GetEntryNum(hallOfFame, 0);
+        Heap_Free((void *)hallOfFame);
         return TRUE;
-    } else if (v0 == 2) {
-        *v2 = 0;
-        Heap_Free((void *)v1);
+    } else if (resultCode == LOAD_RESULT_CORRUPT) {
+        *destVar = 0;
+        Heap_Free((void *)hallOfFame);
         return TRUE;
     }
 
-    *v2 = 0;
+    *destVar = 0;
     return TRUE;
 }
 
@@ -7910,20 +7909,20 @@ static BOOL ScrCmd_320(ScriptContext *ctx)
     return TRUE;
 }
 
-static BOOL ScrCmd_321(ScriptContext *ctx)
+static BOOL ScrCmd_StartDistortionWorldGiratinaShadowEvent(ScriptContext *ctx)
 {
     FieldSystem *fieldSystem = ctx->fieldSystem;
-    u16 v1 = ScriptContext_GetVar(ctx);
+    u16 eventIndex = ScriptContext_GetVar(ctx);
 
-    ov9_0224E884(fieldSystem, v1);
+    DistWorld_StartGiratinaShadowEvent(fieldSystem, eventIndex);
     return FALSE;
 }
 
-static BOOL ScrCmd_322(ScriptContext *ctx)
+static BOOL ScrCmd_FinishDistortionWorldGiratinaShadowEvent(ScriptContext *ctx)
 {
     FieldSystem *fieldSystem = ctx->fieldSystem;
 
-    ov9_0224E8A8(fieldSystem);
+    DistWorld_FinishGiratinaShadowEvent(fieldSystem);
     return FALSE;
 }
 

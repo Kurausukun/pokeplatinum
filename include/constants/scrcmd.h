@@ -1,7 +1,7 @@
 #ifndef POKEPLATINUM_CONSTANTS_SCRCMD_H
 #define POKEPLATINUM_CONSTANTS_SCRCMD_H
 
-#include "generated/accessories.h"
+#include "constants/accessories.h"
 #include "generated/backdrops.h"
 
 #define BERRY_WATERING_START 0
@@ -11,7 +11,9 @@
 #define MENU_NO     1
 #define MENU_CANCEL -2
 
-#define LOCALID_PLAYER 0xFF
+#define LOCALID_CAMERA   0xF1
+#define LOCALID_FOLLOWER 0xF2
+#define LOCALID_PLAYER   0xFF
 
 #define LIST_MENU_ENTRY_NO_ALT_TEXT 0xff
 

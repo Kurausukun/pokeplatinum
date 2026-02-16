@@ -20,7 +20,7 @@ SnowpointGym_Candice:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
     FacePlayer
-    GoToIfBadgeAcquired BADGE_ID_ICICLE SnowpointGym_CandiceAfterBadge
+    GoToIfBadgeAcquired BADGE_ID_ICICLE, SnowpointGym_CandiceAfterBadge
     CreateJournalEvent LOCATION_EVENT_GYM_WAS_TOO_TOUGH, 167, 0, 0, 0
     Message SnowpointGym_Text_CandiceIntro
     CloseMessage
@@ -49,7 +49,7 @@ SnowpointGym_CandiceTryGiveTM72:
     SetVar VAR_0x8004, ITEM_TM72
     SetVar VAR_0x8005, 1
     GoToIfCannotFitItem VAR_0x8004, VAR_0x8005, VAR_RESULT, SnowpointGym_CandiceCannotGiveTM72
-    GiveItemQuantity
+    Common_GiveItemQuantity
     SetFlag FLAG_OBTAINED_CANDICE_TM72
     BufferItemName 0, VAR_0x8004
     BufferTMHMMoveName 1, VAR_0x8004
@@ -60,7 +60,7 @@ SnowpointGym_CandiceTryGiveTM72:
     End
 
 SnowpointGym_CandiceCannotGiveTM72:
-    MessageBagIsFull
+    Common_MessageBagIsFull
     CloseMessage
     ReleaseAll
     End

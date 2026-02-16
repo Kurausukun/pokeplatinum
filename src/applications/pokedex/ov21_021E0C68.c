@@ -47,8 +47,8 @@ typedef struct {
     Sprite *unk_00;
     PokedexTextData *unk_04;
     SpriteResource *unk_08[4];
-    CursorTransformation unk_18;
-    CursorTransformation unk_38;
+    SpriteTransformation unk_18;
+    SpriteTransformation unk_38;
 } UnkStruct_ov21_021E14D4;
 
 static UnkStruct_ov21_021E0D68 *ov21_021E0D04(enum HeapID heapID, PokedexApp *param1);
@@ -75,9 +75,9 @@ static void ov21_021E17EC(UnkStruct_ov21_021E14D4 *param0, int param1, int param
 static BOOL ov21_021E1808(UnkStruct_ov21_021E14D4 *param0, PokedexGraphicData **param1);
 static void ov21_021E1824(UnkStruct_ov21_021E14D4 *param0);
 static BOOL ov21_021E1840(UnkStruct_ov21_021E14D4 *param0, PokedexGraphicData **param1);
-static void ov21_021E0F4C(UnkStruct_ov21_021E14D4 *param0, PokedexGraphicData **param1, const UnkStruct_ov21_021E0D68 *param2, int heapID);
+static void ov21_021E0F4C(UnkStruct_ov21_021E14D4 *param0, PokedexGraphicData **param1, const UnkStruct_ov21_021E0D68 *param2, enum HeapID heapID);
 static void ov21_021E0F94(UnkStruct_ov21_021E14D4 *param0, PokedexGraphicData **param1);
-static void ov21_021E0FBC(PokedexGraphicData **param0, int heapID);
+static void ov21_021E0FBC(PokedexGraphicData **param0, enum HeapID heapID);
 static void ov21_021E10D0(PokedexGraphicData **param0, const UnkStruct_ov21_021E0D68 *param1, enum HeapID heapID);
 static void ov21_021E1188(PokedexGraphicData **param0, int param1, int param2, int param3, int param4);
 static int LanguageMessage(int param0);
@@ -360,7 +360,7 @@ static int ov21_021E0E90(void *graphics, PokedexGraphicsManager *graphicsMan, co
     return 0;
 }
 
-static void ov21_021E0F4C(UnkStruct_ov21_021E14D4 *param0, PokedexGraphicData **param1, const UnkStruct_ov21_021E0D68 *param2, int heapID)
+static void ov21_021E0F4C(UnkStruct_ov21_021E14D4 *param0, PokedexGraphicData **param1, const UnkStruct_ov21_021E0D68 *param2, enum HeapID heapID)
 {
     ov21_021E11DC(param1, param2, heapID);
     ov21_021E1228(param1, param2);
@@ -379,7 +379,7 @@ static void ov21_021E0F94(UnkStruct_ov21_021E14D4 *param0, PokedexGraphicData **
     Bg_ClearTilemap((*param1)->bgConfig, 1);
 }
 
-static void ov21_021E0FBC(PokedexGraphicData **param0, int heapID)
+static void ov21_021E0FBC(PokedexGraphicData **param0, enum HeapID heapID)
 {
     void *v0;
     NNSG2dScreenData *v1;
@@ -752,7 +752,7 @@ static void ov21_021E17EC(UnkStruct_ov21_021E14D4 *param0, int param1, int param
 
 static BOOL ov21_021E1808(UnkStruct_ov21_021E14D4 *param0, PokedexGraphicData **param1)
 {
-    BOOL v0 = PokedexGraphics_TakeCursorTransformStep(&param0->unk_18);
+    BOOL v0 = PokedexGraphics_TakeTransformStep(&param0->unk_18);
     PokemonGraphics_SetCharCenterXY(*param1, param0->unk_18.currentX, param0->unk_18.currentY);
 
     return v0;
@@ -765,7 +765,7 @@ static void ov21_021E1824(UnkStruct_ov21_021E14D4 *param0)
 
 static BOOL ov21_021E1840(UnkStruct_ov21_021E14D4 *param0, PokedexGraphicData **param1)
 {
-    BOOL v0 = PokedexGraphics_TakeCursorTransformStep(&param0->unk_38);
+    BOOL v0 = PokedexGraphics_TakeTransformStep(&param0->unk_38);
     ov21_021D1848(*param1, param0->unk_38.currentX, param0->unk_38.currentY);
 
     return v0;

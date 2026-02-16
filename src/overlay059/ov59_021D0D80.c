@@ -9,7 +9,6 @@
 #include "struct_defs/struct_0203DE34.h"
 #include "struct_defs/struct_020961E8_t.h"
 #include "struct_defs/struct_02096274.h"
-#include "struct_defs/struct_02099F80.h"
 
 #include "overlay059/ov59_021D2F88.h"
 #include "overlay059/struct_ov59_021D109C.h"
@@ -193,7 +192,7 @@ int ov59_021D0D80(ApplicationManager *appMan, int *param1)
 
         ResetScreenMasterBrightness(DS_SCREEN_MAIN);
         ResetScreenMasterBrightness(DS_SCREEN_SUB);
-        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_UNK_17, FADE_TYPE_UNK_17, COLOR_BLACK, 16, 1, HEAP_ID_51);
+        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_CIRCLE_IN, FADE_TYPE_CIRCLE_IN, COLOR_BLACK, 16, 1, HEAP_ID_51);
 
         ov59_021D1388(v0, v1);
         SetVBlankCallback(ov59_021D1100, v0);
@@ -371,7 +370,7 @@ static void ov59_021D1100(void *param0)
 
 static void ov59_021D1128(void)
 {
-    UnkStruct_02099F80 v0 = {
+    GXBanks v0 = {
         GX_VRAM_BG_128_A,
         GX_VRAM_BGEXTPLTT_NONE,
         GX_VRAM_SUB_BG_128_C,
@@ -1130,7 +1129,7 @@ static int ov59_021D1E98(UnkStruct_020961E8 *param0, int param1)
 static int ov59_021D1EB8(UnkStruct_020961E8 *param0, int param1)
 {
     if (++param0->unk_3B4 > 60) {
-        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_UNK_16, FADE_TYPE_UNK_16, COLOR_BLACK, 16, 1, HEAP_ID_51);
+        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_CIRCLE_OUT, FADE_TYPE_CIRCLE_OUT, COLOR_BLACK, 16, 1, HEAP_ID_51);
         param1 = 3;
     }
 
@@ -1226,7 +1225,7 @@ static int ov59_021D2064(UnkStruct_020961E8 *param0, int param1)
 {
     if (CommTiming_IsSyncState(201)) {
         CommMan_SetErrorHandling(0, 0);
-        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_UNK_16, FADE_TYPE_UNK_16, COLOR_BLACK, 16, 1, HEAP_ID_51);
+        StartScreenFade(FADE_BOTH_SCREENS, FADE_TYPE_CIRCLE_OUT, FADE_TYPE_CIRCLE_OUT, COLOR_BLACK, 16, 1, HEAP_ID_51);
 
         param1 = 3;
     }

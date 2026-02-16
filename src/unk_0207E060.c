@@ -5,12 +5,12 @@
 
 #include "struct_defs/struct_0207E060.h"
 
-#include "overlay004/ov4_021D0D80.h"
+#include "nintendo_wfc/main.h"
 
 #include "heap.h"
 #include "trainer_info.h"
 
-UnkStruct_0207E060 *sub_0207E060(const TrainerInfo *info, u32 heapID)
+UnkStruct_0207E060 *sub_0207E060(const TrainerInfo *info, enum HeapID heapID)
 {
     UnkStruct_0207E060 *v0;
     BOOL v1;
@@ -22,9 +22,9 @@ UnkStruct_0207E060 *sub_0207E060(const TrainerInfo *info, u32 heapID)
     v0->unk_1E = TrainerInfo_Gender(info);
     v0->unk_1D = TrainerInfo_Appearance(info);
     v0->unk_18 = TrainerInfo_GameCode(info);
-    v0->unk_19 = TrainerInfo_RegionCode(info);
+    v0->language = TrainerInfo_Language(info);
 
-    v1 = ov4_021D222C(v0, (sizeof(UnkStruct_0207E060)));
+    v1 = NintendoWFC_SetStatusData(v0, (sizeof(UnkStruct_0207E060)));
     GF_ASSERT(v1 == 1);
 
     return v0;

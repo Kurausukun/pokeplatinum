@@ -9,7 +9,7 @@
     ScriptEntryEnd
 
 _0012:
-    SetFlag FLAG_UNK_0x09C4
+    SetFlag FLAG_FIRST_ARRIVAL_ETERNA_FOREST
     End
 
 _0018:
@@ -21,7 +21,7 @@ _0018:
     BufferAccessoryName 0, VAR_0x8004
     Message 0
     SetVar VAR_0x8005, 1
-    GiveAccessoryWaitForConfirm
+    Common_GiveAccessoryWaitForConfirm
     SetFlag FLAG_UNK_0x012A
     CloseMessage
     ReleaseAll

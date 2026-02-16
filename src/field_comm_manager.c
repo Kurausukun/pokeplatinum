@@ -6,13 +6,13 @@
 #include "constants/graphics.h"
 #include "constants/heap.h"
 
-#include "struct_decls/struct_02029894_decl.h"
 #include "struct_defs/struct_0205964C.h"
+#include "struct_defs/underground.h"
 
 #include "field/field_system.h"
 #include "functypes/funcptr_020598EC.h"
 #include "overlay007/communication_club.h"
-#include "overlay023/ov23_02241F74.h"
+#include "overlay023/underground_manager.h"
 
 #include "comm_player_manager.h"
 #include "communication_information.h"
@@ -236,7 +236,7 @@ static void Task_StartBattleServer(void)
 
     ov7_0224B4B8();
 
-    CommInfo_SendBattleRegulation();
+    CommInfo_SendPlayerInfo();
     FieldCommMan_SetTask(Task_ServerWait, 0);
 }
 
@@ -272,7 +272,7 @@ static void sub_02059964(void)
         return;
     }
 
-    CommInfo_SendBattleRegulation();
+    CommInfo_SendPlayerInfo();
     FieldCommMan_SetTask(sub_02059980, 0);
 }
 
@@ -408,7 +408,7 @@ static void sub_02059B74(void)
                         }
                     }
 
-                    ScriptManager_Set(sFieldCommMan->fieldSystem, 9102, NULL);
+                    ScriptManager_Set(sFieldCommMan->fieldSystem, SCRIPT_ID(COMMUNICATION_CLUB, 2), NULL);
                 }
             }
         }
@@ -715,25 +715,25 @@ static void sub_0205A058(void)
     FieldCommMan_SetTask(FieldCommMan_Delete, 0);
 }
 
-UnkStruct_02029894 *sub_0205A080(SaveData *saveData)
+SecretBase *sub_0205A080(SaveData *saveData)
 {
-    if (!sFieldCommMan || !sFieldCommMan->unk_41) {
+    if (!sFieldCommMan || !sFieldCommMan->isUnderground) {
         return NULL;
     }
 
-    return ov23_02242E10(saveData);
+    return UndergroundMan_GetCurrentOccupiedSecretBase(saveData);
 }
 
 void sub_0205A0A0(void)
 {
-    if (sFieldCommMan && sFieldCommMan->unk_41) {
-        ov23_02242C78();
+    if (sFieldCommMan && sFieldCommMan->isUnderground) {
+        UndergroundMan_PauseResources();
     }
 }
 
 void sub_0205A0BC(void)
 {
-    if (sFieldCommMan && sFieldCommMan->unk_41) {
-        ov23_02242CB4();
+    if (sFieldCommMan && sFieldCommMan->isUnderground) {
+        UndergroundMan_UnpauseResources();
     }
 }

@@ -49,7 +49,7 @@ const ListMenuTemplate *UndergroundTextPrinter_GetListMenuTemplate(void)
     return &sListMenuTemplate;
 }
 
-UndergroundTextPrinter *UndergroundTextPrinter_New(int bankID, int heapID, BgConfig *bgConfig, int renderDelay, int stringSize)
+UndergroundTextPrinter *UndergroundTextPrinter_New(int bankID, enum HeapID heapID, BgConfig *bgConfig, int renderDelay, int stringSize)
 {
     int size = stringSize;
     UndergroundTextPrinter *textPrinter = Heap_Alloc(heapID, sizeof(UndergroundTextPrinter));
@@ -143,7 +143,7 @@ static String *UndergroundTextPrinter_GetString(UndergroundTextPrinter *textPrin
 static int UndergroundTextPrinter_AddPrinter(UndergroundTextPrinter *textPrinter, BOOL sysTaskManaged, UndergroundTextPrinterCallback callback, int callbackParam)
 {
     UndergroundTextPrinter_EraseMessageBox(textPrinter, CLEAR_MESSAGE_BOX);
-    ov23_022421EC();
+    UndergroundMan_RemovePrinters();
 
     if (!Window_IsInUse(&textPrinter->window)) {
         Window_Add(textPrinter->bgConfig, &textPrinter->window, BG_LAYER_MAIN_3, 2, 19, 27, 4, 12, textPrinter->windowBaseTile);
@@ -324,9 +324,9 @@ void UndergroundTextPrinter_SetUndergroundTrapNameWithIndex(UndergroundTextPrint
     textPrinter->formattingNeeded = TRUE;
 }
 
-void UndergroundTextPrinter_SetUndergroundGoodsNameWithIndex(UndergroundTextPrinter *textPrinter, int idx, int goods)
+void UndergroundTextPrinter_SetGoodNameWithIndex(UndergroundTextPrinter *textPrinter, int idx, int goodID)
 {
-    StringTemplate_SetUndergroundGoodsName(textPrinter->template, idx, goods);
+    StringTemplate_SetUndergroundGoodsName(textPrinter->template, idx, goodID);
     textPrinter->formattingNeeded = TRUE;
 }
 

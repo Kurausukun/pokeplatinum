@@ -13,14 +13,14 @@
     ScriptEntryEnd
 
 _0022:
-    SetFlag FLAG_UNK_0x09C3
+    SetFlag FLAG_FIRST_ARRIVAL_VALLEY_WINDWORKS
     GoToIfGe VAR_UNK_0x4089, 2, _0035
     End
 
 _0035:
     SetObjectEventPos 5, 21, 5
     SetObjectEventDir 5, DIR_WEST
-    SetObjectEventMovementType 5, MOVEMENT_TYPE_LOOK_LEFT
+    SetObjectEventMovementType 5, MOVEMENT_TYPE_LOOK_WEST
     SetObjectEventPos 2, 18, 4
     SetObjectEventDir 2, DIR_SOUTH
     SetObjectEventMovementType 2, MOVEMENT_TYPE_LOOK_SOUTH
@@ -139,7 +139,7 @@ _01DB:
     CloseMessage
     SetFlag FLAG_UNK_0x01F8
     ClearFlag FLAG_UNK_0x01F9
-    SetObjectEventMovementType 5, MOVEMENT_TYPE_LOOK_LEFT
+    SetObjectEventMovementType 5, MOVEMENT_TYPE_LOOK_WEST
     AddObject 5
     LockObject 5
     GetPlayerMapPos VAR_0x8004, VAR_0x8005
@@ -331,7 +331,7 @@ _03DA:
 _03E2:
     PlayFanfare SEQ_SE_CONFIRM
     LockAll
-    GoToIfGe VAR_UNK_0x40AA, 2, _0400
+    GoToIfGe VAR_EXITED_DISTORTION_WORLD_STATE, 2, _0400
     Message 14
     GoTo _040B
     End

@@ -26,8 +26,8 @@
 #include "unk_0202F1D4.h"
 #include "unk_020553DC.h"
 #include "unk_0208C010.h"
-#include "unk_02099550.h"
 #include "vars_flags.h"
+#include "wifi_overlays.h"
 
 #include "constdata/const_020EA358.h"
 #include "constdata/const_020F2FCC.h"
@@ -58,8 +58,8 @@ static int sub_0208BBA8(ApplicationManager *appMan, int *param1);
 static int sub_0208BBB4(ApplicationManager *appMan, int *param1);
 static int sub_0208BBC0(ApplicationManager *appMan, int *param1);
 static int sub_0208BC08(ApplicationManager *appMan, int *param1);
-static BOOL sub_0208BC3C(UnkStruct_0208BC3C *param0, int heapID);
-static BOOL sub_0208BC8C(UnkStruct_0208BC3C *param0, int heapID);
+static BOOL sub_0208BC3C(UnkStruct_0208BC3C *param0, enum HeapID heapID);
+static BOOL sub_0208BC8C(UnkStruct_0208BC3C *param0, enum HeapID heapID);
 static BOOL sub_0208BE80(int param0);
 
 UnkStruct_0208C06C *sub_0208BA78(ApplicationManager *appMan)
@@ -218,7 +218,7 @@ static int sub_0208BC08(ApplicationManager *appMan, int *param1)
     return 1;
 }
 
-static BOOL sub_0208BC3C(UnkStruct_0208BC3C *param0, int heapID)
+static BOOL sub_0208BC3C(UnkStruct_0208BC3C *param0, enum HeapID heapID)
 {
     switch (param0->unk_00) {
     case 0:
@@ -242,7 +242,7 @@ static BOOL sub_0208BC3C(UnkStruct_0208BC3C *param0, int heapID)
     return 0;
 }
 
-static BOOL sub_0208BC8C(UnkStruct_0208BC3C *param0, int heapID)
+static BOOL sub_0208BC8C(UnkStruct_0208BC3C *param0, enum HeapID heapID)
 {
     switch (param0->unk_00) {
     case 0:
